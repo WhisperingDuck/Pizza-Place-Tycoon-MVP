@@ -442,7 +442,7 @@ window.StandView={render};
     "runProfit": "Run profit",
     "runDays": "Days open",
     "finishRun": "Close run →",
-    "fiveDays": "Five days complete. Read the receipt and plan tomorrow.",
+    "fiveDays": "Five days complete.",
     "pepperoni": "Pepperoni",
     "mushroom": "Mushrooms",
     "green_peppers": "Green peppers",
@@ -500,7 +500,10 @@ window.StandView={render};
     "recycle": "Cans returned.",
     "wheelchair": "Community collection complete.",
     "menu": "Menu updated.",
-    "fallback": "Topping sold out; served plain."
+    "fallback": "Topping sold out; served plain.",
+    "foodReady": "Food delivered. Health restored.",
+    "cleanReady": "Counter cleaned.",
+    "trainReady": "Training finished for today."
   },
   "counter": {
     "opened": "Sign turned to OPEN. {visitors} visitors expected.",
@@ -961,7 +964,7 @@ Pizza.DATA = {
     switch (id) {
       case 'big_game': s.tomorrow.bonus += C.events.bigGame; effect = `Tomorrow: +${C.events.bigGame} potential customers.`; break;
       case 'rain': s.tomorrow.multiplier *= C.events.rain; effect = 'Tomorrow: half the usual foot traffic.'; break;
-      case 'scratch': S.money(s, C.events.scratch, 'events'); effect = `+${(C.events.scratch / 100).toFixed(2)} cash.`; break;
+      case 'scratch': S.money(s, C.events.scratch, 'events'); effect = `+$${(C.events.scratch / 100).toFixed(2)} cash.`; break;
       case 'good_tv': S.rep(s, C.events.interview); effect = `+${C.events.interview} reputation.`; break;
       case 'bad_tv': S.rep(s, -C.events.interview); effect = `−${C.events.interview} reputation (minimum 0).`; break;
       case 'cat': S.rep(s, C.events.catRep); s.dirt = Math.min(C.disgust.max, s.dirt + C.events.catDirt); effect = '+1 reputation, +1 dirt.'; break;
@@ -977,7 +980,7 @@ Pizza.DATA = {
       case 'sympathy':
         if (s.sympathyUsed) return false;
         s.sympathyUsed = true; S.money(s, C.events.sympathyCash, 'events');
-        effect = `+${(C.events.sympathyCash / 100).toFixed(2)}. Once per run.`; break;
+        effect = `+$${(C.events.sympathyCash / 100).toFixed(2)}. Once per run.`; break;
     }
     s.today.events.push({ id, name: event.name, text: event.text, effect });
     S.log(s, 'event', `${event.name} — ${event.text} ${effect}`);
@@ -1083,7 +1086,7 @@ Pizza.DATA = {
     if (mood === 'disgusted') S.rep(s, C.reputation.disgusted);
     const lines = P.DATA.reactions[mood], line = lines[Math.floor(S.random(s) * lines.length)];
     result(mood, `${recipe.name}${drinkRevenue ? ' + Pop' : ''}`, `${fallback ? 'Topping sold out; served plain. ' : ''}${line}`, sliceRevenue + drinkRevenue, s.rep - repBefore);
-    S.log(s, mood === 'disgusted' ? 'warning' : 'sale', `${recipe.name}${drinkRevenue ? ' + Pop' : ''} · +${((sliceRevenue + drinkRevenue) / 100).toFixed(2)} · ${mood}. ${fallback ? 'Topping sold out; served plain. ' : ''}${line}`);
+    S.log(s, mood === 'disgusted' ? 'warning' : 'sale', `${recipe.name}${drinkRevenue ? ' + Pop' : ''} · +$${((sliceRevenue + drinkRevenue) / 100).toFixed(2)} · ${mood}. ${fallback ? 'Topping sold out; served plain. ' : ''}${line}`);
     P.Logic.unlocks(s);
   }
   P.Customers = { forecast, factors, chance, schedule, resolve };
@@ -1209,7 +1212,7 @@ Pizza.DATA = {
         S.money(s, -C.inventoryCosts[id] * quantity, item.group === 'supplies' ? 'supplies' : 'ingredients');
         s.inventory[id] += quantity;
         if (item.group === 'toppings') s.lots[id].push({ quantity, expiresOn: s.day + (s.upgrades.includes('mini_fridge') ? C.freshnessDays : 1) - 1 });
-        S.log(s, 'purchase', `Bought ${quantity} ${item.name}. −${(C.inventoryCosts[id] * quantity / 100).toFixed(2)}.`); break;
+        S.log(s, 'purchase', `Bought ${quantity} ${item.name}. −$${(C.inventoryCosts[id] * quantity / 100).toFixed(2)}.`); break;
       }
       case 'upgrade': {
         const u = C.upgrades[id];
@@ -1223,7 +1226,7 @@ Pizza.DATA = {
         const units = recycleUnits(s), payout = recycleValue(s);
         s.waste -= units; s.recycled = true; s.windfall = false;
         S.money(s, payout, 'recycling');
-        S.log(s, 'prep', `Returned ${units} Pop cans. +${(payout / 100).toFixed(2)}.`); break;
+        S.log(s, 'prep', `Returned ${units} Pop cans. +$${(payout / 100).toFixed(2)}.`); break;
       }
       case 'wheelchair': P.Events.trigger(s, 'wheelchair'); break;
       case 'price':
@@ -1526,9 +1529,7 @@ window.StandScene={paint};
   const seed = sample ? 6 : undefined;
   const ids = P.DATA.items.map(item => item.id);
   const supportedStock = new Set(ids);
-  const cash = cents => '
-</body></html>
- + (cents / 100).toFixed(2);
+  const cash = cents => '$' + (cents / 100).toFixed(2);
   const fill = (template, params = {}) => template.replace(/\{(\w+)\}/g, (token, k) => params[k] ?? token);
   const entriesByEffect = new Map();
   copy.events.forEach(entry => {
@@ -1641,7 +1642,7 @@ window.StandScene={paint};
     if (customer.stage === 'arriving') return { kind: 'arriving', text: copy.counter.arrivalShort, visitor, amount: 0 };
     const outcome = customer.outcome;
     const isMiss = outcome.kind === 'miss';
-    const text = isMiss ? (state.inventory.slices ? copy.counter.atCapacity : copy.counter.soldOut) : outcome.text;
+    const text = isMiss ? (state.inventory.slices ? copy.counter.atCapacity : copy.counter.soldOut) : outcome.text.replace('Topping sold out; served plain.', copy.feedback.fallback);
     return { visitor, kind: outcome.kind, text, amount: outcome.revenue };
   }
   function recordOutcome(customer) {
@@ -1779,7 +1780,7 @@ window.StandScene={paint};
       case 'food':
       case 'recycle':
       case 'wheelchair':
-      case 'menu': notice = copy.feedback[type]; break;
+      case 'menu': notice = copy.feedback[!state.action && ['clean', 'train'].includes(type) ? type + 'Ready' : type]; break;
       case 'price': notice = fill(copy.feedback.price, { price: cash(state.price) }); break;
       case 'open':
         state.reviewLog = []; notice = ''; paused = false; lastTime = performance.now(); lastPaint = '';
@@ -1796,7 +1797,7 @@ window.StandScene={paint};
     lastTime = now;
     if (document.hidden) return;
     if (state.phase === 'management' && state.action?.type === 'food') {
-      P.Logic.tick(state, delta); persist(); render(); return;
+      P.Logic.tick(state, delta); if (!state.action) notice = copy.feedback.foodReady; persist(); render(); return;
     }
     if (paused || panelOpen || state.phase !== 'day') return;
     const before = state.dayRun.customer;

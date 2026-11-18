@@ -124,7 +124,7 @@
     if (customer.stage === 'arriving') return { kind: 'arriving', text: copy.counter.arrivalShort, visitor, amount: 0 };
     const outcome = customer.outcome;
     const isMiss = outcome.kind === 'miss';
-    const text = isMiss ? (state.inventory.slices ? copy.counter.atCapacity : copy.counter.soldOut) : outcome.text;
+    const text = isMiss ? (state.inventory.slices ? copy.counter.atCapacity : copy.counter.soldOut) : outcome.text.replace('Topping sold out; served plain.', copy.feedback.fallback);
     return { visitor, kind: outcome.kind, text, amount: outcome.revenue };
   }
   function recordOutcome(customer) {
@@ -262,7 +262,7 @@
       case 'food':
       case 'recycle':
       case 'wheelchair':
-      case 'menu': notice = copy.feedback[type]; break;
+      case 'menu': notice = copy.feedback[!state.action && ['clean', 'train'].includes(type) ? type + 'Ready' : type]; break;
       case 'price': notice = fill(copy.feedback.price, { price: cash(state.price) }); break;
       case 'open':
         state.reviewLog = []; notice = ''; paused = false; lastTime = performance.now(); lastPaint = '';
@@ -279,7 +279,7 @@
     lastTime = now;
     if (document.hidden) return;
     if (state.phase === 'management' && state.action?.type === 'food') {
-      P.Logic.tick(state, delta); persist(); render(); return;
+      P.Logic.tick(state, delta); if (!state.action) notice = copy.feedback.foodReady; persist(); render(); return;
     }
     if (paused || panelOpen || state.phase !== 'day') return;
     const before = state.dayRun.customer;

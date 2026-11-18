@@ -34,7 +34,7 @@ async function prep(page,price=false,partial=false){
 }
 async function closeDay(page){await tap(page,'#primary');await page.clock.runFor(21000);assert.equal(await page.locator('#report').isVisible(),true);}
 async function tools(page,name){
- const selector='[data-dialog="'+name+'"]';await tap(page,selector);
+ const selector='#tools [data-dialog="'+name+'"]';await tap(page,selector);
  assert(await page.locator('#sheet').evaluate(el=>el.open));
  for(let i=0;i<20;i++){await page.keyboard.press('Tab');assert(await page.locator('#sheet').evaluate(el=>el.contains(document.activeElement)));}
  await page.keyboard.press('Shift+Tab');assert(await page.locator('#sheet').evaluate(el=>el.contains(document.activeElement)));

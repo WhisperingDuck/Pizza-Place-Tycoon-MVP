@@ -172,7 +172,7 @@
     "runProfit": "Run profit",
     "runDays": "Days open",
     "finishRun": "Close run →",
-    "fiveDays": "Five days complete. Read the receipt and plan tomorrow.",
+    "fiveDays": "Five days complete.",
     "pepperoni": "Pepperoni",
     "mushroom": "Mushrooms",
     "green_peppers": "Green peppers",
@@ -230,7 +230,10 @@
     "recycle": "Cans returned.",
     "wheelchair": "Community collection complete.",
     "menu": "Menu updated.",
-    "fallback": "Topping sold out; served plain."
+    "fallback": "Topping sold out; served plain.",
+    "foodReady": "Food delivered. Health restored.",
+    "cleanReady": "Counter cleaned.",
+    "trainReady": "Training finished for today."
   },
   "counter": {
     "opened": "Sign turned to OPEN. {visitors} visitors expected.",
