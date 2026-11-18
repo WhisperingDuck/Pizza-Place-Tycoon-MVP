@@ -37,6 +37,17 @@ body{display:flow-root;min-height:100vh}
 }
 
 @media(min-width:701px){.stat dt,.kicker{font-size:11px}.world-top .route,.world-top .clock{font-size:12px}.price-foot{font-size:11px}.forecast dt{font-size:13px}.count-tag{font-size:12px}.receipt dt{font-size:13px}}
+
+.sheet-section{border-top:1px solid var(--line);margin-top:18px;padding-top:13px}
+.tool-row{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:9px 0;border-bottom:1px dotted var(--line)}
+.tool-row>div{min-width:0}.tool-row p,.tool-row small{display:block;margin:4px 0;color:var(--sub);font-size:12px;overflow-wrap:anywhere}
+.tool-row .smallbutton{flex-shrink:0;max-width:50%;white-space:normal}
+.smallbutton:disabled{opacity:.65;cursor:default;border-style:dashed}
+.sheet-scroll h3{font-size:15px}.sheet-scroll .sheet-feedback{padding:8px;border:1px solid var(--line);background:var(--pale)}
+.sheet-ledger{margin:10px 0}.sheet-ledger div{display:flex;justify-content:space-between;gap:12px;padding:3px 0}
+.sheet-ledger dd{margin:0;font-weight:bold}.sheet-ledger .sum{border-top:1px solid var(--ink);padding-top:6px}
+.floor{flex-wrap:wrap}.floor-left{min-width:0}.floor .link{white-space:nowrap}
+@media(max-width:700px){.floor{font-size:10px;gap:6px}.floor-left{flex:1 1 100%}.floor .link{padding:5px 0}.tool-row{gap:10px}.tool-row .smallbutton{font-size:12px}.links{gap:8px}.links .link{font-size:10px}.bar{padding-inline:12px}.bar h2{font-size:10px;letter-spacing:.03em}}
 </style></head>
 <body>
 <main class="shell">
@@ -50,7 +61,7 @@ body{display:flow-root;min-height:100vh}
 <div class="world-top"><div class="route"><span class="route-sign" aria-hidden="true">1</span><span data-ui="route"></span></div><span class="clock"><svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="6"/><path d="M8 4v4l3 1"/></svg><span id="clock"></span></span></div>
 <span class="scene-stamp"><i class="lamp"></i><span id="sceneLabel"></span></span><div id="bubble" class="scene-reaction" hidden><small id="bubbleTag"></small><span id="bubbleLine"></span></div>
 </section>
-<div class="bar"><h2 id="benchLabel"></h2><nav class="links" id="tools"><button class="link" data-dialog="stock" data-ui="stockroom"></button><button class="link" data-dialog="equipment" data-ui="equipment"></button><button class="link" data-dialog="log" data-ui="logShort"></button></nav></div>
+<div class="bar"><h2 id="benchLabel"></h2><nav class="links" id="tools"><button class="link" data-dialog="stock" data-ui="stockroom"></button><button class="link" data-dialog="equipment" data-ui="equipment"></button><button class="link" data-dialog="stand" data-ui="stand"></button><button class="link" data-dialog="log" data-ui="logShort"></button></nav></div>
 <section id="prep" class="bench">
 <section class="block" data-station="dough"><div class="titleline"><h3 data-ui="doughStation"></h3><span class="count-tag" id="doughCount"></span></div><div class="ingredients" id="flourRow"></div><div class="workrow"><button class="workbutton" data-action="dough"><span id="doughAction"></span><span aria-hidden="true" class="arrow" id="doughPct"></span></button><p class="requirement" id="doughHint"></p></div></section>
 <section class="block" data-station="slices"><div class="titleline"><h3 data-ui="sliceStation"></h3><span class="count-tag" id="trayCount"></span></div><div class="ingredients" id="fillRows"></div><div class="workrow"><button class="workbutton" data-action="prepare"><span id="slicesAction"></span><span class="arrow" aria-hidden="true" id="slicesPct"></span></button><p class="requirement" id="slicesHint"></p></div></section>
@@ -60,12 +71,12 @@ body{display:flow-root;min-height:100vh}
 <div class="live-totals"><h3 class="section-head" data-ui="window"></h3><div class="counter-figures"><div><b id="sold"></b><span data-ui="sold"></span></div><div><b id="left"></b><span data-ui="remaining"></span></div><div><b id="takings"></b><span data-ui="sales"></span></div></div><div class="timeline"><i id="serviceFill"></i></div><p class="live-status" id="serviceCount"></p></div>
 <div><div class="log-head"><h3 class="section-head" data-ui="counterLog"></h3><button class="link" data-dialog="log" data-ui="fullLog"></button></div><ol class="log inline" id="liveLog"></ol></div>
 </section>
-<section class="report-grid" id="report" hidden><div class="receipt"><header><h3 class="section-head" data-ui="receipt"></h3><small id="receiptNumber"></small></header><dl><div><dt data-ui="soldPrepared"></dt><dd id="rSold"></dd></div><div><dt data-ui="sales"></dt><dd id="rSales"></dd></div><div><dt data-ui="leftovers"></dt><dd id="rLeft"></dd></div><div><dt data-ui="spending"></dt><dd id="rSpent"></dd></div></dl><div class="ledger-tot"><span data-ui="change"></span><b id="rChange"></b></div></div>
+<section class="report-grid" id="report" hidden><div class="receipt"><header><h3 class="section-head" data-ui="receipt"></h3><small id="receiptNumber"></small></header><dl><div><dt id="rSoldLabel" data-ui="soldPrepared"></dt><dd id="rSold"></dd></div><div><dt id="rSalesLabel" data-ui="sales"></dt><dd id="rSales"></dd></div><div><dt id="rLeftLabel" data-ui="leftovers"></dt><dd id="rLeft"></dd></div><div><dt id="rSpentLabel" data-ui="spending"></dt><dd id="rSpent"></dd></div><div id="rOtherRow" hidden><dt data-ui="otherIncome"></dt><dd id="rOther"></dd></div></dl><div class="ledger-tot"><span id="rChangeLabel" data-ui="change"></span><b id="rChange"></b></div></div>
 <div class="report-notes"><div><span class="kicker" data-ui="tomorrow"></span><p id="rClue"></p></div><div class="eventline"><span class="kicker" id="eventTitle"></span><p id="rEvent"></p><button id="readNote" class="link" data-dialog="note" data-ui="fullReceipt" hidden></button></div></div>
 </section>
 <div class="task"><div class="task-copy"><strong id="taskTitle"></strong><small id="taskHint"></small></div><button class="equipmentBuy" id="buyMicrowave" data-action="microwave"></button><button class="main-action" id="primary"></button></div>
 </div>
-<footer class="floor"><span class="floor-left" data-ui="edition"></span><span class="floor-status" id="floorStatus"></span><button class="link" data-dialog="reset" data-ui="resetSample"></button></footer>
+<footer class="floor"><span class="floor-left" id="edition"></span><span class="floor-status" id="floorStatus"></span><button class="link" id="modeSwitch" data-action="mode"></button><button class="link" id="restart" data-dialog="reset"></button></footer>
 </main>
 <dialog id="sheet" aria-labelledby="sheetTitle"><div class="sheet-inner"><header class="sheet-top"><h2 id="sheetTitle"></h2><button class="smallbutton" id="closeSheet" data-ui="back"></button></header><div id="sheetBody" class="sheet-scroll"></div></div></dialog>
 <div class="sr" aria-live="polite" aria-atomic="true" id="announce"></div>
@@ -87,11 +98,18 @@ const pictures={
  paper_plates:['..........','...gggg...','..gwwwwg..','.gwggggwg.','.gwgwwgwg.','.gwgwwgwg.','.gwggggwg.','..gwwwwg..','...gggg...','..........']};
 const palette={g:'#3e5a43',p:'#e7d5a4',r:'#8f412d',y:'#e4bf6e',t:'#af5737',w:'#faf2d5'};
 function art(key){const rows=pictures[key];if(!rows)return '';let paths='';for(let y=0;y<rows.length;y++)for(let x=0;x<rows[y].length;x++)if(palette[rows[y][x]])paths+='<rect x="'+x+'" y="'+y+'" width="1" height="1" fill="'+palette[rows[y][x]]+'"/>';return '<svg viewBox="0 0 '+rows[0].length+' '+rows.length+'" width="100%" height="100%" shape-rendering="crispEdges" aria-hidden="true">'+paths+'</svg>';}
-function stockRow(id,prefix){return '<div class="ingredient"><span aria-hidden="true" class="illustration">'+art(id)+'</span><span class="iname">'+safe(ui[id])+'</span><span class="onhand" id="'+prefix+id+'Count"></span><button class="buy" data-action="buy" data-id="'+id+'" id="'+prefix+id+'Buy"></button></div>';}
-function stockPaint(id,prefix){const n=vm.stock[id]||0, cost=vm.costs[id]||0;const item=ui[id],btn=el(prefix+id+'Buy');el(prefix+id+'Count').textContent=n;el(prefix+id+'Count').setAttribute('aria-label',replace(ui.onHand,{count:n,item}));btn.textContent=replace(ui.buyPrice,{cost:fmt(cost).replace(/\.00$/,'')});btn.setAttribute('aria-label',replace(ui.buyDetail,{item,cost:fmt(cost),count:n}));btn.title=vm.buyReason?.[id]||'';btn.disabled=vm.phase!=='prep'||vm.canBuy?.[id]===false;}
+function stockRow(id,prefix){return '<div class="ingredient"><span aria-hidden="true" class="illustration">'+art(id)+'</span><span class="iname">'+safe(vm.items.find(item=>item.id===id)?.name||ui[id])+'</span><span class="onhand" id="'+prefix+id+'Count"></span><button class="buy" data-action="buy" data-id="'+id+'" data-quantity="'+(prefix==='m'?5:1)+'" id="'+prefix+id+'Buy"></button></div>';}
+function stockPaint(id,prefix){
+ const n=vm.stock[id]||0,quantity=prefix==='m'?5:1,cost=(vm.costs[id]||0)*quantity;
+ const item=vm.items.find(item=>item.id===id)?.name||ui[id],btn=el(prefix+id+'Buy'),reason=quantity===5?vm.buyFiveReason[id]:vm.buyReason[id];
+ el(prefix+id+'Count').textContent=n;el(prefix+id+'Count').setAttribute('aria-label',replace(ui.onHand,{count:n,item}));
+ btn.textContent=replace(quantity===5?ui.buyFive:ui.buyPrice,{cost:fmt(cost).replace(/\.00$/,''),count:quantity});
+ btn.setAttribute('aria-label',replace(ui.buyQuantityDetail,{item,cost:fmt(cost),count:n,quantity}));
+ btn.title=reason||'';btn.disabled=vm.phase!=='prep'||Boolean(reason);
+}
 function put(id,v){const n=el(id),s=String(v??'');if(n.textContent!==s)n.textContent=s;}
 function logRows(items,limit){return [...items].reverse().slice(0,limit).map(row=>'<li><time>'+safe(row.time)+'</time><span>'+safe(row.text)+'</span></li>').join('');}
-function dispatch(action,id){window.Stand.action(action,id);}
+function dispatch(action,id,quantity=1){window.Stand.action(action,id,quantity);}
 function work(kind,buttonAction){
  const button=document.querySelector('[data-action="'+buttonAction+'"]'),working=vm.work?.kind===kind,otherWork=vm.work&&!working;
  const ready=kind==='dough'?vm.canDough:vm.canPrepare;
@@ -108,7 +126,8 @@ function prep(){
  work('dough','dough');work('slices','prepare');put('price',fmt(vm.price));el('priceDown').disabled=vm.price<=vm.priceMin;el('priceUp').disabled=vm.price>=vm.priceMax;
  put('forecastVisitors',vm.forecast.visitors);put('capacity',vm.forecast.capacity);put('chance',vm.forecast.chance+'%');
  let title;if(vm.work)title=vm.work.kind==='dough'?ui.taskDough:ui.taskSlices;else if(vm.ready)title=ui.taskReady;else if(vm.stock.slices>0&&!vm.microwave)title=ui.taskMicrowave;else if(!vm.stock.flour&&!vm.stock.dough)title=ui.taskFlour;else if(!vm.stock.dough)title=ui.taskDough;else if(!vm.stock.sauce||!vm.stock.cheese)title=ui.taskToppings;else title=ui.taskSlices;
- put('taskTitle',title);const notes=[];if(!vm.microwave)notes.push(ui.needMicrowave);if(!vm.stock.slices)notes.push(ui.needTray);if(vm.work)notes.push(ui.finishWorkShort);put('taskHint',vm.ready?replace(ui.readyHint,{count:vm.stock.slices,price:fmt(vm.price)}):notes.join(' · '));
+ if(vm.work&&!['dough','slices'].includes(vm.work.kind))title=ui.working;
+  put('taskTitle',title);const notes=[];if(!vm.microwave)notes.push(ui.needMicrowave);if(!vm.stock.slices)notes.push(ui.needTray);if(vm.work)notes.push(['dough','slices'].includes(vm.work.kind)?ui.finishWorkShort:ui.supportWork);put('taskHint',vm.ready?replace(ui.readyHint,{count:vm.stock.slices,price:fmt(vm.price)}):notes.join(' · '));
  const micro=el('buyMicrowave');micro.hidden=vm.microwave;micro.disabled=vm.canBuy?.microwave===false;put('buyMicrowave',replace(ui.buyMicrowave,{cost:fmt(vm.costs.microwave).replace(/\.00$/,'')}));
  el('primary').disabled=!vm.ready;el('primary').dataset.action='open';put('primary',ui.open);
 }
@@ -123,31 +142,72 @@ function service(){
  el('buyMicrowave').hidden=true;el('primary').disabled=false;el('primary').dataset.action='pause';put('primary',vm.paused?ui.resume:ui.pause);
 }
 function report(){
- const r=vm.receipt;if(!r)return;
- put('receiptNumber',replace(ui.receiptNo,{day:String(vm.day).padStart(2,'0')}));put('rSold',r.sold+' / '+r.prepared);put('rLeft',r.leftovers);put('rSales',fmt(r.sales));put('rSpent',fmt(r.spending));put('rChange',signed(r.change));el('rChange').classList.toggle('costneg',r.change<0);
- put('rClue',r.clue);put('eventTitle',r.eventTitle||ui.event);put('rEvent',r.eventMessage||ui.noEvent);put('taskTitle',ui.dayClosed);put('taskHint',replace(ui.closeBalance,{cash:fmt(vm.cash),health:vm.health}));el('buyMicrowave').hidden=true;el('primary').disabled=false;el('primary').dataset.action=vm.dayTerminal?'reset':'next';put('primary',vm.dayTerminal?ui.resetSample:replace(ui.next,{day:vm.day+1}));
+  el('primary').disabled=false;el('buyMicrowave').hidden=true;delete el('primary').dataset.dialog;
+  if(vm.runEnded){
+    put('receiptNumber',ui.runClosed);put('rSoldLabel',ui.runSold);put('rSold',vm.final.slices);
+    put('rSalesLabel',ui.runIncome);put('rSales',fmt(vm.totalIncome));put('rSpentLabel',ui.runSpent);put('rSpent',fmt(vm.totalSpending));
+    put('rLeftLabel',ui.runDays);put('rLeft',vm.final.days);put('rChangeLabel',ui.runProfit);put('rChange',signed(vm.final.profit));
+    el('rOtherRow').hidden=true;put('rClue',ui[{health:'endHealth',cash:'endCash',complete:'endComplete'}[vm.endReason]]);
+    put('eventTitle',ui.score);put('rEvent',vm.final.score);put('taskTitle',ui.runClosed);put('taskHint',ui.saved);
+    delete el('primary').dataset.action;el('primary').dataset.dialog='reset';put('primary',vm.sample?ui.resetSample:ui.restart);
+    return;
+  }
+  const r=vm.receipt;if(!r)return;
+  put('rSoldLabel',ui.soldPrepared);put('rSalesLabel',ui.sales);put('rSpentLabel',ui.spending);put('rLeftLabel',ui.leftovers);put('rChangeLabel',ui.change);
+  put('receiptNumber',replace(ui.receiptNo,{day:String(vm.day).padStart(2,'0')}));put('rSold',r.sold+' / '+r.prepared);put('rLeft',r.leftovers);put('rSales',fmt(r.sales));put('rSpent',fmt(r.spending));put('rChange',signed(r.change));el('rChange').classList.toggle('costneg',r.change<0);
+  el('rOtherRow').hidden=!r.otherIncome;put('rOther',fmt(r.otherIncome));
+  put('rClue',r.clue);put('eventTitle',r.eventTitle||ui.event);put('rEvent',r.eventMessage||ui.noEvent);
+  put('taskTitle',vm.day===5?ui.fiveDays:ui.dayClosed);put('taskHint',replace(ui.closeBalance,{cash:fmt(vm.cash),health:vm.health}));
+  el('primary').dataset.action='next';put('primary',vm.dayTerminal?ui.finishRun:replace(ui.next,{day:vm.day+1}));
+}
+function toolRow(title,detail,button){return '<div class="tool-row"><div><strong>'+safe(title)+'</strong><small>'+safe(detail)+'</small></div>'+button+'</div>';}
+function toolButton(action,id,label,reason){return '<button class="smallbutton" data-action="'+safe(action)+'" data-id="'+safe(id||'')+'" '+(reason?'disabled':'')+'>'+safe(label)+'</button>';}
+function ledger(r){
+ const rows=[[ui.openingCash,fmt(r.startCash)],[ui.sales,fmt(r.sales)],[ui.otherIncome,fmt(r.otherIncome)],
+ [ui.ingredientsSpent,'−'+fmt(r.expenses.ingredients)],[ui.suppliesSpent,'−'+fmt(r.expenses.supplies)],
+ [ui.upgradesSpent,'−'+fmt(r.expenses.upgrades)],[ui.foodSpent,'−'+fmt(r.expenses.food)],[ui.eventsSpent,'−'+fmt(r.expenses.events)],
+ [ui.closingCash,fmt(r.endCash)]];
+ return '<dl class="sheet-ledger">'+rows.map(([label,value],i)=>'<div '+(i===rows.length-1?'class="sum"':'')+'><dt>'+safe(label)+'</dt><dd>'+safe(value)+'</dd></div>').join('')+'</dl><p class="sheet-note">'+safe(ui.ledgerFormula)+'</p>';
+}
+function standTools(){
+ let html='<h3>'+safe(ui.supportTitle)+'</h3><p>'+safe(replace(ui.progressSummary,{skill:vm.skill,xp:vm.xp,sold:vm.salesTotal}))+'</p><p>'+safe(ui.health)+' '+vm.health+'/10 · '+safe(ui.condition)+' '+vm.disgust.toFixed(1)+' · '+safe(ui.cans)+' '+vm.cans+'/24</p>';
+ html+=vm.support.map(item=>toolRow(ui[item.type],item.reason,toolButton(item.type,'',ui[item.type]+(item.progress!==null?' · '+item.progress+'%':''),item.reason))).join('');
+ html+='<p class="sheet-note">'+safe(ui.foodHint)+'</p>';
+ if(vm.canRecover)html+=toolRow(ui.recoveryHint,'',toolButton('recover','',ui.recovery,''));
+ html+='<section class="sheet-section"><h3>'+safe(replace(ui.menuTitle,{count:vm.slots}))+'</h3>';
+ html+=vm.recipes.map(item=>toolRow(item.name+' · '+fmt(item.price),item.reason||item.note,toolButton('menu',item.id,item.active?ui.removeRecipe:item.unlocked?ui.addRecipe:ui.locked,item.reason))).join('');
+ html+='<p class="sheet-note">'+safe(ui.nextUnlock)+'</p><p class="sheet-note">'+safe(ui.supportHint)+'</p></section><section class="sheet-section"><h3>'+safe(ui.history)+'</h3>';
+ html+=vm.history.length?vm.history.slice(-5).reverse().map(r=>'<details><summary>'+safe(replace(ui.receiptSummary,{day:r.day,sold:r.sold,cash:fmt(r.endCash)}))+'</summary>'+ledger(r)+'</details>').join(''):'<p>'+safe(ui.historyEmpty)+'</p>';
+ if(vm.phase==='service')html+='<p class="sheet-note">'+safe(ui.pauseInPanel)+'</p>';
+ return html+'</section>';
 }
 function paintSheet(force=false){
- if(!activeDialog)return;const names={stock:ui.stockroom,equipment:ui.equipment,log:ui.counterLog,reset:ui.resetTitle,note:ui.receiptDetail};put('sheetTitle',names[activeDialog]);
- let html='';const D=activeDialog,key=[D,vm.phase,vm.cash,vm.stock.flour,vm.stock.sauce,vm.stock.cheese,vm.stock.napkins,vm.stock.paper_plates,vm.microwave,vm.log?.length,vm.receipt?.eventMessage].join('|');
+ if(!activeDialog)return;const names={stock:ui.stockroom,equipment:ui.equipment,log:ui.counterLog,reset:vm.sample?ui.resetTitle:ui.restartTitle,note:ui.receiptDetail,stand:ui.stand};put('sheetTitle',names[activeDialog]);
+ let html='';const D=activeDialog,key=JSON.stringify([D,vm.phase,vm.cash,vm.stock,vm.upgrades,vm.recipes,vm.work,vm.health,vm.disgust,vm.xp,vm.cans,vm.log?.length,vm.receipt?.eventMessage,vm.notice]);
  if(!force&&lastSheet===key)return;lastSheet=key;
  if(D==='stock'){
-   html='<div class="large-line"><h3>'+safe(ui.budget)+'</h3><b>'+fmt(vm.cash)+'</b></div><h3>'+safe(ui.ingredients)+'</h3>'+['flour','sauce','cheese'].map(id=>stockRow(id,'m')).join('')+'<h3 style="margin-top:16px">'+safe(ui.supplies)+'</h3>'+['napkins','paper_plates'].map(id=>stockRow(id,'m')).join('')+'<p class="sheet-note">'+safe(vm.phase==='prep'?ui.stockHint:ui.readOnly)+'</p>';
-   const unaffordable=['flour','sauce','cheese','napkins','paper_plates'].filter(id=>vm.phase==='prep'&&!vm.canBuy[id]);if(unaffordable.length)html+='<p>'+safe(ui.noFunds)+' '+safe(unaffordable.map(id=>ui[id]).join(', '))+'</p>';
+   html='<div class="large-line"><h3>'+safe(ui.budget)+'</h3><b>'+fmt(vm.cash)+'</b></div>';
+   for(const group of ['ingredients','toppings','supplies']){
+     const items=vm.items.filter(item=>item.group===group);
+     if(items.length)html+='<h3>'+safe(ui[group])+'</h3>'+items.map(item=>stockRow(item.id,'m')).join('');
+   }
+   html+='<p class="sheet-note">'+safe(vm.phase==='prep'?ui.stockHint:ui.readOnly)+'</p>';
  } else if(D==='equipment'){
-   html='<div class="large-line"><strong>'+safe(ui.equipmentName)+'</strong>'+(vm.microwave?'<b>'+safe(ui.owned)+'</b>':'<button class="smallbutton" data-action="microwave" '+(!vm.canBuy.microwave?'disabled':'')+'>'+safe(replace(ui.buyMicrowave,{cost:fmt(vm.costs.microwave)}))+'</button>')+'</div><p>'+safe(ui.microwaveHint)+'</p>';
-   if(!vm.microwave&&!vm.canBuy.microwave)html+='<p>'+safe(vm.buyReason.microwave)+'</p>';
+   html=vm.upgrades.map(item=>toolRow(item.name+' · '+fmt(item.cost),item.effect+' '+(item.reason||item.note),item.owned?'<b>'+safe(ui.owned)+'</b>':toolButton('upgrade',item.id,replace(ui.buyPrice,{cost:fmt(item.cost)}),item.reason))).join('');
+ } else if(D==='stand'){
+   html=standTools();
  } else if(D==='log'){
    html=vm.log?.length?'<ol class="log">'+logRows(vm.log,Number.MAX_SAFE_INTEGER)+'</ol>':'<p>'+safe(ui.fullLogEmpty)+'</p>';
    if(vm.phase==='service')html+='<p class="sheet-note">'+safe(ui.pauseInPanel)+'</p>';
  } else if(D==='note'){
-   html='<h3>'+safe(ui.tomorrow)+'</h3><p>'+safe(vm.receipt?.clue)+'</p><h3>'+safe(vm.receipt?.eventTitle||ui.event)+'</h3><p>'+safe(vm.receipt?.eventMessage||ui.noEvent)+'</p>';
+   html='<h3>'+safe(ui.tomorrow)+'</h3><p>'+safe(vm.receipt?.clue)+'</p><h3>'+safe(vm.receipt?.eventTitle||ui.event)+'</h3><p>'+safe(vm.receipt?.eventMessage||ui.noEvent)+'</p>'+(vm.receipt?'<h3>'+safe(ui.ledgerTitle)+'</h3>'+ledger(vm.receipt):'')+(vm.receipt?.milestones.length?'<h3>'+safe(ui.milestones)+'</h3><p>'+safe(vm.receipt.milestones.map(m=>m.names.join(', ')).join(' · '))+'</p>':'');
  } else {
-   html='<p>'+safe(ui.resetDetail)+'</p><button class="smallbutton" data-confirm-reset>'+safe(ui.resetConfirm)+'</button>';
+   html='<p>'+safe(vm.sample?ui.resetDetail:ui.restartDetail)+'</p><button class="smallbutton" data-confirm-reset>'+safe(vm.sample?ui.resetConfirm:ui.runRestartConfirm)+'</button>';
  }
  const focusIn=el('sheetBody').contains(document.activeElement)?document.activeElement:null;
  const focusKey=focusIn?.dataset.action,focusId=focusIn?.dataset.id,scroll=el('sheetBody').scrollTop;
- el('sheetBody').innerHTML=html;if(D==='stock')['flour','sauce','cheese','napkins','paper_plates'].forEach(id=>stockPaint(id,'m'));
+ el('sheetBody').innerHTML=html;if(D==='stock')vm.items.forEach(item=>stockPaint(item.id,'m'));
+  if(vm.notice&&D!=='log'&&D!=='reset'){const feedback=document.createElement('p');feedback.className='sheet-feedback';feedback.textContent=vm.notice;el('sheetBody').append(feedback);}
  if(focusKey){const restored=[...el('sheetBody').querySelectorAll('button')].find(b=>b.dataset.action===focusKey&&b.dataset.id===focusId&&!b.disabled);(restored||el('closeSheet')).focus({preventScroll:true});}
  el('sheetBody').scrollTop=scroll;
 }
@@ -160,7 +220,7 @@ document.addEventListener('keydown',e=>{
  if(!el('sheet').open)return;
  if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close();return;}
  if(e.key!=='Tab')return;
- const buttons=[...el('sheet').querySelectorAll('button:not(:disabled),a[href],input:not(:disabled),[tabindex="0"]')].filter(node=>node.getClientRects().length);
+ const buttons=[...el('sheet').querySelectorAll('button:not(:disabled),a[href],input:not(:disabled),summary,[tabindex="0"]')].filter(node=>node.getClientRects().length);
  if(!buttons.length)return;
  e.preventDefault();const index=buttons.indexOf(document.activeElement);
  const next=index<0?(e.shiftKey?buttons.length-1:0):(index+(e.shiftKey?-1:1)+buttons.length)%buttons.length;
@@ -170,7 +230,7 @@ document.addEventListener('click',e=>{
  const button=e.target.closest('button');if(!button||button.disabled)return;
  if(button.hasAttribute('data-confirm-reset')){close();opener=document.querySelector('[data-dialog=reset]');dispatch('reset');return;}
  if(button.dataset.dialog){show(button.dataset.dialog,button);return;}
- if(button.dataset.action)dispatch(button.dataset.action,button.dataset.id);
+ if(button.dataset.action)dispatch(button.dataset.action,button.dataset.id,Number(button.dataset.quantity||1));
 });
 function init(){
  each('[data-ui]',node=>node.textContent=ui[node.dataset.ui]);each('[data-art]',node=>node.innerHTML=art(node.dataset.art));
@@ -183,9 +243,9 @@ function updateClock(){
  put('clock',String(Math.floor(minutes/60)).padStart(2,'0')+':'+String(minutes%60).padStart(2,'0'));
 }
 function receiptOverflow(){
- if(vm?.phase!=='report'||!vm.receipt)return;
+ if(vm?.phase!=='report'||!vm.receipt){el('readNote').hidden=true;return;}
  const clipped=['rClue','eventTitle','rEvent'].some(id=>{const n=el(id);return n.scrollHeight>n.clientHeight+1;});
- el('readNote').hidden=!(vm.receipt.eventTitle||clipped);
+ el('readNote').hidden=false;
 }
 window.addEventListener('resize',receiptOverflow);
 function render(model,content){
@@ -194,7 +254,9 @@ function render(model,content){
  ['prep','service','report'].forEach(s=>el(s).hidden=s!==phase);
  put('day',replace(ui.day,{day:String(vm.day).padStart(2,'0')}));put('phase',ui[phase+'Phase']);put('cash',fmt(vm.cash));put('health',vm.health+ui.healthSuffix);put('rep',vm.reputation);put('benchLabel',ui[phase+'Bench']);
  const scenePhase=phase[0].toUpperCase()+phase.slice(1);put('sceneLabel',ui['scene'+scenePhase]);el('scene').setAttribute('aria-label',ui['sceneAlt'+scenePhase]);el('world').dataset.phase=phase;updateClock();el('bubble').hidden=true;
- if(phase==='prep'){prep();put('possibleSales',fmt(vm.possibleSales));put('spending',fmt(vm.spending));}else if(phase==='service')service();else report();
+ delete el('primary').dataset.dialog;
+  put('edition',vm.sample?ui.sampleEdition:ui.runEdition);put('modeSwitch',vm.sample?ui.returnRun:ui.playSample);put('restart',vm.sample?ui.resetSample:ui.restart);
+  if(phase==='prep'){prep();put('possibleSales',fmt(vm.possibleSales));put('spending',fmt(vm.spending));}else if(phase==='service')service();else report();
  if(vm.saveNotice)put('floorStatus',vm.saveNotice);else put('floorStatus',phase==='prep'?vm.notice:'');
  const announce=phase==='service'?vm.log?.at(-1)?.text:phase==='report'&&shift?ui.dayClosed:vm.notice;
  if(announce&&previousNotice!==announce){put('announce',announce);previousNotice=announce;}

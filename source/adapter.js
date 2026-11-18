@@ -1,4 +1,4 @@
-/* The review adapter translates checkpoint state into the one-day surface.
+/* The continuing-game adapter translates checkpoint state into the approved stand surface.
    Simulation, transactions, probability, work, settlement and save validation
    are supplied by the unmodified candidate modules above. */
 (() => {
@@ -6,8 +6,10 @@
   const P = window.Pizza;
   const C = P.CONFIG;
   const copy = JSON.parse(document.getElementById('stand-copy').textContent);
-  const seed = 6;
-  const ids = ['flour', 'sauce', 'cheese', 'napkins', 'paper_plates'];
+  const reviewHash = new URLSearchParams(window.location.hash.slice(1));
+  const sample = reviewHash.get('mode') === 'sample' || (reviewHash.has('event') && !reviewHash.has('mode'));
+  const seed = sample ? 6 : undefined;
+  const ids = P.DATA.items.map(item => item.id);
   const supportedStock = new Set(ids);
   const cash = cents => '$' + (cents / 100).toFixed(2);
   const fill = (template, params = {}) => template.replace(/\{(\w+)\}/g, (token, k) => params[k] ?? token);
@@ -19,14 +21,19 @@
   const cost = id => id === 'microwave' ? C.upgrades.clean_microwave.cost : C.inventoryCosts[id];
 
   // These keys belong exclusively to this prototype, including on a file URL.
-  for (const slot of ['run', 'bests', 'settings']) C.keys[slot] = 'roadside.one-day.design-v1.' + slot;
+  if (sample) for (const slot of ['run', 'bests', 'settings']) C.keys[slot] = 'roadside.one-day.design-v1.' + slot;
   const naturalEnd = P.Events.end;
-  const reviewHash = new URLSearchParams(window.location.hash.slice(1));
-  const forcedEvent = reviewHash.get('event');
+  const forcedEvent = sample ? reviewHash.get('event') : null;
   const previewEvent = copy.events.find(e => e.id === forcedEvent);
   const previewType = P.DATA.events.find(e => e.id === previewEvent?.effect)?.type;
   for (const [k, lines] of Object.entries(copy.reactions)) P.DATA.reactions[k] = [...lines];
+  for (const group of ['items', 'recipes', 'upgrades']) for (const item of P.DATA[group]) {
+    Object.assign(item, copy.catalogue?.[group]?.[item.id] || {});
+  }
   P.DATA.recipes.find(r => r.id === 'plain').name = copy.names.plain;
+  const textReason = reason => copy.ruleReasons?.[reason] || reason;
+  const nameOf = id => copy.names[id] || P.DATA.items.find(i => i.id === id)?.name || id;
+  function availableAction(type, id) { return textReason(P.Logic.reason(state, type, id)); }
   function configureEvent(day) {
     for (const event of P.DATA.events) {
       const choices = entriesByEffect.get(event.id);
@@ -101,11 +108,12 @@
   }
   function availableToBuy(id) {
     if (state.phase !== 'management') return copy.feedback.beforeOpen;
+    if (id !== 'microwave') return textReason(P.Logic.reason(state, 'buy', id));
     if (id === 'microwave' && state.upgrades.includes('clean_microwave')) return copy.feedback.installedAlready;
     return state.cash >= cost(id) ? '' : copy.feedback.noCash;
   }
   function entryLine(row) {
-    const p = { ...row.params };
+    const p = { item: copy.names.plain, ...row.params };
     if (p.mood) p.line = copy.reactions[p.mood]?.[p.lineIndex] || p.line;
     return fill(copy.counter[row.key], p);
   }
@@ -124,7 +132,7 @@
     let key = 'sale';
     if (result.kind === 'passed') key = 'walk';
     if (result.kind === 'miss') key = state.inventory.slices ? 'busy' : 'out';
-    const params = { n: customer.number, line: result.text, money: cash(result.revenue),
+    const params = { n: customer.number, item: result.title, line: result.text.replace('Topping sold out; served plain.', copy.feedback.fallback), money: cash(result.revenue),
       mood: result.kind, lineIndex: copy.reactions[result.kind]?.indexOf(result.text) };
     addLog(key, params, result.kind === 'miss' || result.kind === 'passed' ? 'walk' : 'sale', customer.number);
   }
@@ -150,7 +158,7 @@
     let template = copy.receipt.sellThroughClue, count = 0;
     if (r.soldOut) { template = copy.receipt.stockClue; count = r.soldOut; }
     else if (r.turnedAway) { template = copy.receipt.capacityClue; count = r.turnedAway; }
-    else if (r.passed) template = state.inventory.napkins ? copy.receipt.wasteClue : copy.receipt.supplyClue;
+    else if (r.passed) template = (r.reviewHadNapkins ?? state.inventory.napkins) ? copy.receipt.wasteClue : copy.receipt.supplyClue;
     else if (r.spoiledSlices) { template = copy.receipt.overprepClue; count = r.spoiledSlices; }
     const clue = fill(template, { count, passed: r.passed, visitors: r.potential });
     return { prepared: r.served + r.spoiledSlices, sold: r.served, leftovers: r.spoiledSlices,
@@ -158,20 +166,33 @@
       eventTitle: events.map(e => e.title).join(' / '),
       eventMessage: events.length ? events.map(e => e.message + ' ' + e.effect).join(' ') : copy.receipt.quiet,
       startCash: r.startCash, endCash: r.endCash, healthChange: r.healthChange,
+      otherIncome: r.income.events + r.income.recycling, income: r.income, expenses: r.expenses,
+      milestones: r.milestones || [], day: r.day,
       visitors: r.potential, passed: r.passed, soldOut: r.soldOut };
   }
   function viewModel() {
     const phase = state.phase === 'management' ? 'prep' : state.phase === 'day' ? 'service' : 'report';
     const run = state.dayRun, t = state.today, r = state.report;
     const receipt = r ? receiptFor(r) : null;
-    const work = state.action ? { kind: state.action.type === 'prepare' ? 'slices' : 'dough',
+    const work = state.action ? { kind: state.action.type === 'prepare' ? 'slices' : state.action.type,
       progress: Math.round(100 * (1 - state.action.remaining / state.action.total)) } : null;
     const noDough = workReason('dough'), noSlices = workReason('prepare'), noOpen = openReason();
     const costs = {}, canBuy = {}, buyReason = {};
     for (const id of [...ids, 'microwave']) {
       costs[id] = cost(id); buyReason[id] = availableToBuy(id); canBuy[id] = !buyReason[id];
     }
-    return { phase, day: state.day, cash: state.cash, health: state.health, reputation: state.rep, price: state.price,
+    return { sample, runEnded: state.phase === 'score', final: state.final, endReason: state.endReason,
+      totalIncome: state.stats.income, totalSpending: state.stats.spending,
+      skill: P.State.skill(state), xp: state.xp, disgust: P.State.disgust(state), cans: state.waste,
+      canRecover: state.phase === 'management' && !state.action && state.cash + P.Logic.recycleValue(state) < P.Logic.openCost(state),
+      history: state.history.map(receiptFor),
+      support: ['clean', 'train', 'food', 'recycle', 'wheelchair'].map(type => ({ type, reason: availableAction(type),
+        progress: state.action?.type === type ? Math.round(100 * (1 - state.action.remaining / state.action.total)) : null })),
+      items: ids.map(id => ({ id, name: nameOf(id), group: P.DATA.items.find(i => i.id === id).group })),
+      upgrades: P.DATA.upgrades.map(item => ({ ...item, cost: C.upgrades[item.id].cost, owned: state.upgrades.includes(item.id), reason: availableAction('upgrade', item.id) })),
+      recipes: P.DATA.recipes.map(item => ({ ...item, active: state.menu.includes(item.id), reason: availableAction('menu', item.id), unlocked: P.State.recipeUnlocked(state, item), price: state.price + C.recipeBonuses[item.id] })),
+      slots: P.State.slots(state), salesTotal: state.stats.slices,
+      phase, day: state.day, cash: state.cash, health: state.health, reputation: state.rep, price: state.price,
       stock: { ...state.inventory }, costs, microwave: state.upgrades.includes('clean_microwave'), work,
       workStep: { dough: P.Logic.clickPower(state, 'dough'), slices: P.Logic.clickPower(state, 'prepare') },
       forecast: { visitors: run || receipt ? t.potential : P.Customers.forecast(state), capacity: P.State.capacity(state),
@@ -182,6 +203,7 @@
       serviceProgress: run ? run.elapsed / run.duration : receipt ? 1 : 0,
       log: logEntries().map(row => ({ time: row.time, text: entryLine(row), kind: row.kind, visitor: row.number })),
       reaction: currentOutcome(), receipt, notice, saveNotice, ready: !noOpen, openReason: noOpen,
+      buyFiveReason: Object.fromEntries(ids.map(id => [id, textReason(P.Logic.reason(state, 'buy', id, 5))])),
       canBuy, buyReason, canDough: !noDough, canPrepare: !noSlices, workReasons: { dough: noDough, slices: noSlices },
       priceMin: C.price.min, priceMax: C.price.max, priceStep: C.price.step, batchSize: C.slicesPerBatch,
       dayTerminal: state.phase === 'score' || (phase === 'report' && (state.health === 0 || state.day >= C.maxDays)) };
@@ -193,42 +215,40 @@
     checkpoint = null; paused = false; panelOpen = false; saveNotice = ''; lastPaint = '';
     state = P.State.create(seed); configureEvent(1); notice = copy.feedback.start; persist(); render();
   }
-  function action(name, id) {
+  function action(name, id, quantity = 1) {
     if (name === 'panel') { panelOpen = id === true || id === 'true'; lastTime = performance.now(); return; }
     if (name === 'reset') { reset(); return; }
+    if (name === 'mode') { persist(); window.location.hash = sample ? '' : 'mode=sample'; window.location.reload(); return; }
+    if (name === 'recover') { P.Logic.recovery(state); if (state.phase === 'score') P.Save.record(state); persist(); render(); return; }
     if (name === 'pause') {
       if (state.phase === 'day') { paused = !paused; lastTime = performance.now(); render(); }
       return;
     }
     if (name === 'next') {
       if (state.phase !== 'report') return;
-      if (viewModel().dayTerminal) { reset(); return; }
       // An end-of-day modifier may refer to the next day's event copy.
       configureEvent(state.day + 1);
       P.Logic.continueDay(state);
+      if (state.phase === 'score') P.Save.record(state);
       state.reviewLog = []; notice = copy.feedback.newDay; persist(); render(); return;
     }
-    if (state.phase !== 'management') return;
+    if (!['management', 'day'].includes(state.phase)) return;
     let type = name, item = id;
     if (name === 'work') type = id === 'slices' ? 'prepare' : id;
     if (name === 'microwave' || (name === 'buy' && item === 'microwave')) { type = 'upgrade'; item = 'clean_microwave'; }
     if (type === 'price' && (String(id) === '1' || String(id) === '-1')) item = Number(id) === 1 ? 'up' : 'down';
-    if (!['buy', 'upgrade', 'dough', 'prepare', 'price', 'open'].includes(type)) return;
+    if (!['buy', 'upgrade', 'dough', 'prepare', 'price', 'open', 'menu', 'clean', 'train', 'food', 'recycle', 'wheelchair'].includes(type)) return;
     if (type === 'buy' && !supportedStock.has(item)) return;
-    if (type === 'upgrade' && item !== 'clean_microwave') return;
     if (type === 'open') {
       const why = openReason();
       if (why) { notice = why; render(); return; }
       checkpoint = P.Save.clone(state);
     }
-    const result = P.Logic.action(state, type, item);
-    if (!result.ok) {
-      notice = type === 'buy' || type === 'upgrade' ? availableToBuy(type === 'upgrade' ? 'microwave' : item) :
-        workReason(type); render(); return;
-    }
+    const result = P.Logic.action(state, type, item, quantity);
+    if (!result.ok) { notice = textReason(result.message); render(); return; }
     switch (type) {
-      case 'buy': notice = fill(copy.feedback.bought, { item: copy.names[item], cost: cash(cost(item)) }); break;
-      case 'upgrade': notice = fill(copy.feedback.installed, { cost: cash(cost('microwave')) }); break;
+      case 'buy': notice = fill(copy.feedback.bought, { item: nameOf(item), cost: cash(cost(item) * quantity), quantity }); break;
+      case 'upgrade': notice = fill(copy.feedback.equipmentInstalled, { item: P.DATA.upgrades.find(u => u.id === item).name, cost: cash(C.upgrades[item].cost) }); break;
       case 'dough':
       case 'prepare': {
         const makingDough = type === 'dough';
@@ -237,6 +257,12 @@
           { progress: Math.round(100 * (1 - state.action.remaining / state.action.total)) });
         break;
       }
+      case 'clean':
+      case 'train':
+      case 'food':
+      case 'recycle':
+      case 'wheelchair':
+      case 'menu': notice = copy.feedback[type]; break;
       case 'price': notice = fill(copy.feedback.price, { price: cash(state.price) }); break;
       case 'open':
         state.reviewLog = []; notice = ''; paused = false; lastTime = performance.now(); lastPaint = '';
@@ -251,10 +277,15 @@
     const now = performance.now();
     const delta = Math.min((now - lastTime) / 1000, 0.3);
     lastTime = now;
-    if (document.hidden || paused || panelOpen || state.phase !== 'day') return;
+    if (document.hidden) return;
+    if (state.phase === 'management' && state.action?.type === 'food') {
+      P.Logic.tick(state, delta); persist(); render(); return;
+    }
+    if (paused || panelOpen || state.phase !== 'day') return;
     const before = state.dayRun.customer;
     P.Logic.tick(state, delta);
     if (state.phase === 'report') {
+      state.report.reviewHadNapkins = state.inventory.napkins > 0;
       addLog('closed', { sold: state.today.served }, 'close', 0);
       checkpoint = null; notice = ''; persist(); render(); return;
     }
@@ -265,13 +296,17 @@
       recordOutcome(current);
     // The first day is below all milestones. Later continuing samples use the
     // same checkpoint unlocks; acknowledge them after settlement of each beat.
-    if (state.pendingMilestones.length) state.pendingMilestones = [];
+    if (state.pendingMilestones.length) {
+      for (const milestone of state.pendingMilestones) addLog('unlock', { count: milestone.at, names: milestone.names.join(', ') }, 'unlock', current?.number || 0);
+      state.pendingMilestones = [];
+    }
     const frameKey = Math.floor(state.dayRun.elapsed * 4) + '/' + (current?.number || 0) + '/' + current?.stage;
     if (frameKey !== lastPaint) { lastPaint = frameKey; render(); }
   }
   window.Stand = { action };
   document.addEventListener('stand-action', event => action(event.detail.action, event.detail.id));
-  document.addEventListener('visibilitychange', () => { lastTime = performance.now(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) persist(); lastTime = performance.now(); });
+  window.addEventListener('pagehide', persist);
   window.setInterval(tick, 120);
   render();
 })();

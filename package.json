@@ -1,0 +1,12 @@
+{
+  "name": "pizza-place-tycoon-review",
+  "private": true,
+  "scripts": {
+    "test": "node tests/model.cjs",
+    "test:browser": "node tests/browser.cjs",
+    "build": "python3 package.py"
+  },
+  "devDependencies": {
+    "playwright": "1.51.1"
+  }
+}

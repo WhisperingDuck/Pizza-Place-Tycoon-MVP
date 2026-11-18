@@ -1,6 +1,6 @@
-# One day on Route 1
+# Days 1–5 on Route 1
 
-**Walkthrough.** Buy one flour, one sauce and one cheese. Finish the dough, then the eight-slice batch. Install the Clean Microwave, raise the plain slice price once to $3.25 and open. Watch the first two visitors. Read the receipt and continue to Day 2. Reset the sample to replay the same customers.
+**Repeatable sample walkthrough.** Buy one flour, one sauce and one cheese. Finish the dough, then the eight-slice batch. Install the Clean Microwave, raise the plain slice price once to $3.25 and open. Watch the first two visitors. Read the receipt and continue to Day 2. Reset the sample to replay the same customers.
 
 | Moment | Where to act | What changes |
 | --- | --- | --- |
@@ -16,6 +16,6 @@
 
 **Small windows and keyboard.** At 1024 × 600, the landscape and counter shorten, and the live feed shows three recent entries. At 390 × 844, the two prep stations sit above the full-width price board. Service totals sit above the three-entry log. Open stand, Pause and Prepare for Day 2 share the action strip below the counter. The full log and long closing notes scroll inside their panels.
 
-Stockroom sells ingredients, napkins and paper plates during prep. Equipment shows the microwave and its purchase or owned state. Opening a panel suspends service. Tab and Shift+Tab cycle through its controls. Back or Escape closes it and restores the invoking control. A manually paused day stays paused. Reset asks before replacing the review save.
+Stockroom sells the complete checkpoint catalogue during prep in packs of five; the bench buys single units. Locked toppings show their unlock requirements. Equipment lists all six checkpoint upgrades and their actual owned, affordable or locked states. Stand contains cleaning, once-daily training, a timed food order, recycling, recipes and the last five receipts. Opening a panel suspends service. Tab and Shift+Tab cycle through its controls. Back or Escape closes it and restores the invoking control. A manually paused day stays paused. Restart asks before replacing the selected mode's save.
 
-**Work and saves.** This review uses the v2.2.0 checkpoint’s click-to-fill jobs. A partial job survives a reload. Reloading service returns to the prepared moment before opening. Reloading a settled receipt preserves its totals. The review uses its own save keys. The exact Monday revision behind the reported 26 checks has yet to be identified.
+**Work and saves.** This review uses the v2.2.0 checkpoint’s click-to-fill jobs. A partial job survives a reload. Reloading service returns to the prepared moment before opening. Reloading a settled receipt preserves its totals. The continuing run uses the checkpoint's original keys and save validation. The sample uses its own isolated keys. Switch modes through the footer; restarting either mode leaves the other saved. The exact Monday revision behind the reported 26 checks has yet to be identified.

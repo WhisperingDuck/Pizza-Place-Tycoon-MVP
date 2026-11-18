@@ -26,3 +26,12 @@ Give each entry a permanent, unique lowercase ID. Use underscores between words.
 4. Shorten labels if they wrap awkwardly at 390 pixels. Customer lines can be longer; the full counter log retains them. Keep `draft: true` on each event until the owner approves that line.
 
 The standalone file embeds a snapshot of the JSON at packaging time. Edit the source JSON to keep revisions reproducible. Changing an event’s ID changes its preview address. Changing only its title or message preserves the address.
+
+
+## Continuing-game content
+
+The default mode is the continuing run. Use `#mode=sample` for the exact seed-6 comparison. Event previews belong to sample mode, for example `#mode=sample&event=rain_check`; an explicit `#mode=run&event=...` does not override continuing-game events.
+
+The `catalogue` sections override displayed item, recipe and upgrade labels/notes/effects. They do not change ingredients, prices, thresholds or mechanics. `ruleReasons` translates checkpoint validation messages. Stand actions, run endings, ledger rows and mode/restart text are in `ui` and `feedback`.
+
+Keep the placeholders required by `package.py`. The sale line now uses `{item}`, and purchase feedback includes `{quantity}`. Closing notes include the full cash ledger so event and recycling income reconcile with closing cash.

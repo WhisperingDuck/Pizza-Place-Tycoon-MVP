@@ -17,21 +17,22 @@ TEXT_KEYS = {
     "feedback": (
         "start newDay bought installed doughReady slicesReady doughWorking slicesWorking price noCash "
         "installedAlready beforeOpen noFlour noIngredients finishWork noMicrowave noTray "
-        "noMicrowaveOrTray noHealth ready restore saveUnavailable incompatible"
+        "noMicrowaveOrTray noHealth ready restore saveUnavailable incompatible equipmentInstalled clean train food recycle wheelchair menu fallback"
     ).split(),
     "effects": "big_game rain scratch good_tv bad_tv cat garbage windfall weekend rats sympathy wheelchair".split(),
-    "counter": "opened arrived arrivalShort sale walk out busy soldOut atCapacity closed".split(),
+    "counter": "opened arrived arrivalShort sale walk out busy soldOut atCapacity closed unlock".split(),
     "receipt": "quiet supplyClue wasteClue stockClue capacityClue overprepClue sellThroughClue".split(),
 }
 TOKENS = {
-    "feedback.bought": "item cost", "feedback.installed": "cost", "feedback.slicesReady": "batch",
+    "feedback.bought": "quantity item cost", "feedback.installed": "cost", "feedback.slicesReady": "batch",
     "feedback.doughWorking": "progress", "feedback.slicesWorking": "progress", "feedback.price": "price",
     "feedback.noIngredients": "items", "counter.opened": "visitors", "counter.arrived": "n",
-    "counter.sale": "n money line", "counter.walk": "n line", "counter.out": "n", "counter.busy": "n",
+    "counter.sale": "n item money line", "counter.walk": "n line", "counter.out": "n", "counter.busy": "n",
     "effects.big_game": "count", "effects.rain": "percent", "effects.scratch": "cash",
     "effects.good_tv": "rep", "effects.bad_tv": "rep", "effects.cat": "rep dirt",
     "effects.windfall": "multiple", "effects.weekend": "count", "effects.sympathy": "cash",
     "effects.wheelchair": "count rep",
+    "feedback.equipmentInstalled": "item cost", "counter.unlock": "count names",
     "counter.closed": "sold", "receipt.supplyClue": "passed visitors", "receipt.wasteClue": "passed visitors",
     "receipt.stockClue": "count", "receipt.capacityClue": "count", "receipt.overprepClue": "count",
 }

@@ -1,5 +1,5 @@
 {
-  "status": "DRAFT — owner copy for the one-day review.",
+  "status": "DRAFT — editable game and event copy.",
   "ui": {
     "brand": "PIZZA PLACE",
     "brandSub": "TYCOON",
@@ -119,7 +119,71 @@
     "servicePass": "The visitor walked on.",
     "serviceArrival": "A visitor approaches.",
     "serviceOutcome": "At the window.",
-    "potentialShort": "Tray value"
+    "potentialShort": "Tray value",
+    "stand": "Stand",
+    "runEdition": "Continuing run · Days 1–5 review",
+    "sampleEdition": "Repeatable sample day",
+    "restart": "Restart run",
+    "playSample": "Play sample",
+    "returnRun": "Return to run",
+    "restartTitle": "Restart this run?",
+    "restartDetail": "Return to Day 1 with $64 and empty stock. This replaces the continuing run. Your sample stays saved.",
+    "runRestartConfirm": "Start a new run",
+    "supportTitle": "Look after the stand",
+    "skill": "Shop skill",
+    "condition": "Disgust",
+    "cans": "Refundable cans",
+    "progressSummary": "Skill {skill} · {xp}/90 XP · {sold} slices sold",
+    "clean": "Clean counter",
+    "train": "Train once today",
+    "food": "Order food · $8",
+    "recycle": "Return cans",
+    "wheelchair": "Community collection",
+    "foodHint": "Food restores up to 3 health after five seconds. Cleaning and training advance each time you press their button.",
+    "supportHint": "Supplies are used by each buyer. Toppings are added when a slice sells. Dough and unsold slices expire at closing.",
+    "menuTitle": "Menu · {count} slots",
+    "addRecipe": "Add",
+    "removeRecipe": "Remove",
+    "locked": "Locked",
+    "nextUnlock": "Pepperoni and a second menu slot unlock at 25 slices sold.",
+    "history": "Previous receipts",
+    "historyEmpty": "No completed days yet.",
+    "receiptSummary": "Day {day} · {sold} sold · cash {cash}",
+    "otherIncome": "Other income",
+    "openingCash": "Opening cash",
+    "closingCash": "Closing cash",
+    "ledgerTitle": "Cash ledger",
+    "ingredientsSpent": "Ingredients",
+    "suppliesSpent": "Supplies",
+    "upgradesSpent": "Equipment",
+    "foodSpent": "Food",
+    "eventsSpent": "Events",
+    "milestones": "New at the stand",
+    "recovery": "Check recovery",
+    "recoveryHint": "You cannot afford the minimum stock to open. Check the checkpoint’s recovery rules.",
+    "runClosed": "Run closed.",
+    "endHealth": "You ran out of health.",
+    "endCash": "The stand cannot afford another opening.",
+    "endComplete": "The 100-day run is complete.",
+    "score": "Final score",
+    "runIncome": "Total income",
+    "runSpent": "Total spending",
+    "runSold": "Slices sold",
+    "runProfit": "Run profit",
+    "runDays": "Days open",
+    "finishRun": "Close run →",
+    "fiveDays": "Five days complete. Read the receipt and plan tomorrow.",
+    "pepperoni": "Pepperoni",
+    "mushroom": "Mushrooms",
+    "green_peppers": "Green peppers",
+    "pop": "Pop",
+    "working": "Work in progress",
+    "supportWork": "Finish the work at Stand tools.",
+    "saved": "Run saves after each action.",
+    "ledgerFormula": "Opening cash + sales + other income − spending = closing cash.",
+    "toppings": "Toppings",
+    "buyFive": "Buy 5 · {cost}",
+    "buyQuantityDetail": "Buy {quantity} {item} for {cost}. {count} in stock."
   },
   "names": {
     "flour": "Flour",
@@ -129,12 +193,16 @@
     "paper_plates": "Paper plates",
     "microwave": "Clean Microwave",
     "plain": "Plain slice",
-    "dough": "Dough"
+    "dough": "Dough",
+    "pepperoni": "Pepperoni",
+    "mushroom": "Mushrooms",
+    "green_peppers": "Green peppers",
+    "pop": "Pop"
   },
   "feedback": {
     "start": "Buy flour to start your first dough.",
     "newDay": "The counter is clear. Stock up for the next tray.",
-    "bought": "+1 {item} in stock · −{cost}",
+    "bought": "+{quantity} {item} in stock · −{cost}",
     "installed": "Clean Microwave installed · −{cost}",
     "doughReady": "Dough ready. Add sauce and cheese.",
     "slicesReady": "{batch} slices on the tray.",
@@ -154,19 +222,28 @@
     "ready": "The tray and microwave are ready.",
     "restore": "Back at the moment before opening.",
     "saveUnavailable": "Saving is unavailable. Keep this tab open.",
-    "incompatible": "The sample save could not be read. A fresh day is ready."
+    "incompatible": "The save could not be read. A fresh Day 1 is ready.",
+    "equipmentInstalled": "{item} installed · −{cost}",
+    "clean": "Cleaning the counter.",
+    "train": "Training at the stand.",
+    "food": "Food ordered. Delivery takes five seconds.",
+    "recycle": "Cans returned.",
+    "wheelchair": "Community collection complete.",
+    "menu": "Menu updated.",
+    "fallback": "Topping sold out; served plain."
   },
   "counter": {
     "opened": "Sign turned to OPEN. {visitors} visitors expected.",
     "arrived": "Visitor {n} steps up to the counter.",
     "arrivalShort": "One moment, please.",
-    "sale": "Visitor {n} bought a plain slice · +{money}. {line}",
+    "sale": "Visitor {n} bought {item} · +{money}. {line}",
     "walk": "Visitor {n} walked away. {line}",
     "out": "Visitor {n} found an empty tray.",
     "busy": "Visitor {n} left the queue.",
     "soldOut": "Nothing left on the tray.",
     "atCapacity": "The queue is too long.",
-    "closed": "Stand closed. {sold} slices sold."
+    "closed": "Stand closed. {sold} slices sold.",
+    "unlock": "{count} slices sold. Unlocked: {names}."
   },
   "reactions": {
     "delighted": [
@@ -303,5 +380,142 @@
     "rats": "One more rat at the stand.",
     "sympathy": "Cash +{cash}.",
     "wheelchair": "{count} cans redeemed. Reputation +{rep}."
+  },
+  "catalogue": {
+    "items": {
+      "flour": {
+        "name": "Flour",
+        "note": "1 unit makes 1 dough."
+      },
+      "sauce": {
+        "name": "Sauce",
+        "note": "1 unit per batch of 8 slices."
+      },
+      "cheese": {
+        "name": "Cheese",
+        "note": "1 unit per batch of 8 slices."
+      },
+      "pepperoni": {
+        "name": "Pepperoni",
+        "note": "1 portion per pepperoni slice."
+      },
+      "mushroom": {
+        "name": "Mushroom",
+        "note": "1 portion per mushroom slice."
+      },
+      "green_peppers": {
+        "name": "Green Peppers",
+        "note": "1 portion per green pepper slice."
+      },
+      "napkins": {
+        "name": "Napkins",
+        "note": "1 per sale. Helps buy chance and reactions."
+      },
+      "paper_plates": {
+        "name": "Paper Plates",
+        "note": "1 per sale. Helps buy chance and reactions."
+      },
+      "pop": {
+        "name": "Pop",
+        "note": "Optional $1.50 drink sale. Each sale adds 1 refundable can."
+      }
+    },
+    "recipes": {
+      "plain": {
+        "name": "Plain Slice",
+        "note": "Cheese-adjacent optimism on dough."
+      },
+      "pepperoni": {
+        "name": "Pepperoni Slice",
+        "note": "A reliable way to look intentional."
+      },
+      "mushroom": {
+        "name": "Mushroom Slice",
+        "note": "A little roadside-foraged energy."
+      },
+      "green_peppers": {
+        "name": "Green Pepper Slice",
+        "note": "Slightly fresher than the building."
+      },
+      "classic": {
+        "name": "The Classic",
+        "note": "Safe, sturdy and hard to argue with."
+      }
+    },
+    "upgrades": {
+      "clean_microwave": {
+        "name": "Clean Microwave",
+        "tag": "ESSENTIAL",
+        "effect": "Required to open. Removes 1 dirt.",
+        "note": "Cleaning this thing could not hurt."
+      },
+      "hand_made_sign": {
+        "name": "Hand Made Sign",
+        "tag": "REPUTATION",
+        "effect": "+2 reputation. More people stop by.",
+        "note": "Now they know this is a pizza place."
+      },
+      "folding_table": {
+        "name": "Folding Table",
+        "tag": "CAPACITY",
+        "effect": "+5 customers served per day.",
+        "note": "Technically, it is a table."
+      },
+      "mini_fridge": {
+        "name": "Mini Fridge",
+        "tag": "FRESHNESS",
+        "effect": "Toppings stay fresh for 7 days.",
+        "note": "Seven days instead of one sad afternoon."
+      },
+      "second_microwave": {
+        "name": "Second Microwave",
+        "tag": "CAPACITY",
+        "effect": "+5 customers served per day.",
+        "note": "Two is better than one."
+      },
+      "tiny_menu_board": {
+        "name": "Tiny Menu Board",
+        "tag": "VARIETY",
+        "effect": "+1 active recipe slot.",
+        "note": "Just enough room to imply a real menu."
+      }
+    }
+  },
+  "ruleReasons": {
+    "Read the report to continue.": "Read the report to continue.",
+    "Available before opening.": "Available before opening.",
+    "Finish the current action first.": "Finish the current action first.",
+    "Unknown item.": "Unknown item.",
+    "Choose a valid quantity.": "Choose a valid quantity.",
+    "Not enough cash.": "Not enough cash.",
+    "Unknown upgrade.": "Unknown upgrade.",
+    "Already installed.": "Already installed.",
+    "The counter is clean.": "The counter is clean.",
+    "Buy flour first.": "Buy flour first.",
+    "Make dough first.": "Make dough first.",
+    "Needs 1 sauce and 1 cheese.": "Needs 1 sauce and 1 cheese.",
+    "Already trained today.": "Already trained today.",
+    "Skill is at maximum.": "Skill is at maximum.",
+    "Health is full.": "Health is full.",
+    "Sell Pop to collect refundable cans.": "Sell Pop to collect refundable cans.",
+    "You already built the wheelchair.": "You already built the wheelchair.",
+    "Fill the can crate first.": "Fill the can crate first.",
+    "Health is empty.": "Health is empty.",
+    "Buy the Clean Microwave first.": "Buy the Clean Microwave first.",
+    "Prepare at least one batch of slices.": "Prepare at least one batch of slices.",
+    "The stand is not open.": "The stand is not open.",
+    "Required toppings are still locked.": "Required toppings are still locked.",
+    "Keep at least one recipe on the menu.": "Keep at least one recipe on the menu.",
+    "Menu is full. Remove a recipe first.": "Menu is full. Remove a recipe first.",
+    "Invalid price change.": "Invalid price change.",
+    "Unknown action.": "Unknown action.",
+    "Unlocks at 25 slices sold.": "Unlocks at 25 slices sold.",
+    "Requires 25 slices sold.": "Requires 25 slices sold.",
+    "Unlocks at 50 slices sold.": "Unlocks at 50 slices sold.",
+    "Requires 50 slices sold.": "Requires 50 slices sold.",
+    "Unlocks at 75 slices sold.": "Unlocks at 75 slices sold.",
+    "Requires 75 slices sold.": "Requires 75 slices sold.",
+    "Unlocks at 100 slices sold.": "Unlocks at 100 slices sold.",
+    "Requires 100 slices sold.": "Requires 100 slices sold."
   }
 }
