@@ -1,0 +1,1519 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Pizza Place Tycoon</title>
+<style>
+:root{color-scheme:light;--outer:#35463b;--paper:#eee8cd;--pale:#f7f1d8;--ink:#263b2e;--sub:#53624d;--line:#a3aa8e;--night:#293f32;--green:#31593e;--red:#9d4431;--gold:#d5ae5f;--sans:Arial,Helvetica,sans-serif;--mono:"Courier New",Courier,monospace}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--outer);color:var(--ink)}body{font:14px/1.3 var(--mono);background-image:radial-gradient(#8b987133 .65px,transparent .9px);background-size:4px 4px}button{color:inherit;font:700 13px/1.12 var(--mono);cursor:pointer;touch-action:manipulation;border-radius:0}button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid #c96622;outline-offset:3px;position:relative;z-index:2}button:focus:not(:focus-visible){outline:none}button:disabled{cursor:default}button:hover:not(:disabled):not([aria-disabled=true]){filter:brightness(1.06)}button:active:not(:disabled):not([aria-disabled=true]){transform:translateY(1px)}[hidden]{display:none!important}
+.shell{width:min(1310px,calc(100% - 72px));margin:clamp(16px,4.4vh,46px) auto 10px}.machine{border:3px solid #eee8ce;background:var(--paper);outline:2px solid #213328;box-shadow:6px 7px 0 #23362b}.mast{display:flex;align-items:center;gap:clamp(20px,3vw,52px);padding:14px 28px;min-height:75px;border-bottom:2px solid var(--ink)}
+.brand{display:flex;align-items:center;gap:12px}.brand .illustration{display:block;width:38px;height:38px;flex:none}.brand h1{font:900 clamp(22px,2vw,30px)/.86 var(--mono);letter-spacing:-2px;margin:0;white-space:nowrap}.brand h1 small{display:block;font:700 10px/1 var(--mono);letter-spacing:6px;margin:7px 0 0 2px}.daybox{border-left:1px solid var(--line);padding-left:26px}.daybox b{font:700 16px/1.2 var(--mono)}.daybox .phase{display:block;font:700 10px/1.5 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--sub);margin-top:3px}.stats{margin-left:auto;display:flex;gap:clamp(22px,3.8vw,64px)}.stat{display:grid;gap:2px}.kicker,.stat dt,.tag{font:700 10px/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase}.stat dt{color:var(--sub);margin:0}.stat dd{margin:0;font:700 22px/1.05 var(--mono);letter-spacing:-1px}.stats{margin-block:0}
+.world{height:clamp(216px,35.7vh,353px);position:relative;overflow:hidden;background:#abcab6;border-bottom:2px solid var(--ink);isolation:isolate}.world canvas{width:100%;height:100%;display:block;object-fit:cover;object-position:center 58%;image-rendering:pixelated}.world-top{position:absolute;inset:15px 21px auto;display:flex;justify-content:space-between;align-items:center;pointer-events:none;color:#2e4738}.world[data-phase=report] .world-top{color:#d3dcc1}.route,.clock{display:flex;gap:6px;align-items:center;font:700 11px/1 var(--mono);letter-spacing:.06em}.route-sign{position:relative;display:grid;place-content:center;border:2px solid currentColor;min-width:25px;height:23px;border-radius:2px 2px 6px 6px;font-size:14px;letter-spacing:-1px}.clock svg{width:14px;height:14px}.scene-stamp{position:absolute;left:21px;bottom:13px;display:flex;align-items:center;gap:7px;background:#f8efcb;color:#364a37;border:1px solid #3e563e;box-shadow:2px 2px 0 #334b3a80;padding:5px 7px;font-size:10px;font-weight:bold;letter-spacing:.06em;text-transform:uppercase}.lamp{display:inline-block;background:#a24834;width:7px;height:7px}.world[data-phase=service] .lamp{background:#437343}.world[data-phase=report] .scene-stamp{background:#ded8b9}.scene-reaction{position:absolute;right:clamp(15px,6vw,100px);bottom:25%;max-width:265px;background:#fbf2cf;border:2px solid #354d37;box-shadow:3px 3px 0 #34483865;padding:7px 10px;color:#314431;overflow-wrap:anywhere;font:700 12px/1.2 var(--mono)}.scene-reaction:after{content:"";position:absolute;width:7px;height:7px;bottom:-6px;left:22%;background:#fbf2cf;border-right:2px solid #354d37;border-bottom:2px solid #354d37;transform:rotate(45deg)}.scene-reaction small{display:block;color:var(--red);font-size:10px;margin-bottom:4px}
+.bar{display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:7px 27px;border-bottom:1px solid var(--line);background:#e1dfc4}.bar h2,.block h3,.section-head{margin:0}.bar h2{display:flex;gap:9px;align-items:center;font:bold 12px/1 var(--mono);letter-spacing:.11em;text-transform:uppercase}.bar h2:before{content:"";width:8px;height:8px;background:var(--red)}.links{display:flex;gap:19px}.link{padding:5px 0;border:0;background:transparent;text-decoration:underline;text-underline-offset:3px;text-decoration-color:#818d74;font-weight:bold;font-size:12px}.link:before{content:"";display:inline-block;width:0}.bench{display:grid;grid-template-columns:1fr 1.05fr 1fr;padding:18px 0 19px;min-height:216px}.block{min-width:0;padding:0 26px}.block+.block{border-left:1px solid var(--line)}.block h3,.section-head{font:bold 17px/1.2 var(--mono);letter-spacing:-.7px}.titleline{display:flex;align-items:center;justify-content:space-between;gap:6px}.count-tag{white-space:nowrap;font:bold 11px/1.2 var(--mono);padding:4px 6px;background:#dbdec3;border:1px solid #abb49a;color:#354e39}.ingredients{display:flex;flex-direction:column;margin:11px 0 8px;gap:4px}.ingredient{display:grid;grid-template-columns:22px minmax(0,1fr) auto auto;align-items:center;gap:9px;min-height:31px}.ingredient .illustration{height:22px;width:22px;display:block}.iname{font:700 14px/1.1 var(--mono)}.onhand{font:700 12px/1 var(--mono);color:var(--sub);min-width:18px;text-align:right}.buy,.step,.smallbutton,.equipmentBuy{background:var(--pale);border:1px solid #849076;border-bottom-color:var(--ink);box-shadow:0 1px 0 #7d896e;padding:6px 9px;white-space:nowrap}.buy:disabled,.equipmentBuy:disabled,.step:disabled{color:#65715a;border-style:dashed;box-shadow:none;background:#e3e2c8}.workrow{margin-top:8px}.workbutton{position:relative;width:100%;overflow:hidden;background:var(--green);color:#fff5cf;border:1px solid #29462e;box-shadow:0 2px 0 #253e2b;text-align:left;min-height:32px;padding:6px 10px;display:flex;align-items:center;justify-content:space-between}.workbutton:disabled{background:#dbddc2;color:#58644f;border:1px dashed #9ca48a;box-shadow:none}.workbutton:before{content:"";position:absolute;inset:0 auto 0 0;width:var(--fill,0%);background:#637e4f}.workbutton span{position:relative}.workbutton .arrow{font-size:14px}.requirement{margin:5px 0 0;color:var(--sub);font:12px/1.25 var(--mono);min-height:1.25em;overflow-wrap:anywhere}.price-line{display:flex;align-items:center;gap:14px;margin:11px 0 6px}.price-main{font:700 34px/1 var(--mono);letter-spacing:-2px;min-width:5ch}.step{width:32px;height:30px;padding:0;display:grid;place-items:center;font-size:20px}.forecast{display:grid;gap:4px;margin:8px 0 0}.forecast div{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.forecast dt{color:var(--sub);font-size:12px}.forecast dd{margin:0;font-size:13px;font-weight:700}.forecast div:last-child{border-top:1px dotted #a7ae91;padding-top:4px}.task{padding:12px 26px;min-height:66px;background:var(--night);color:#f4efcd;display:flex;align-items:center;gap:16px}.task-copy{min-width:0;flex:1}.task-copy strong{display:block;font:700 15px/1.22 var(--mono);letter-spacing:-.3px}.task-copy small{display:block;font:12px/1.3 var(--mono);color:#d4dcc0;margin-top:4px;overflow-wrap:anywhere}.task .equipmentBuy{background:#d6dec0;border:1px solid #a8b995;color:var(--ink);padding:8px 10px;box-shadow:none}.main-action{border:1px solid #ddd8ac;background:#e8d089;color:#243b2b;padding:11px 18px;font-size:14px;min-width:145px;box-shadow:2px 2px 0 #162a20}.main-action:disabled{background:#3c5040;color:#d3d8b9;border:1px dashed #90a186;box-shadow:none}.floor{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0 0;font:11px/1.25 var(--mono);color:#d4d9c4}.floor-left{display:flex;gap:7px;align-items:center}.floor-left:before{content:"";width:6px;height:6px;background:#c09550}.floor .link{color:inherit;text-decoration-color:#8d9c88;font-size:11px}.floor-status{flex:1;text-align:center;color:#dce3cb;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.live-grid{display:grid;grid-template-columns:minmax(220px,.85fr) minmax(350px,1.6fr);gap:34px;padding:19px 27px;min-height:218px}.live-totals{border-right:1px solid var(--line);padding-right:26px}.counter-figures{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}.counter-figures b{display:block;font:bold 24px/1 var(--mono);letter-spacing:-1.5px}.counter-figures span{display:block;margin-top:5px;color:var(--sub);font:12px/1.2 var(--mono)}.timeline{height:7px;background:#d5d9bc;border:1px solid #a4ad91}.timeline i{display:block;height:100%;width:0;background:var(--green)}.live-status{margin:6px 0 0;color:var(--sub);font-size:12px}.log-head{display:flex;align-items:center;justify-content:space-between;gap:7px}.log{list-style:none;padding:0;margin:7px 0 0}.log li{display:grid;grid-template-columns:48px minmax(0,1fr);gap:10px;align-items:baseline;border-top:1px dotted #a8b090;padding:5px 0;overflow-wrap:anywhere;font-size:13px}.log time{color:var(--sub);font-size:11px}.log li:first-child{font-weight:700}.log.inline li:nth-child(n+5){display:none}.report-grid{padding:13px 27px 15px;display:grid;grid-template-columns:minmax(350px,1.1fr) minmax(250px,1fr);gap:38px;min-height:218px}.receipt{position:relative;background:#faf4d9;border:1px solid #bbb69b;border-bottom:2px dashed #a7a58c;padding:12px 18px;box-shadow:2px 3px 0 #c8c8a9}.receipt header{display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px dashed #aaa98a;padding-bottom:6px}.receipt header small{color:var(--sub);font-size:11px}.receipt dl{margin:6px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:3px 22px}.receipt dl div,.ledger-tot{display:flex;justify-content:space-between;gap:5px;align-items:baseline}.receipt dt{color:var(--sub);font-size:12px}.receipt dd{margin:0;font-weight:700;font-size:13px}.ledger-tot{border-top:1px dashed #a6aa88;margin-top:8px;padding-top:7px;font:700 15px/1.1 var(--mono)}.report-notes{display:flex;flex-direction:column;justify-content:center;gap:12px}.report-notes p{font:14px/1.35 var(--mono);overflow-wrap:anywhere;margin:3px 0 0;max-width:55ch}.report-notes .eventline p{color:var(--sub);font-size:12px}.report-notes .eventline{border-top:1px dotted #a2aa8c;padding-top:8px}.report-notes .kicker{color:var(--red)}.costneg{color:#853f2e}
+dialog{color:var(--ink);background:var(--paper);border:3px solid var(--ink);box-shadow:5px 5px 0 #172c26;max-height:min(78dvh,620px);width:min(500px,calc(100vw - 35px));padding:0;border-radius:0}dialog::backdrop{background:#1b2c24ad}.sheet-inner{display:flex;flex-direction:column;max-height:inherit}.sheet-top{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:15px 19px;border-bottom:1px solid var(--line);background:#dfdec1}.sheet-top h2{font:700 19px/1 var(--mono);margin:0}.sheet-scroll{overflow:auto;overscroll-behavior:contain;padding:15px 19px}.sheet-scroll p{font:13px/1.45 var(--mono);overflow-wrap:anywhere}.sheet-scroll h3{font-size:14px;margin:5px 0 10px}.sheet-scroll .ingredient{min-height:37px;border-bottom:1px dotted #adb297}.sheet-scroll .log li{padding:8px 0}.sheet-scroll .large-line{margin:8px 0;display:flex;justify-content:space-between;align-items:center;gap:10px}.sheet-scroll .smallbutton,.smallbutton{padding:7px 10px}.sheet-scroll .sheet-note{color:var(--sub);font-size:12px}
+@media(min-width:1400px) and (min-height:850px){.bench{min-height:240px;padding-block:24px}.live-grid,.report-grid{min-height:240px}.workbutton{min-height:37px}.ingredients{gap:6px;margin-top:14px}.mast{min-height:83px}.task{min-height:76px}.ingredient{min-height:32px}.bar{min-height:47px}.world{height:clamp(315px,40vh,382px)}.block{padding-inline:30px}.shell{margin-top:clamp(25px,4.8vh,50px)}}
+@media(max-width:1100px){.shell{width:calc(100% - 32px)}.mast{padding-inline:20px}.block{padding-inline:16px}.bar,.task{padding-inline:16px}.ingredient{gap:6px}.price-line{gap:9px}.live-grid,.report-grid{padding-inline:17px}}
+@media(min-width:701px) and (max-height:690px){.shell{width:calc(100% - 26px);margin:10px auto}.mast{min-height:48px;padding:7px 18px}.brand .illustration{width:29px;height:29px}.brand h1{font-size:20px}.brand h1 small{font-size:8px;margin-top:4px}.stat dd{font-size:18px}.daybox b{font-size:14px}.daybox .phase{font-size:9px;margin-top:1px}.world{height:clamp(135px,29.5vh,198px)}.world canvas{object-fit:fill}.bar{padding-block:3px;min-height:31px}.bench{padding-block:10px;min-height:173px}.ingredients{margin:7px 0 4px;gap:3px}.ingredient{min-height:24px}.workrow{margin-top:6px}.workbutton{min-height:27px}.buy{padding:4px 8px}.requirement{font-size:11px;margin-top:4px}.task{min-height:48px;padding-block:7px}.main-action{padding:9px 14px}.floor{padding-top:6px}.live-grid,.report-grid{min-height:173px;padding-block:9px}.log.inline li:nth-child(n+4){display:none}.world-top{top:10px}.scene-stamp{bottom:8px}.report-notes{gap:6px}.receipt{padding-block:8px}.price-line{margin-top:7px}.bar h2{font-size:11px}.bench h3,.section-head{font-size:16px}}
+@media(max-width:700px){.shell{width:calc(100% - 18px);margin:9px auto 6px}.machine{border-width:2px;box-shadow:3px 4px 0 #25372c}.mast{display:grid;grid-template-columns:1fr auto;gap:8px 12px;padding:10px 13px 8px}.brand{gap:7px}.brand .illustration{width:27px;height:27px}.brand h1{font-size:19px;letter-spacing:-1.3px}.brand h1 small{font-size:7px;letter-spacing:4px;margin-top:4px}.daybox{border:0;padding:0;text-align:right}.daybox b{font-size:13px}.daybox .phase{font-size:9px;margin-top:1px}.stats{grid-column:1/-1;display:flex;justify-content:space-between;gap:7px;width:100%;padding:7px 0 0;border-top:1px solid #b6bba0}.stat{display:flex;align-items:baseline;gap:4px}.stat dt{font-size:9px;letter-spacing:0}.stat dd{font-size:15px;letter-spacing:-.6px}.world{height:clamp(120px,23.5vh,205px)}.world canvas{object-fit:cover;object-position:49% 58%}.world-top{inset:9px 11px auto}.route,.clock{font-size:9px}.route-sign{min-width:18px;height:16px;font-size:10px;border-width:1px}.scene-stamp{left:10px;bottom:8px;font-size:8px;padding:3px 5px;gap:4px}.lamp{height:6px;width:6px}.scene-reaction{right:6px;top:28px;bottom:auto;max-width:143px;padding:5px 6px;font-size:10px}.scene-reaction small{font-size:8px}.bar{min-height:34px;padding:3px 10px}.bar h2{font-size:10px;letter-spacing:.04em;gap:5px}.bar h2:before{width:6px;height:6px}.links{gap:9px}.links .link{font-size:10px;padding-block:7px}.bench{grid-template-columns:1fr 1fr;padding:11px 0 0;min-height:0}.block{padding:0 10px}.block+.block{border-left:1px solid #b1b69c}.block h3,.section-head{font-size:14px;letter-spacing:-.6px}.titleline{flex-wrap:wrap;gap:4px}.count-tag{font-size:9px;padding:2px 4px}.ingredients{margin:7px 0 3px;gap:4px;min-height:53px}.ingredient{grid-template-columns:15px minmax(0,1fr) auto auto;min-height:24px;gap:3px}.ingredient .illustration{width:15px;height:17px}.iname{font-size:11px}.onhand{font-size:10px;min-width:8px}.buy{font-size:10px;padding:5px 4px}.workrow{margin-top:4px}.workbutton{min-height:29px;padding:6px;font-size:11px}.workbutton .arrow{font-size:12px}.requirement{font-size:10px;line-height:1.3;margin-top:5px;min-height:26px}.price-block{grid-column:1/-1;display:grid;grid-template-columns:44% minmax(0,1fr);grid-template-rows:auto auto;align-content:center;align-items:center;gap:4px 15px;padding:9px 12px 10px!important;margin-top:8px;background:#e8e5c8;border-left:0!important;border-top:1px solid #adb499}.price-block .titleline{grid-column:1;grid-row:1}.price-line{grid-column:1;grid-row:2;margin:0;gap:7px}.price-main{font-size:23px;letter-spacing:-1.4px}.step{width:25px;height:25px;font-size:16px}.forecast{grid-column:2;grid-row:1/3;margin:0;padding-left:10px;border-left:1px solid #b2b79b;gap:2px}.forecast dt{font-size:10px}.forecast dd{font-size:11px}.forecast div:last-child{padding-top:2px}.task{padding:9px 10px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 9px;min-height:52px}.task-copy{grid-column:1/-1}.task-copy strong{font-size:12px}.task-copy small{font-size:10px;margin-top:2px}.task .equipmentBuy{justify-self:start;padding:6px;font-size:11px}.main-action{grid-column:2;justify-self:end;min-width:116px;padding:8px 9px;font-size:11px}.task:not(:has(.equipmentBuy:not([hidden]))) .task-copy{grid-column:1}.floor{padding:7px 2px 0;font-size:9px}.floor .link{font-size:10px}.floor-status{max-width:35%;font-size:9px}.live-grid{grid-template-columns:1fr;gap:10px;min-height:0;padding:12px 11px}.live-totals{display:grid;grid-template-columns:1.2fr 1fr;gap:3px 10px;border:0;padding:0}.live-totals .section-head{grid-row:1;grid-column:1}.counter-figures{grid-column:1/3;grid-row:2;gap:8px;margin:6px 0}.counter-figures b{font-size:22px}.counter-figures span{font-size:10px;margin-top:2px}.live-status{grid-column:2;grid-row:1;text-align:right;font-size:10px;margin:0}.timeline{grid-column:1/-1;grid-row:3;height:5px}.log-head .link{font-size:11px}.log li{font-size:11px;grid-template-columns:39px 1fr;gap:7px;padding:5px 0}.log time{font-size:10px}.log.inline li:nth-child(n+4){display:none}.report-grid{grid-template-columns:1fr;gap:9px;padding:11px;min-height:0}.receipt{padding:9px 11px}.receipt dt{font-size:11px}.receipt dl{gap:4px 13px}.receipt dd{font-size:12px}.ledger-tot{font-size:13px}.report-notes{gap:6px}.report-notes p{font-size:11px;margin:2px 0 0}.report-notes .eventline{padding-top:5px}.report-notes .eventline p{font-size:10px}.report-notes .kicker{font-size:9px}.sheet-scroll .ingredient{grid-template-columns:22px 1fr auto auto;gap:8px}.sheet-scroll .iname,.sheet-scroll .buy{font-size:13px}}
+@media(max-width:390px){.titleline{min-height:25px}.price-block .titleline{min-height:0}.task-copy small{line-height:1.15}.links{gap:7px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+.sr{position:absolute;width:1px;height:1px;margin:-1px;clip:rect(0,0,0,0);clip-path:inset(50%);overflow:hidden;white-space:nowrap}
+
+.price-foot{border-top:1px solid #b4b799;margin-top:8px;padding-top:5px;display:flex;justify-content:space-between;gap:6px;color:var(--sub);font-size:10px}.price-foot b{color:var(--ink)}.report-notes p,.report-notes .eventline p,.report-notes .eventline .kicker,.scene-reaction span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}.report-notes .eventline .kicker{-webkit-line-clamp:1}.report-notes .eventline p{-webkit-line-clamp:2}.scene-reaction span{-webkit-line-clamp:3}.report-notes .link{font-size:10px;padding:3px 0}
+@media(max-width:700px){.price-foot{grid-column:1/-1;margin-top:2px;padding-top:4px;font-size:9px}.floor-status{display:none}.report-notes p{-webkit-line-clamp:2}}
+@media(min-width:701px) and (max-height:690px){.price-foot{margin-top:4px;padding-top:2px}.report-notes p{-webkit-line-clamp:2}}
+body{display:flow-root;min-height:100vh}
+.log.inline li span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+@media(min-width:701px) and (max-height:690px){.log.inline li span{-webkit-line-clamp:1}}
+
+@media(max-width:700px) and (min-height:740px){
+ .mast{padding:12px 13px 10px}.brand h1{font-size:21px}.stats{padding-top:9px}.stat dd{font-size:17px}
+ .links .link{padding:10px 1px;font-size:11px}.bar{min-height:39px}.block h3,.section-head{font-size:15px}
+ .ingredient{min-height:32px}.ingredient .iname{font-size:12px}.ingredient .onhand{font-size:11px}.buy{min-height:30px;font-size:11px;padding-inline:5px}
+ .ingredients{min-height:68px}.workbutton{min-height:35px;font-size:12px}.requirement{font-size:11px;min-height:28px}
+ .step{width:29px;height:31px}.forecast dt,.forecast dd,.price-foot{font-size:11px}.price-foot{padding-top:5px}.price-block{padding-block:10px!important}
+ .task .equipmentBuy,.main-action{min-height:34px;font-size:12px}.task-copy strong{font-size:14px}.task-copy small{font-size:11px}.task{padding-block:11px}
+ .live-grid,.report-grid{padding-block:15px}.log.inline li{font-size:13px;padding-block:7px}.log time{font-size:11px}.counter-figures span{font-size:11px}
+ .log-head .link,.floor .link{padding-block:9px}.counter-figures b{font-size:25px}.live-grid{gap:13px}.receipt dt,.report-notes p{font-size:12px}.sheet-scroll .smallbutton{min-height:35px}
+}
+
+@media(min-width:701px){.stat dt,.kicker{font-size:11px}.world-top .route,.world-top .clock{font-size:12px}.price-foot{font-size:11px}.forecast dt{font-size:13px}.count-tag{font-size:12px}.receipt dt{font-size:13px}}
+</style></head>
+<body>
+<main class="shell">
+<div class="machine">
+<header class="mast">
+<div class="brand"><span class="illustration" data-art="brand" aria-hidden="true"></span><h1><span data-ui="brand"></span><small data-ui="brandSub"></small></h1></div>
+<div class="daybox"><b id="day"></b><small class="phase" id="phase"></small></div>
+<dl class="stats"><div class="stat"><dt data-ui="cash"></dt><dd id="cash"></dd></div><div class="stat"><dt data-ui="health"></dt><dd id="health"></dd></div><div class="stat"><dt data-ui="reputation"></dt><dd id="rep"></dd></div></dl>
+</header>
+<section class="world" id="world"><canvas id="scene" width="640" height="220" role="img"></canvas>
+<div class="world-top"><div class="route"><span class="route-sign" aria-hidden="true">1</span><span data-ui="route"></span></div><span class="clock"><svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="6"/><path d="M8 4v4l3 1"/></svg><span id="clock"></span></span></div>
+<span class="scene-stamp"><i class="lamp"></i><span id="sceneLabel"></span></span><div id="bubble" class="scene-reaction" hidden><small id="bubbleTag"></small><span id="bubbleLine"></span></div>
+</section>
+<div class="bar"><h2 id="benchLabel"></h2><nav class="links" id="tools"><button class="link" data-dialog="stock" data-ui="stockroom"></button><button class="link" data-dialog="equipment" data-ui="equipment"></button><button class="link" data-dialog="log" data-ui="logShort"></button></nav></div>
+<section id="prep" class="bench">
+<section class="block" data-station="dough"><div class="titleline"><h3 data-ui="doughStation"></h3><span class="count-tag" id="doughCount"></span></div><div class="ingredients" id="flourRow"></div><div class="workrow"><button class="workbutton" data-action="dough"><span id="doughAction"></span><span aria-hidden="true" class="arrow" id="doughPct"></span></button><p class="requirement" id="doughHint"></p></div></section>
+<section class="block" data-station="slices"><div class="titleline"><h3 data-ui="sliceStation"></h3><span class="count-tag" id="trayCount"></span></div><div class="ingredients" id="fillRows"></div><div class="workrow"><button class="workbutton" data-action="prepare"><span id="slicesAction"></span><span class="arrow" aria-hidden="true" id="slicesPct"></span></button><p class="requirement" id="slicesHint"></p></div></section>
+<section class="block price-block"><div class="titleline"><h3 data-ui="priceBoard"></h3></div><div class="price-line"><button class="step" data-action="price" data-id="-1" id="priceDown">−</button><strong class="price-main" id="price"></strong><button class="step" data-action="price" data-id="1" id="priceUp">+</button></div><dl class="forecast"><div><dt data-ui="visitors"></dt><dd id="forecastVisitors"></dd></div><div><dt data-ui="capacity"></dt><dd id="capacity"></dd></div><div><dt data-ui="chance"></dt><dd id="chance"></dd></div></dl><div class="price-foot"><span><span data-ui="potentialShort"></span> <b id="possibleSales"></b></span><span><span data-ui="spentSoFar"></span> <b id="spending"></b></span></div></section>
+</section>
+<section class="live-grid" id="service" hidden>
+<div class="live-totals"><h3 class="section-head" data-ui="window"></h3><div class="counter-figures"><div><b id="sold"></b><span data-ui="sold"></span></div><div><b id="left"></b><span data-ui="remaining"></span></div><div><b id="takings"></b><span data-ui="sales"></span></div></div><div class="timeline"><i id="serviceFill"></i></div><p class="live-status" id="serviceCount"></p></div>
+<div><div class="log-head"><h3 class="section-head" data-ui="counterLog"></h3><button class="link" data-dialog="log" data-ui="fullLog"></button></div><ol class="log inline" id="liveLog"></ol></div>
+</section>
+<section class="report-grid" id="report" hidden><div class="receipt"><header><h3 class="section-head" data-ui="receipt"></h3><small id="receiptNumber"></small></header><dl><div><dt data-ui="soldPrepared"></dt><dd id="rSold"></dd></div><div><dt data-ui="sales"></dt><dd id="rSales"></dd></div><div><dt data-ui="leftovers"></dt><dd id="rLeft"></dd></div><div><dt data-ui="spending"></dt><dd id="rSpent"></dd></div></dl><div class="ledger-tot"><span data-ui="change"></span><b id="rChange"></b></div></div>
+<div class="report-notes"><div><span class="kicker" data-ui="tomorrow"></span><p id="rClue"></p></div><div class="eventline"><span class="kicker" id="eventTitle"></span><p id="rEvent"></p><button id="readNote" class="link" data-dialog="note" data-ui="fullReceipt" hidden></button></div></div>
+</section>
+<div class="task"><div class="task-copy"><strong id="taskTitle"></strong><small id="taskHint"></small></div><button class="equipmentBuy" id="buyMicrowave" data-action="microwave"></button><button class="main-action" id="primary"></button></div>
+</div>
+<footer class="floor"><span class="floor-left" data-ui="edition"></span><span class="floor-status" id="floorStatus"></span><button class="link" data-dialog="reset" data-ui="resetSample"></button></footer>
+</main>
+<dialog id="sheet" aria-labelledby="sheetTitle"><div class="sheet-inner"><header class="sheet-top"><h2 id="sheetTitle"></h2><button class="smallbutton" id="closeSheet" data-ui="back"></button></header><div id="sheetBody" class="sheet-scroll"></div></div></dialog>
+<div class="sr" aria-live="polite" aria-atomic="true" id="announce"></div>
+<script>
+(()=>{
+'use strict';
+const el=id=>document.getElementById(id);
+const each=(selector,fn)=>document.querySelectorAll(selector).forEach(fn);
+const fmt=n=>'$'+(Math.abs(n||0)/100).toFixed(2), signed=n=>(n<0?'−':n>0?'+':'')+fmt(n);
+const safe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const replace=(text,values={})=>String(text??'').replace(/\{(\w+)\}/g,(_,key)=>String(values[key]??''));
+let vm,ui,activeDialog='',opener=null,lastPhase='',lastSheet='',lastLog='',previousNotice='',previousReaction='';
+const pictures={
+ brand:['.......rrr..','.....rryyyr.','...rryyttyr.','.rryttyyyyr.','ryyytyyyyr..','rrtyyttyyr..','.rryytyyr...','..rtyyyyr...','...ryyyr....','....ryr.....','.....r......'],
+ flour:['..ggggg...','..gpppg...','...gpg....','..gpppg...','.gpppppg..','.gpgggpg..','.gpgpgpg..','.gpgggpg..','.gpppppg..','.ggggggg..'],
+ sauce:['..gggggg..','.gwwwwwwg.','.gggggggg.','.gtrrrrtg.','.gtrpprtg.','.gtrpprtg.','.gtrrrrtg.','.gggggggg.','.gwwwwwwg.','..gggggg..'],
+ cheese:['.......yy.','.....yyty.','...yyytty.','.yyyyytyg.','gyyyyyggg.','gyyyggyyg.','gyggytyyg.','ggyyyytyg.','..ggyyyyg.','....ggggg.'],
+ napkins:['..........','...ggggg..','..gwwwwgg.','.gwwwgwwg.','.gwwgwwwg.','.gwgwwwwg.','.ggwwwwwg.','.gggggggg.','..........','..........'],
+ paper_plates:['..........','...gggg...','..gwwwwg..','.gwggggwg.','.gwgwwgwg.','.gwgwwgwg.','.gwggggwg.','..gwwwwg..','...gggg...','..........']};
+const palette={g:'#3e5a43',p:'#e7d5a4',r:'#8f412d',y:'#e4bf6e',t:'#af5737',w:'#faf2d5'};
+function art(key){const rows=pictures[key];if(!rows)return '';let paths='';for(let y=0;y<rows.length;y++)for(let x=0;x<rows[y].length;x++)if(palette[rows[y][x]])paths+='<rect x="'+x+'" y="'+y+'" width="1" height="1" fill="'+palette[rows[y][x]]+'"/>';return '<svg viewBox="0 0 '+rows[0].length+' '+rows.length+'" width="100%" height="100%" shape-rendering="crispEdges" aria-hidden="true">'+paths+'</svg>';}
+function stockRow(id,prefix){return '<div class="ingredient"><span aria-hidden="true" class="illustration">'+art(id)+'</span><span class="iname">'+safe(ui[id])+'</span><span class="onhand" id="'+prefix+id+'Count"></span><button class="buy" data-action="buy" data-id="'+id+'" id="'+prefix+id+'Buy"></button></div>';}
+function stockPaint(id,prefix){const n=vm.stock[id]||0, cost=vm.costs[id]||0;const item=ui[id],btn=el(prefix+id+'Buy');el(prefix+id+'Count').textContent=n;el(prefix+id+'Count').setAttribute('aria-label',replace(ui.onHand,{count:n,item}));btn.textContent=replace(ui.buyPrice,{cost:fmt(cost).replace(/\.00$/,'')});btn.setAttribute('aria-label',replace(ui.buyDetail,{item,cost:fmt(cost),count:n}));btn.title=vm.buyReason?.[id]||'';btn.disabled=vm.phase!=='prep'||vm.canBuy?.[id]===false;}
+function put(id,v){const n=el(id),s=String(v??'');if(n.textContent!==s)n.textContent=s;}
+function logRows(items,limit){return [...items].reverse().slice(0,limit).map(row=>'<li><time>'+safe(row.time)+'</time><span>'+safe(row.text)+'</span></li>').join('');}
+function dispatch(action,id){window.Stand.action(action,id);}
+function work(kind,buttonAction){
+ const button=document.querySelector('[data-action="'+buttonAction+'"]'),working=vm.work?.kind===kind,otherWork=vm.work&&!working;
+ const ready=kind==='dough'?vm.canDough:vm.canPrepare;
+ const progress=working?vm.work.progress:0;
+ button.disabled=Boolean(otherWork)||!ready&&!working;button.style.setProperty('--fill',progress+'%');
+ put(kind+'Action',working?ui[kind+'More']:ui[kind+'Start']);put(kind+'Pct',working?progress+'%':'→');
+ button.setAttribute('aria-describedby',kind+'Hint');
+ let missing=[];if(!vm.stock.dough)missing.push(ui.dough);if(!vm.stock.sauce)missing.push(ui.sauce);if(!vm.stock.cheese)missing.push(ui.cheese);
+ const hint=working?replace(ui.workProgress,{progress}):otherWork?ui.finishWork:kind==='dough'?(vm.stock.flour?ui.doughRecipe:replace(ui.need,{items:ui.flour})):missing.length?replace(ui.need,{items:missing.join(' + ')}):ui.slicesRecipe;
+ put(kind+'Hint',hint);
+}
+function prep(){
+ ['flour','sauce','cheese'].forEach(id=>stockPaint(id,'p'));put('doughCount',replace(ui.doughCount,{count:vm.stock.dough}));put('trayCount',replace(ui.trayCount,{count:vm.stock.slices}));
+ work('dough','dough');work('slices','prepare');put('price',fmt(vm.price));el('priceDown').disabled=vm.price<=vm.priceMin;el('priceUp').disabled=vm.price>=vm.priceMax;
+ put('forecastVisitors',vm.forecast.visitors);put('capacity',vm.forecast.capacity);put('chance',vm.forecast.chance+'%');
+ let title;if(vm.work)title=vm.work.kind==='dough'?ui.taskDough:ui.taskSlices;else if(vm.ready)title=ui.taskReady;else if(vm.stock.slices>0&&!vm.microwave)title=ui.taskMicrowave;else if(!vm.stock.flour&&!vm.stock.dough)title=ui.taskFlour;else if(!vm.stock.dough)title=ui.taskDough;else if(!vm.stock.sauce||!vm.stock.cheese)title=ui.taskToppings;else title=ui.taskSlices;
+ put('taskTitle',title);const notes=[];if(!vm.microwave)notes.push(ui.needMicrowave);if(!vm.stock.slices)notes.push(ui.needTray);if(vm.work)notes.push(ui.finishWorkShort);put('taskHint',vm.ready?replace(ui.readyHint,{count:vm.stock.slices,price:fmt(vm.price)}):notes.join(' · '));
+ const micro=el('buyMicrowave');micro.hidden=vm.microwave;micro.disabled=vm.canBuy?.microwave===false;put('buyMicrowave',replace(ui.buyMicrowave,{cost:fmt(vm.costs.microwave).replace(/\.00$/,'')}));
+ el('primary').disabled=!vm.ready;el('primary').dataset.action='open';put('primary',ui.open);
+}
+function service(){
+ put('sold',vm.sold);put('left',vm.stock.slices);put('takings',fmt(vm.sales));el('serviceFill').style.width=Math.round(vm.serviceProgress*100)+'%';
+ put('serviceCount',replace(ui.visitorCount,{count:vm.visitorsSeen,total:vm.forecast.visitors}));
+ const list=logRows(vm.log||[],4);if(list!==lastLog){el('liveLog').innerHTML=list;lastLog=list;}
+ const rx=vm.reaction||null, bubble=el('bubble');bubble.hidden=!rx?.text;
+ if(rx?.text){put('bubbleTag',replace(ui.visitor,{n:rx.visitor})+(rx.amount?'  +'+fmt(rx.amount):''));put('bubbleLine',rx.text);}
+ put('taskTitle',vm.paused?ui.servicePaused:!rx?ui.serviceStarted:rx.amount?ui.serviceSale:rx.kind==='arriving'?ui.serviceArrival:ui.servicePass);
+ put('taskHint',rx?.amount?replace(ui.paid,{paid:fmt(rx.amount),n:rx.visitor}):rx?replace(ui.visitor,{n:rx.visitor}):ui.waiting);
+ el('buyMicrowave').hidden=true;el('primary').disabled=false;el('primary').dataset.action='pause';put('primary',vm.paused?ui.resume:ui.pause);
+}
+function report(){
+ const r=vm.receipt;if(!r)return;
+ put('receiptNumber',replace(ui.receiptNo,{day:String(vm.day).padStart(2,'0')}));put('rSold',r.sold+' / '+r.prepared);put('rLeft',r.leftovers);put('rSales',fmt(r.sales));put('rSpent',fmt(r.spending));put('rChange',signed(r.change));el('rChange').classList.toggle('costneg',r.change<0);
+ put('rClue',r.clue);put('eventTitle',r.eventTitle||ui.event);put('rEvent',r.eventMessage||ui.noEvent);put('taskTitle',ui.dayClosed);put('taskHint',replace(ui.closeBalance,{cash:fmt(vm.cash),health:vm.health}));el('buyMicrowave').hidden=true;el('primary').disabled=false;el('primary').dataset.action=vm.dayTerminal?'reset':'next';put('primary',vm.dayTerminal?ui.resetSample:replace(ui.next,{day:vm.day+1}));
+}
+function paintSheet(force=false){
+ if(!activeDialog)return;const names={stock:ui.stockroom,equipment:ui.equipment,log:ui.counterLog,reset:ui.resetTitle,note:ui.receiptDetail};put('sheetTitle',names[activeDialog]);
+ let html='';const D=activeDialog,key=[D,vm.phase,vm.cash,vm.stock.flour,vm.stock.sauce,vm.stock.cheese,vm.stock.napkins,vm.stock.paper_plates,vm.microwave,vm.log?.length,vm.receipt?.eventMessage].join('|');
+ if(!force&&lastSheet===key)return;lastSheet=key;
+ if(D==='stock'){
+   html='<div class="large-line"><h3>'+safe(ui.budget)+'</h3><b>'+fmt(vm.cash)+'</b></div><h3>'+safe(ui.ingredients)+'</h3>'+['flour','sauce','cheese'].map(id=>stockRow(id,'m')).join('')+'<h3 style="margin-top:16px">'+safe(ui.supplies)+'</h3>'+['napkins','paper_plates'].map(id=>stockRow(id,'m')).join('')+'<p class="sheet-note">'+safe(vm.phase==='prep'?ui.stockHint:ui.readOnly)+'</p>';
+   const unaffordable=['flour','sauce','cheese','napkins','paper_plates'].filter(id=>vm.phase==='prep'&&!vm.canBuy[id]);if(unaffordable.length)html+='<p>'+safe(ui.noFunds)+' '+safe(unaffordable.map(id=>ui[id]).join(', '))+'</p>';
+ } else if(D==='equipment'){
+   html='<div class="large-line"><strong>'+safe(ui.equipmentName)+'</strong>'+(vm.microwave?'<b>'+safe(ui.owned)+'</b>':'<button class="smallbutton" data-action="microwave" '+(!vm.canBuy.microwave?'disabled':'')+'>'+safe(replace(ui.buyMicrowave,{cost:fmt(vm.costs.microwave)}))+'</button>')+'</div><p>'+safe(ui.microwaveHint)+'</p>';
+   if(!vm.microwave&&!vm.canBuy.microwave)html+='<p>'+safe(vm.buyReason.microwave)+'</p>';
+ } else if(D==='log'){
+   html=vm.log?.length?'<ol class="log">'+logRows(vm.log,Number.MAX_SAFE_INTEGER)+'</ol>':'<p>'+safe(ui.fullLogEmpty)+'</p>';
+   if(vm.phase==='service')html+='<p class="sheet-note">'+safe(ui.pauseInPanel)+'</p>';
+ } else if(D==='note'){
+   html='<h3>'+safe(ui.tomorrow)+'</h3><p>'+safe(vm.receipt?.clue)+'</p><h3>'+safe(vm.receipt?.eventTitle||ui.event)+'</h3><p>'+safe(vm.receipt?.eventMessage||ui.noEvent)+'</p>';
+ } else {
+   html='<p>'+safe(ui.resetDetail)+'</p><button class="smallbutton" data-confirm-reset>'+safe(ui.resetConfirm)+'</button>';
+ }
+ const focusIn=el('sheetBody').contains(document.activeElement)?document.activeElement:null;
+ const focusKey=focusIn?.dataset.action,focusId=focusIn?.dataset.id,scroll=el('sheetBody').scrollTop;
+ el('sheetBody').innerHTML=html;if(D==='stock')['flour','sauce','cheese','napkins','paper_plates'].forEach(id=>stockPaint(id,'m'));
+ if(focusKey){const restored=[...el('sheetBody').querySelectorAll('button')].find(b=>b.dataset.action===focusKey&&b.dataset.id===focusId&&!b.disabled);(restored||el('closeSheet')).focus({preventScroll:true});}
+ el('sheetBody').scrollTop=scroll;
+}
+function show(type,button){opener=button;activeDialog=type;lastSheet='';dispatch('panel',true);paintSheet(true);el('sheet').showModal();window.StandScene?.paint(vm);el('closeSheet').focus({preventScroll:true});}
+function close(){if(el('sheet').open)el('sheet').close();}
+el('sheet').addEventListener('close',()=>{activeDialog='';lastSheet='';dispatch('panel',false);window.StandScene?.paint(vm);if(opener?.isConnected&&!opener.disabled)opener.focus({preventScroll:true});opener=null;});
+el('sheet').addEventListener('click',e=>{if(e.target!==el('sheet'))return;const r=el('sheet').getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)close();});
+el('closeSheet').addEventListener('click',close);
+document.addEventListener('keydown',e=>{
+ if(!el('sheet').open)return;
+ if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close();return;}
+ if(e.key!=='Tab')return;
+ const buttons=[...el('sheet').querySelectorAll('button:not(:disabled),a[href],input:not(:disabled),[tabindex="0"]')].filter(node=>node.getClientRects().length);
+ if(!buttons.length)return;
+ e.preventDefault();const index=buttons.indexOf(document.activeElement);
+ const next=index<0?(e.shiftKey?buttons.length-1:0):(index+(e.shiftKey?-1:1)+buttons.length)%buttons.length;
+ buttons[next].focus();
+},true);
+document.addEventListener('click',e=>{
+ const button=e.target.closest('button');if(!button||button.disabled)return;
+ if(button.hasAttribute('data-confirm-reset')){close();opener=document.querySelector('[data-dialog=reset]');dispatch('reset');return;}
+ if(button.dataset.dialog){show(button.dataset.dialog,button);return;}
+ if(button.dataset.action)dispatch(button.dataset.action,button.dataset.id);
+});
+function init(){
+ each('[data-ui]',node=>node.textContent=ui[node.dataset.ui]);each('[data-art]',node=>node.innerHTML=art(node.dataset.art));
+ el('tools').setAttribute('aria-label',ui.tools);el('priceDown').setAttribute('aria-label',ui.lowerPrice);el('priceUp').setAttribute('aria-label',ui.raisePrice);
+ el('flourRow').innerHTML=stockRow('flour','p');el('fillRows').innerHTML=stockRow('sauce','p')+stockRow('cheese','p');
+ el('primary').setAttribute('aria-describedby','taskTitle taskHint');
+}
+function updateClock(){
+ const minutes=vm.phase==='prep'?600:vm.phase==='report'?1140:660+Math.floor(480*vm.serviceProgress);
+ put('clock',String(Math.floor(minutes/60)).padStart(2,'0')+':'+String(minutes%60).padStart(2,'0'));
+}
+function receiptOverflow(){
+ if(vm?.phase!=='report'||!vm.receipt)return;
+ const clipped=['rClue','eventTitle','rEvent'].some(id=>{const n=el(id);return n.scrollHeight>n.clientHeight+1;});
+ el('readNote').hidden=!(vm.receipt.eventTitle||clipped);
+}
+window.addEventListener('resize',receiptOverflow);
+function render(model,content){
+ const first=!ui;vm=model;ui=content.ui;if(first)init();
+ const phase=vm.phase,shift=lastPhase&&lastPhase!==phase,wasOnPhaseControl=shift&&(document.activeElement===el('primary')||[el('prep'),el('service'),el('report')].some(p=>p.contains(document.activeElement)));
+ ['prep','service','report'].forEach(s=>el(s).hidden=s!==phase);
+ put('day',replace(ui.day,{day:String(vm.day).padStart(2,'0')}));put('phase',ui[phase+'Phase']);put('cash',fmt(vm.cash));put('health',vm.health+ui.healthSuffix);put('rep',vm.reputation);put('benchLabel',ui[phase+'Bench']);
+ const scenePhase=phase[0].toUpperCase()+phase.slice(1);put('sceneLabel',ui['scene'+scenePhase]);el('scene').setAttribute('aria-label',ui['sceneAlt'+scenePhase]);el('world').dataset.phase=phase;updateClock();el('bubble').hidden=true;
+ if(phase==='prep'){prep();put('possibleSales',fmt(vm.possibleSales));put('spending',fmt(vm.spending));}else if(phase==='service')service();else report();
+ if(vm.saveNotice)put('floorStatus',vm.saveNotice);else put('floorStatus',phase==='prep'?vm.notice:'');
+ const announce=phase==='service'?vm.log?.at(-1)?.text:phase==='report'&&shift?ui.dayClosed:vm.notice;
+ if(announce&&previousNotice!==announce){put('announce',announce);previousNotice=announce;}
+ if(phase==='report')receiptOverflow();
+ if(!activeDialog&&wasOnPhaseControl){const node=phase==='prep'?el('pflourBuy'):el('primary');node.focus({preventScroll:true});}
+ lastPhase=phase;paintSheet();window.StandScene?.paint(vm);
+}
+window.StandView={render};
+})();
+</script>
+<script id="stand-copy" type="application/json">
+{
+  "status": "DRAFT — owner copy for the one-day review.",
+  "ui": {
+    "brand": "PIZZA PLACE",
+    "brandSub": "TYCOON",
+    "cash": "Cash",
+    "health": "Health",
+    "reputation": "Reputation",
+    "day": "Day {day}",
+    "prepPhase": "Preparation",
+    "servicePhase": "Open for business",
+    "reportPhase": "After closing",
+    "route": "Route 1",
+    "scenePrep": "Closed for prep",
+    "sceneService": "Open for business",
+    "sceneReport": "Closed for the night",
+    "sceneAltPrep": "The owner stands at a little pizza counter beside Route 1. The sign is closed.",
+    "sceneAltService": "The striped roadside stand is open. Visitors approach the service window.",
+    "sceneAltReport": "The stand is closed under the moon, with the counter lamp still lit.",
+    "prepBench": "Prep counter",
+    "serviceBench": "Service counter",
+    "reportBench": "Closing counter",
+    "stockroom": "Stockroom",
+    "equipment": "Equipment",
+    "logShort": "Log",
+    "tools": "Stand tools",
+    "doughStation": "Dough station",
+    "sliceStation": "Slice tray",
+    "priceBoard": "Plain slice price",
+    "visitors": "Expected visitors",
+    "capacity": "Serving capacity",
+    "chance": "Buy chance",
+    "potential": "Full tray value",
+    "spentSoFar": "Spent today",
+    "flour": "Flour",
+    "sauce": "Sauce",
+    "cheese": "Cheese",
+    "dough": "Dough",
+    "napkins": "Napkins",
+    "paper_plates": "Paper plates",
+    "onHand": "{count} {item} in stock",
+    "buyPrice": "Buy {cost}",
+    "buyDetail": "Buy one {item} for {cost}. {count} in stock.",
+    "doughCount": "{count} dough",
+    "trayCount": "{count} slices",
+    "doughStart": "Make dough",
+    "slicesStart": "Prep 8 slices",
+    "doughMore": "Work dough",
+    "slicesMore": "Prep slices",
+    "workProgress": "{progress}% · press to continue",
+    "finishWork": "Finish the current batch.",
+    "need": "Need {items}",
+    "doughRecipe": "1 flour → 1 dough",
+    "slicesRecipe": "1 dough + sauce + cheese",
+    "lowerPrice": "Lower plain slice price",
+    "raisePrice": "Raise plain slice price",
+    "taskDough": "Make one batch of dough.",
+    "taskSlices": "Prepare eight slices.",
+    "taskReady": "Ready to open.",
+    "taskMicrowave": "Fit out the counter.",
+    "taskFlour": "Buy flour to start the dough.",
+    "taskToppings": "Stock the slice tray with sauce and cheese.",
+    "needMicrowave": "Clean Microwave required",
+    "needTray": "Tray is empty",
+    "finishWorkShort": "Finish work",
+    "readyHint": "{count} slices at {price} each.",
+    "buyMicrowave": "Buy microwave · {cost}",
+    "open": "Open stand →",
+    "window": "At the window",
+    "sold": "Sold",
+    "remaining": "On tray",
+    "sales": "Sales",
+    "counterLog": "Counter log",
+    "fullLog": "Read all",
+    "visitorCount": "Visitors {count}/{total}",
+    "visitor": "Visitor {n}",
+    "servicePaused": "Service paused.",
+    "serviceStarted": "Waiting for the first visitor.",
+    "paid": "Visitor {n} paid {paid}.",
+    "waiting": "The sign is out.",
+    "resume": "Resume service ▷",
+    "pause": "Pause service Ⅱ",
+    "receipt": "Closing receipt",
+    "receiptNo": "No. {day}",
+    "soldPrepared": "Sold / made",
+    "leftovers": "Leftovers",
+    "spending": "Spending",
+    "change": "Cash change",
+    "tomorrow": "For tomorrow",
+    "event": "Closing event",
+    "noEvent": "Nothing to report.",
+    "dayClosed": "Shutters down.",
+    "closeBalance": "Cash {cash} · Health {health}/10",
+    "next": "Prepare for Day {day} →",
+    "edition": "Repeatable sample day",
+    "resetSample": "Reset sample",
+    "back": "Back",
+    "resetTitle": "Reset the sample?",
+    "resetDetail": "Return to Day 1 with empty stock. This replaces your progress in the sample.",
+    "resetConfirm": "Reset to Day 1",
+    "fullLogEmpty": "No entries yet.",
+    "equipmentName": "Clean Microwave",
+    "owned": "Owned",
+    "microwaveHint": "One working microwave is required to open the stand.",
+    "supplies": "Supplies",
+    "ingredients": "Ingredients",
+    "stockHint": "Buy stock during preparation. Flour makes dough. Add sauce and cheese to prepare eight slices.",
+    "readOnly": "Stock purchases resume during preparation.",
+    "noFunds": "Insufficient cash.",
+    "budget": "Cash on hand",
+    "transaction": "{item} · {stock} in stock",
+    "fullReceipt": "Read closing note",
+    "receiptDetail": "Closing note",
+    "draft": "Sample copy",
+    "pauseInPanel": "Service pauses while this panel is open.",
+    "currentSlice": "Plain slice",
+    "healthSuffix": "/10",
+    "serviceSale": "Sale at the window.",
+    "servicePass": "The visitor walked on.",
+    "serviceArrival": "A visitor approaches.",
+    "serviceOutcome": "At the window.",
+    "potentialShort": "Tray value"
+  },
+  "names": {
+    "flour": "Flour",
+    "sauce": "Sauce",
+    "cheese": "Cheese",
+    "napkins": "Napkins",
+    "paper_plates": "Paper plates",
+    "microwave": "Clean Microwave",
+    "plain": "Plain slice",
+    "dough": "Dough"
+  },
+  "feedback": {
+    "start": "Buy flour to start your first dough.",
+    "newDay": "The counter is clear. Stock up for the next tray.",
+    "bought": "+1 {item} in stock · −{cost}",
+    "installed": "Clean Microwave installed · −{cost}",
+    "doughReady": "Dough ready. Add sauce and cheese.",
+    "slicesReady": "{batch} slices on the tray.",
+    "doughWorking": "Keep kneading · {progress}% done.",
+    "slicesWorking": "Keep preparing · {progress}% done.",
+    "price": "Plain slice set to {price}.",
+    "noCash": "Not enough cash.",
+    "installedAlready": "Already installed.",
+    "beforeOpen": "Available before opening.",
+    "noFlour": "Needs 1 flour.",
+    "noIngredients": "Needs {items}.",
+    "finishWork": "Finish the current batch first.",
+    "noMicrowave": "Install the Clean Microwave.",
+    "noTray": "Prepare a tray of slices.",
+    "noMicrowaveOrTray": "Prepare a tray and install the Clean Microwave.",
+    "noHealth": "Health is empty.",
+    "ready": "The tray and microwave are ready.",
+    "restore": "Back at the moment before opening.",
+    "saveUnavailable": "Saving is unavailable. Keep this tab open.",
+    "incompatible": "The sample save could not be read. A fresh day is ready."
+  },
+  "counter": {
+    "opened": "Sign turned to OPEN. {visitors} visitors expected.",
+    "arrived": "Visitor {n} steps up to the counter.",
+    "arrivalShort": "One moment, please.",
+    "sale": "Visitor {n} bought a plain slice · +{money}. {line}",
+    "walk": "Visitor {n} walked away. {line}",
+    "out": "Visitor {n} found an empty tray.",
+    "busy": "Visitor {n} left the queue.",
+    "soldOut": "Nothing left on the tray.",
+    "atCapacity": "The queue is too long.",
+    "closed": "Stand closed. {sold} slices sold."
+  },
+  "reactions": {
+    "delighted": [
+      "“I’d stop here again.”",
+      "“That hit the spot.”",
+      "“Save me an end piece tomorrow.”"
+    ],
+    "satisfied": [
+      "“That’ll do for lunch.”",
+      "“Does what it says on the sign.”",
+      "“I’ll take it for the road.”"
+    ],
+    "neutral": [
+      "Folds it once. Heads back to the road.",
+      "Takes the slice without a word.",
+      "Eats at the curb."
+    ],
+    "disgusted": [
+      "“Any chance of a napkin?”",
+      "Looks at the counter, then at the slice.",
+      "Wipes both hands on a sleeve."
+    ],
+    "passed": [
+      "Checks the sign and keeps walking.",
+      "“Maybe on the way back.”",
+      "“Brought my lunch today.”"
+    ]
+  },
+  "receipt": {
+    "quiet": "Nothing to report.",
+    "supplyClue": "{passed} of {visitors} visitors passed. Stock napkins before opening tomorrow to improve the chance of a sale.",
+    "wasteClue": "{passed} of {visitors} visitors passed. Try one price step lower tomorrow and compare the number sold.",
+    "stockClue": "{count} visitors found an empty tray. Prepare another batch tomorrow.",
+    "capacityClue": "{count} visitors left at capacity. Check tomorrow’s serving limit before making more.",
+    "overprepClue": "{count} slices expired. Check tomorrow’s visitor forecast before preparing a second batch.",
+    "sellThroughClue": "Every prepared slice sold. Compare tomorrow’s visitor forecast with a single tray."
+  },
+  "events": [
+    {
+      "id": "game_night",
+      "effect": "big_game",
+      "title": "Game tomorrow",
+      "message": "The home team plays tomorrow. The road should be busy.",
+      "draft": true
+    },
+    {
+      "id": "rain_check",
+      "effect": "rain",
+      "title": "Rain in the forecast",
+      "message": "The neighbour rolls up the awning. Rain tomorrow.",
+      "draft": true
+    },
+    {
+      "id": "lucky_ticket",
+      "effect": "scratch",
+      "title": "Lucky ticket",
+      "message": "There was a scratch ticket under the till.",
+      "draft": true
+    },
+    {
+      "id": "good_interview",
+      "effect": "good_tv",
+      "title": "On the local news",
+      "message": "They kept the good part of the interview.",
+      "draft": true
+    },
+    {
+      "id": "bad_interview",
+      "effect": "bad_tv",
+      "title": "On the local news",
+      "message": "They kept the part about the microwave.",
+      "draft": true
+    },
+    {
+      "id": "counter_cat",
+      "effect": "cat",
+      "title": "Counter cat",
+      "message": "A cat sat on the counter. Someone took a picture.",
+      "draft": true
+    },
+    {
+      "id": "garbage_pickup",
+      "effect": "garbage",
+      "title": "Garbage day",
+      "message": "The truck stopped by on its way home.",
+      "draft": true
+    },
+    {
+      "id": "depot_bonus",
+      "effect": "windfall",
+      "title": "Depot special",
+      "message": "The bottle depot is paying extra.",
+      "draft": true
+    },
+    {
+      "id": "weekend_traffic",
+      "effect": "weekend",
+      "title": "Weekend traffic",
+      "message": "A few more cars than usual out on the road.",
+      "draft": true
+    },
+    {
+      "id": "after_hours",
+      "effect": "rats",
+      "title": "After-hours visitor",
+      "message": "Something got into the leftovers.",
+      "draft": true
+    },
+    {
+      "id": "tip_jar",
+      "effect": "sympathy",
+      "title": "Something in the tip jar",
+      "message": "A stranger leaves a note under the till.",
+      "draft": true
+    },
+    {
+      "id": "neighbours",
+      "effect": "wheelchair",
+      "title": "Community collection",
+      "message": "The neighbours have the parts. You have the cans.",
+      "draft": true
+    }
+  ],
+  "effects": {
+    "big_game": "Tomorrow: {count} additional visitors.",
+    "rain": "Tomorrow: {percent}% of usual foot traffic.",
+    "scratch": "Cash +{cash}.",
+    "good_tv": "Reputation +{rep}.",
+    "bad_tv": "Reputation −{rep}, down to zero.",
+    "cat": "Reputation +{rep}. Dirt +{dirt}.",
+    "garbage": "Dirt and rats cleared.",
+    "windfall": "Next recycling payout ×{multiple}.",
+    "weekend": "{count} additional visitors today.",
+    "rats": "One more rat at the stand.",
+    "sympathy": "Cash +{cash}.",
+    "wheelchair": "{count} cans redeemed. Reputation +{rep}."
+  }
+}
+</script>
+<script>
+/* Every economic and simulation value lives here. Money is integer cents. */
+window.Pizza = window.Pizza || {};
+Pizza.DEBUG_MODE = false;
+Pizza.CONFIG = {
+  version: '2.2.0', saveVersion: 2, maxDays: 100,
+  startingCash: 6400, startingHealth: 10, maxHealth: 10, startingRep: 2,
+  healthLoss: 1, foodCost: 800, foodHealth: 3, foodSeconds: 5,
+  daySeconds: 20, speeds: [1, 2, 4], baseCustomers: 4, maxCustomers: 100,
+  slicesPerBatch: 8,
+  work: { total: 100, skillBonus: 4, dough: 20, prepare: 25, train: 20, clean: 25 },
+  service: { customerSeconds: 1.9, decisionSeconds: 0.7 },
+  skillXP: 10, skillMax: 9, doughXP: 1, prepXP: 1, trainingXP: 2,
+  price: { start: 300, min: 100, max: 1000, step: 25, sensitivity: 0.06 },
+  buy: { base: 0.52, min: 0.05, max: 0.95, menu: 0.03, maxMenu: 0.15, supply: 0.03, disgust: 0.025 },
+  reaction: { delight: 0.12, skill: 0.012, disgust: 0.03, dirt: 0.025, missing: 0.08, fallback: 0.1, satisfied: 0.58, maxDelight: 0.45, maxDisgust: 0.8 },
+  reputation: { fullDay: 1, early: -2, delighted: 1, disgusted: -1, turnedAway: -1 },
+  disgust: { max: 20, missingSupply: 0.35, perSale: 0.08, spoiledSlice: 0.05, wastedDough: 0.1, spoiledTopping: 0.02, perRat: 1, overflowCan: 0.25 },
+  recycling: { capacity: 24, centsPerUnit: 25, windfall: 10, wheelchairRep: 8 },
+  freshnessDays: 7, popPrice: 150, popChance: 0.25,
+  inventoryCosts: { flour: 100, sauce: 100, cheese: 200, pepperoni: 55, mushroom: 35, green_peppers: 35, napkins: 25, paper_plates: 25, pop: 100 },
+  recipeBonuses: { plain: 0, pepperoni: 100, mushroom: 75, green_peppers: 75, classic: 175 },
+  recipeDelight: { plain: 0, pepperoni: 0.02, mushroom: 0.02, green_peppers: 0.02, classic: 0.07 },
+  orderWeights: { menu: 4, plain: 1 },
+  slots: [[0, 1], [25, 2], [75, 3], [150, 4], [300, 5]],
+  toppingUnlocks: { pepperoni: 25, mushroom: 50, green_peppers: 100 },
+  upgrades: {
+    clean_microwave: { cost: 2000, unlock: 0, capacity: 0, rep: 0, clean: 1 },
+    hand_made_sign: { cost: 2500, unlock: 0, capacity: 0, rep: 2 },
+    folding_table: { cost: 5000, unlock: 25, capacity: 5, rep: 0 },
+    mini_fridge: { cost: 6500, unlock: 75, capacity: 0, rep: 0 },
+    second_microwave: { cost: 7500, unlock: 50, capacity: 5, rep: 0 },
+    tiny_menu_board: { cost: 12000, unlock: 100, capacity: 0, rep: 0, slots: 1 }
+  },
+  events: { chance: 0.32, bigGame: 10, rain: 0.5, scratch: 4500, interview: 5, catRep: 1, catDirt: 1, weekend: 3, weekendDays: [6, 0], weekLength: 7, sympathyThreshold: 500, sympathyCash: 1000, ratPerSlice: 0.015, ratMaxChance: 0.3 },
+  score: { reputation: 10, slices: 2, days: 5, disgust: -5 },
+  maxLog: 100, maxHistory: 100, maxPurchase: 100,
+  keys: { run: 'pizza-place-rebuild.run.v1', bests: 'pizza-place-rebuild.bests.v1', settings: 'pizza-place-rebuild.settings.v1' }
+};
+
+</script>
+<script>
+/* MVP content, deliberately independent of the older application's runtime. */
+Pizza.DATA = {
+  items: [
+    { id: 'flour', name: 'Flour', group: 'ingredients', icon: 'bag', note: '1 unit makes 1 dough.' },
+    { id: 'sauce', name: 'Sauce', group: 'ingredients', icon: 'jar', note: '1 unit per batch of 8 slices.' },
+    { id: 'cheese', name: 'Cheese', group: 'ingredients', icon: 'cheese', note: '1 unit per batch of 8 slices.' },
+    { id: 'pepperoni', name: 'Pepperoni', group: 'toppings', icon: 'topping', note: '1 portion per pepperoni slice.' },
+    { id: 'mushroom', name: 'Mushroom', group: 'toppings', icon: 'mushroom', note: '1 portion per mushroom slice.' },
+    { id: 'green_peppers', name: 'Green Peppers', group: 'toppings', icon: 'pepper', note: '1 portion per green pepper slice.' },
+    { id: 'napkins', name: 'Napkins', group: 'supplies', icon: 'napkin', note: '1 per sale. Helps buy chance and reactions.' },
+    { id: 'paper_plates', name: 'Paper Plates', group: 'supplies', icon: 'plate', note: '1 per sale. Helps buy chance and reactions.' },
+    { id: 'pop', name: 'Pop', group: 'supplies', icon: 'pop', note: 'Optional $1.50 drink sale. Each sale adds 1 refundable can.' }
+  ],
+  recipes: [
+    { id: 'plain', name: 'Plain Slice', ingredients: [], note: 'Cheese-adjacent optimism on dough.' },
+    { id: 'pepperoni', name: 'Pepperoni Slice', ingredients: ['pepperoni'], note: 'A reliable way to look intentional.' },
+    { id: 'mushroom', name: 'Mushroom Slice', ingredients: ['mushroom'], note: 'A little roadside-foraged energy.' },
+    { id: 'green_peppers', name: 'Green Pepper Slice', ingredients: ['green_peppers'], note: 'Slightly fresher than the building.' },
+    { id: 'classic', name: 'The Classic', ingredients: ['pepperoni', 'mushroom'], note: 'Safe, sturdy and hard to argue with.' }
+  ],
+  upgrades: [
+    { id: 'clean_microwave', name: 'Clean Microwave', icon: 'microwave', tag: 'ESSENTIAL', effect: 'Required to open. Removes 1 dirt.', note: 'Cleaning this thing could not hurt.' },
+    { id: 'hand_made_sign', name: 'Hand Made Sign', icon: 'sign', tag: 'REPUTATION', effect: '+2 reputation. More people stop by.', note: 'Now they know this is a pizza place.' },
+    { id: 'folding_table', name: 'Folding Table', icon: 'table', tag: 'CAPACITY', effect: '+5 customers served per day.', note: 'Technically, it is a table.' },
+    { id: 'mini_fridge', name: 'Mini Fridge', icon: 'fridge', tag: 'FRESHNESS', effect: 'Toppings stay fresh for 7 days.', note: 'Seven days instead of one sad afternoon.' },
+    { id: 'second_microwave', name: 'Second Microwave', icon: 'microwave', tag: 'CAPACITY', effect: '+5 customers served per day.', note: 'Two is better than one.' },
+    { id: 'tiny_menu_board', name: 'Tiny Menu Board', icon: 'menu', tag: 'VARIETY', effect: '+1 active recipe slot.', note: 'Just enough room to imply a real menu.' }
+  ],
+  events: [
+    { id: 'big_game', name: 'Big Game Day', type: 'random', text: 'The big game is on tomorrow. Everyone has opinions and some of them have cash.' },
+    { id: 'rain', name: 'Rain Day', type: 'random', text: 'Tomorrow looks wet. People prefer their pizza indoors.' },
+    { id: 'scratch', name: 'Scratch Ticket Win', type: 'random', text: 'You found a lucky scratch ticket. Finally, a business plan.' },
+    { id: 'good_tv', name: 'Good TV Interview', type: 'random', text: 'You talked about pizza on television. Somehow, it went well.' },
+    { id: 'bad_tv', name: 'Bad TV Interview', type: 'random', text: 'The interview aired. They kept the part about the microwave.' },
+    { id: 'cat', name: 'Cat on the Counter', type: 'random', text: 'The crowd loved it. The counter did not.' },
+    { id: 'garbage', name: 'Garbage Truck Go By', type: 'random', text: 'A garbage truck clears the pile. A brief moment of dignity.' },
+    { id: 'windfall', name: 'Recycling Windfall', type: 'random', text: 'The depot is paying extra for your next collection.' },
+    { id: 'weekend', name: 'Weekend!', type: 'scheduled', text: 'People have free time and questionable lunch plans.' },
+    { id: 'rats', name: 'Rats', type: 'conditional', text: 'A rat found the leftovers. It seems optimistic about the business.' },
+    { id: 'sympathy', name: 'Sympathy Tip', type: 'recovery', text: 'A stranger says they respect the hustle. You are not sure they should.' },
+    { id: 'wheelchair', name: 'A Wheelchair from Cans', type: 'secret', text: 'You redeem the cans. The neighbours supply the parts and help build a wheelchair. Word gets around.' }
+  ],
+  reactions: {
+    delighted: ['“Structural confidence. I like that in a slice.”', '“I would tell someone about this.”', '“Honestly? I have paid more for worse.”'],
+    satisfied: ['“That was, legally speaking, lunch.”', '“Aggressively fine.”', '“Does what it says on the sign.”'],
+    neutral: ['They eat in thoughtful silence.', 'They take a slice and reassess the afternoon.', 'No complaints. No eye contact either.'],
+    disgusted: ['“Is the counter supposed to move?”', 'They ask for a napkin and an explanation.', '“I have concerns about the atmosphere.”'],
+    passed: ['A passerby considers the price and keeps walking.', 'Someone checks the menu. Not today.', 'A person says they already ate. Convincingly.']
+  }
+};
+
+</script>
+<script>
+(function (P) {
+  'use strict';
+  const C = P.CONFIG;
+  const sum = obj => Object.values(obj).reduce((a, b) => a + b, 0);
+  const clamp = (n, low, high) => Math.max(low, Math.min(high, n));
+  function random(s) {
+    // Saveable PRNG: reloading a prepared day does not reroll its luck.
+    s.rng = (s.rng + 0x6D2B79F5) >>> 0;
+    let t = s.rng;
+    t = Math.imul(t ^ t >>> 15, t | 1);
+    t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  }
+  function log(s, type, text) {
+    s.log.push({ id: ++s.logId, day: s.day, type, text });
+    if (s.log.length > C.maxLog) s.log.shift();
+  }
+  function daily(s) {
+    return { day: s.day, startCash: s.cash, startHealth: s.health, startRep: s.rep,
+      startDisgust: disgust(s), income: { slices: 0, drinks: 0, recycling: 0, events: 0 },
+      expenses: { ingredients: 0, supplies: 0, upgrades: 0, food: 0, events: 0 },
+      potential: 0, served: 0, passed: 0, soldOut: 0, turnedAway: 0, closed: 0,
+      reactions: { delighted: 0, satisfied: 0, neutral: 0, disgusted: 0 },
+      sales: {}, drinks: 0, spoiledSlices: 0, wastedDough: 0, spoiledToppings: 0,
+      events: [], milestones: [], early: false, finalized: false };
+  }
+  function create(seed) {
+    const s = { version: C.saveVersion, phase: 'management', day: 1, cash: C.startingCash,
+      health: C.startingHealth, rep: C.startingRep, dirt: 0, rats: 0, waste: 0,
+      xp: 0, price: C.price.start, rng: (seed === undefined ? Date.now() ^ Math.floor(Math.random() * 0xffffffff) : seed) >>> 0,
+      inventory: { dough: 0, slices: 0 }, lots: {}, upgrades: [], menu: ['plain'],
+      trained: false, recycled: false, windfall: false, sympathyUsed: false, action: null,
+      tomorrow: { bonus: 0, multiplier: 1 }, modifiers: { bonus: 0, multiplier: 1 },
+      dayRun: null, report: null, history: [], log: [], logId: 0, endReason: null,
+      stats: { income: 0, spending: 0, slices: 0, customers: 0, days: 0, bestRevenue: 0, bestSlices: 0 },
+      unlocks: [], pendingMilestones: [], wheelchairBuilt: false, lastCustomer: null, bestsRecorded: false, final: null };
+    P.DATA.items.forEach(i => { s.inventory[i.id] = 0; if (i.group === 'toppings') s.lots[i.id] = []; });
+    s.today = daily(s);
+    log(s, 'system', 'A roadside stand. A questionable microwave. $64 and a plan.');
+    return s;
+  }
+  function skill(s) { return Math.min(C.skillMax, Math.floor(s.xp / C.skillXP)); }
+  function disgust(s) { return clamp(s.dirt + s.rats * C.disgust.perRat, 0, C.disgust.max); }
+  function capacity(s) { return Math.max(1, Math.floor(s.health + skill(s) + s.upgrades.reduce((v, id) => v + C.upgrades[id].capacity, 0))); }
+  function slots(s) { return C.slots.reduce((v, [at, n]) => s.stats.slices >= at ? n : v, 1) + (s.upgrades.includes('tiny_menu_board') ? C.upgrades.tiny_menu_board.slots : 0); }
+  function unlocked(s, id) { return !(id in C.toppingUnlocks) || s.stats.slices >= C.toppingUnlocks[id]; }
+  function recipeUnlocked(s, recipe) { return recipe.ingredients.every(id => unlocked(s, id)); }
+  function recipeStocked(s, recipe) { return recipe.ingredients.every(id => s.inventory[id] > 0); }
+  function money(s, cents, category) {
+    if (!Number.isInteger(cents) || s.cash + cents < 0) throw new Error('Invalid cash transaction');
+    s.cash += cents;
+    if (cents >= 0) { s.today.income[category] += cents; s.stats.income += cents; }
+    else { s.today.expenses[category] -= cents; s.stats.spending -= cents; }
+  }
+  function rep(s, delta) { s.rep = Math.max(0, s.rep + delta); }
+  function gainXP(s, amount) {
+    const old = skill(s);
+    s.xp = Math.min(C.skillMax * C.skillXP, s.xp + amount);
+    if (skill(s) > old) log(s, 'unlock', `Skill level ${skill(s)}. Each click does more work. Serving capacity increased.`);
+  }
+  function score(s) { return Math.round((s.stats.income - s.stats.spending) / 100 + s.rep * C.score.reputation + s.stats.slices * C.score.slices + s.stats.days * C.score.days + disgust(s) * C.score.disgust); }
+  P.State = { create, daily, random, log, sum, clamp, skill, disgust, capacity, slots, unlocked, recipeUnlocked, recipeStocked, money, rep, gainXP, score };
+})(Pizza);
+
+</script>
+<script>
+(function (P) {
+  'use strict';
+  const C = P.CONFIG, S = P.State;
+  function trigger(s, id) {
+    const event = P.DATA.events.find(e => e.id === id);
+    if (!event) return false;
+    let effect = '';
+    switch (id) {
+      case 'big_game': s.tomorrow.bonus += C.events.bigGame; effect = `Tomorrow: +${C.events.bigGame} potential customers.`; break;
+      case 'rain': s.tomorrow.multiplier *= C.events.rain; effect = 'Tomorrow: half the usual foot traffic.'; break;
+      case 'scratch': S.money(s, C.events.scratch, 'events'); effect = `+$${(C.events.scratch / 100).toFixed(2)} cash.`; break;
+      case 'good_tv': S.rep(s, C.events.interview); effect = `+${C.events.interview} reputation.`; break;
+      case 'bad_tv': S.rep(s, -C.events.interview); effect = `−${C.events.interview} reputation (minimum 0).`; break;
+      case 'cat': S.rep(s, C.events.catRep); s.dirt = Math.min(C.disgust.max, s.dirt + C.events.catDirt); effect = '+1 reputation, +1 dirt.'; break;
+      case 'garbage': s.dirt = 0; s.rats = 0; effect = 'Dirt and rats cleared. Your refundable cans stay in their crate.'; break;
+      case 'windfall': s.windfall = true; effect = `Your next recycling payout is ×${C.recycling.windfall}.`; break;
+      case 'weekend': s.modifiers.bonus += C.events.weekend; effect = `Today: +${C.events.weekend} potential customers.`; break;
+      case 'rats': s.rats += 1; effect = '+1 rat, +1 disgust. Clean the counter before opening tomorrow.'; break;
+      case 'wheelchair':
+        if (s.wheelchairBuilt || s.waste < C.recycling.capacity) return false;
+        s.waste = 0; s.wheelchairBuilt = true; S.rep(s, C.recycling.wheelchairRep);
+        effect = `${C.recycling.capacity} cans redeemed for the neighbourhood wheelchair build. +${C.recycling.wheelchairRep} reputation. No cash payout; the refund goes to the project.`;
+        break;
+      case 'sympathy':
+        if (s.sympathyUsed) return false;
+        s.sympathyUsed = true; S.money(s, C.events.sympathyCash, 'events');
+        effect = `+$${(C.events.sympathyCash / 100).toFixed(2)}. Once per run.`; break;
+    }
+    s.today.events.push({ id, name: event.name, text: event.text, effect });
+    S.log(s, 'event', `${event.name} — ${event.text} ${effect}`);
+    return true;
+  }
+  function randomEvent(s) {
+    const pool = P.DATA.events.filter(e => e.type === 'random');
+    return trigger(s, pool[Math.floor(S.random(s) * pool.length)].id);
+  }
+  function begin(s) {
+    if (C.events.weekendDays.includes(s.day % C.events.weekLength)) trigger(s, 'weekend');
+  }
+  function end(s) {
+    if (S.random(s) < C.events.chance) randomEvent(s);
+    if (s.today.spoiledSlices && S.random(s) < Math.min(C.events.ratMaxChance, s.today.spoiledSlices * C.events.ratPerSlice)) trigger(s, 'rats');
+  }
+  P.Events = { trigger, randomEvent, begin, end };
+})(Pizza);
+
+</script>
+<script>
+(function (P) {
+  'use strict';
+  const C = P.CONFIG, S = P.State;
+  function forecast(s) {
+    return S.clamp(Math.round((C.baseCustomers + s.rep + s.modifiers.bonus) * s.modifiers.multiplier), 1, C.maxCustomers);
+  }
+  function factors(s) {
+    const menu = s.menu.map(id => P.DATA.recipes.find(r => r.id === id)).filter(r => r && S.recipeStocked(s, r));
+    return { base: C.buy.base, price: (C.price.start - s.price) / 100 * C.price.sensitivity,
+      menu: Math.min(C.buy.maxMenu, menu.length * C.buy.menu),
+      supplies: (Number(s.inventory.napkins > 0) + Number(s.inventory.paper_plates > 0)) * C.buy.supply,
+      disgust: -S.disgust(s) * C.buy.disgust };
+  }
+  function chance(s) { return S.clamp(S.sum(factors(s)), C.buy.min, C.buy.max); }
+  function schedule(s) {
+    const potential = forecast(s);
+    s.today.potential = potential;
+    // Stratified arrivals make a whole day readable while retaining uncertainty.
+    const duration = Math.max(C.daySeconds, potential * C.service.customerSeconds), slot = duration / potential;
+    const arrivals = Array.from({ length: potential }, (_, i) => (i + 0.12 + S.random(s) * 0.08) * slot);
+    s.dayRun = { elapsed: 0, next: 0, arrivals, duration, customer: null };
+  }
+  function consumeTopping(s, id) {
+    s.inventory[id] -= 1;
+    const lot = s.lots[id].find(l => l.quantity > 0);
+    if (lot) lot.quantity -= 1;
+    s.lots[id] = s.lots[id].filter(l => l.quantity > 0);
+  }
+  function chooseRecipe(s) {
+    const choices = s.menu.map(id => ({ recipe: P.DATA.recipes.find(r => r.id === id), weight: C.orderWeights.menu }));
+    if (!s.menu.includes('plain')) choices.push({ recipe: P.DATA.recipes[0], weight: C.orderWeights.plain });
+    let roll = S.random(s) * choices.reduce((n, c) => n + c.weight, 0);
+    return (choices.find(c => (roll -= c.weight) < 0) || choices[0]).recipe;
+  }
+  function reaction(s, recipe, missing, fallback) {
+    const delight = Math.min(C.reaction.maxDelight, C.reaction.delight + S.skill(s) * C.reaction.skill + C.recipeDelight[recipe.id]);
+    const gross = Math.min(C.reaction.maxDisgust, C.reaction.disgust + S.disgust(s) * C.reaction.dirt + missing * C.reaction.missing + (fallback ? C.reaction.fallback : 0));
+    // Reserve disgust first, then delight; all four bands always total exactly 1.
+    const delighted = Math.min(delight, 1 - gross);
+    const satisfied = Math.min(C.reaction.satisfied, 1 - gross - delighted);
+    const roll = S.random(s);
+    return roll < gross ? 'disgusted' : roll < gross + delighted ? 'delighted' : roll < gross + delighted + satisfied ? 'satisfied' : 'neutral';
+  }
+  function resolve(s) {
+    const t = s.today;
+    const result = (kind, title, text, revenue = 0, rep = 0) => {
+      s.lastCustomer = { kind, title, text, revenue, rep };
+    };
+    if (t.served >= S.capacity(s)) {
+      t.turnedAway++; result('miss', 'Too busy.', 'At serving capacity. −1 reputation at closing.'); S.log(s, 'miss', 'At capacity. A customer sees the queue and chooses inner peace.'); return;
+    }
+    if (s.inventory.slices <= 0) {
+      t.soldOut++; result('miss', 'Sold out.', 'An empty counter. An unfulfilled lunch.'); S.log(s, 'miss', 'Sold out. Someone would have considered a slice.'); return;
+    }
+    if (S.random(s) >= chance(s)) {
+      t.passed++; const lines = P.DATA.reactions.passed;
+      const line = lines[Math.floor(S.random(s) * lines.length)];
+      result('passed', 'Maybe next time.', line); S.log(s, 'pass', line); return;
+    }
+    let recipe = chooseRecipe(s);
+    const fallback = !S.recipeStocked(s, recipe);
+    if (fallback) recipe = P.DATA.recipes[0];
+    const missing = Number(s.inventory.napkins === 0) + Number(s.inventory.paper_plates === 0);
+    s.inventory.slices--;
+    recipe.ingredients.forEach(id => consumeTopping(s, id));
+    ['napkins', 'paper_plates'].forEach(id => { if (s.inventory[id] > 0) s.inventory[id]--; });
+    s.dirt = Math.min(C.disgust.max, s.dirt + C.disgust.perSale + missing * C.disgust.missingSupply);
+    const sliceRevenue = s.price + C.recipeBonuses[recipe.id];
+    S.money(s, sliceRevenue, 'slices');
+    let drinkRevenue = 0;
+    if (s.inventory.pop > 0 && S.random(s) < C.popChance) {
+      s.inventory.pop--; t.drinks++; drinkRevenue = C.popPrice; S.money(s, drinkRevenue, 'drinks');
+      if (s.waste < C.recycling.capacity) s.waste++;
+      else { s.dirt = Math.min(C.disgust.max, s.dirt + C.disgust.overflowCan); S.log(s, 'warning', 'Can crate full. A discarded can adds dirt.'); }
+    }
+    t.served++; t.sales[recipe.id] = (t.sales[recipe.id] || 0) + 1;
+    s.stats.slices++; s.stats.customers++;
+    const mood = reaction(s, recipe, missing, fallback);
+    t.reactions[mood]++;
+    const repBefore = s.rep;
+    if (mood === 'delighted') S.rep(s, C.reputation.delighted);
+    if (mood === 'disgusted') S.rep(s, C.reputation.disgusted);
+    const lines = P.DATA.reactions[mood], line = lines[Math.floor(S.random(s) * lines.length)];
+    result(mood, `${recipe.name}${drinkRevenue ? ' + Pop' : ''}`, `${fallback ? 'Topping sold out; served plain. ' : ''}${line}`, sliceRevenue + drinkRevenue, s.rep - repBefore);
+    S.log(s, mood === 'disgusted' ? 'warning' : 'sale', `${recipe.name}${drinkRevenue ? ' + Pop' : ''} · +$${((sliceRevenue + drinkRevenue) / 100).toFixed(2)} · ${mood}. ${fallback ? 'Topping sold out; served plain. ' : ''}${line}`);
+    P.Logic.unlocks(s);
+  }
+  P.Customers = { forecast, factors, chance, schedule, resolve };
+})(Pizza);
+
+</script>
+<script>
+(function (P) {
+  'use strict';
+  const C = P.CONFIG, S = P.State;
+  const okay = message => ({ ok: true, message: message || '' });
+  const no = message => ({ ok: false, message });
+  function openCost(s) {
+    let cost = s.upgrades.includes('clean_microwave') ? 0 : C.upgrades.clean_microwave.cost;
+    if (s.inventory.slices > 0) return cost;
+    if (!s.inventory.dough && s.action?.type !== 'dough' && !s.inventory.flour) cost += C.inventoryCosts.flour;
+    if (!s.inventory.sauce) cost += C.inventoryCosts.sauce;
+    if (!s.inventory.cheese) cost += C.inventoryCosts.cheese;
+    return cost;
+  }
+  function recycleUnits(s) { return s.waste; }
+  function recycleValue(s) { return recycleUnits(s) * C.recycling.centsPerUnit * (s.windfall ? C.recycling.windfall : 1); }
+  function clickPower(s, type) { return C.work[type] + S.skill(s) * C.work.skillBonus; }
+  function reason(s, action, id, quantity = 1) {
+    if (s.phase !== 'management' && s.phase !== 'day') return 'Read the report to continue.';
+    const management = s.phase === 'management';
+    if (['buy', 'upgrade', 'dough', 'prepare', 'train', 'clean', 'price', 'menu', 'open'].includes(action) && !management) return 'Available before opening.';
+    if (['dough', 'prepare', 'train', 'clean', 'food'].includes(action) && s.action) {
+      if (s.action.type === action && action !== 'food') return '';
+      return 'Finish the current action first.';
+    }
+    if (action === 'buy') {
+      if (!P.DATA.items.some(i => i.id === id)) return 'Unknown item.';
+      if (!Number.isInteger(quantity) || quantity < 1 || quantity > C.maxPurchase) return 'Choose a valid quantity.';
+      if (!S.unlocked(s, id)) return `Unlocks at ${C.toppingUnlocks[id]} slices sold.`;
+      if (s.cash < C.inventoryCosts[id] * quantity) return 'Not enough cash.';
+    }
+    if (action === 'upgrade') {
+      const u = C.upgrades[id];
+      if (!u) return 'Unknown upgrade.';
+      if (s.upgrades.includes(id)) return 'Already installed.';
+      if (s.stats.slices < u.unlock) return `Requires ${u.unlock} slices sold.`;
+      if (s.cash < u.cost) return 'Not enough cash.';
+    }
+    if (action === 'clean' && !s.dirt && !s.rats) return 'The counter is clean.';
+    if (action === 'dough' && s.inventory.flour < 1) return 'Buy flour first.';
+    if (action === 'prepare') {
+      if (s.inventory.dough < 1) return 'Make dough first.';
+      if (s.inventory.sauce < 1 || s.inventory.cheese < 1) return 'Needs 1 sauce and 1 cheese.';
+    }
+    if (action === 'train') {
+      if (s.trained) return 'Already trained today.';
+      if (S.skill(s) >= C.skillMax) return 'Skill is at maximum.';
+    }
+    if (action === 'food') {
+      if (s.health >= C.maxHealth) return 'Health is full.';
+      if (s.cash < C.foodCost) return 'Not enough cash.';
+    }
+    if (action === 'recycle') {
+      if (!s.waste) return 'Sell Pop to collect refundable cans.';
+    }
+    if (action === 'wheelchair') {
+      if (s.wheelchairBuilt) return 'You already built the wheelchair.';
+      if (s.waste < C.recycling.capacity) return 'Fill the can crate first.';
+    }
+    if (action === 'open') {
+      if (s.action) return 'Finish the current action first.';
+      if (!s.health) return 'Health is empty.';
+      if (!s.upgrades.includes('clean_microwave')) return 'Buy the Clean Microwave first.';
+      if (!s.inventory.slices) return 'Prepare at least one batch of slices.';
+    }
+    if (action === 'close' && management) return 'The stand is not open.';
+    if (action === 'menu') {
+      const recipe = P.DATA.recipes.find(r => r.id === id);
+      if (!recipe || !S.recipeUnlocked(s, recipe)) return 'Required toppings are still locked.';
+      if (s.menu.includes(id) && s.menu.length === 1) return 'Keep at least one recipe on the menu.';
+      if (!s.menu.includes(id) && s.menu.length >= S.slots(s)) return 'Menu is full. Remove a recipe first.';
+    }
+    return '';
+  }
+  function unlocks(s) {
+    const milestones = new Set([...Object.values(C.toppingUnlocks), ...C.slots.map(([n]) => n), ...Object.values(C.upgrades).map(u => u.unlock)]);
+    for (const at of milestones) {
+      if (!at || s.stats.slices < at || s.unlocks.includes(at)) continue;
+      s.unlocks.push(at);
+      const names = P.DATA.items.filter(i => C.toppingUnlocks[i.id] === at).map(i => i.name);
+      P.DATA.upgrades.filter(u => C.upgrades[u.id].unlock === at).forEach(u => names.push(u.name));
+      if (C.slots.some(([n]) => n === at)) names.push('another menu slot');
+      S.log(s, 'unlock', `${at} slices sold. Unlocked: ${names.join(', ')}.`);
+      const reward = { at, names };
+      s.pendingMilestones.push(reward);
+      s.today.milestones.push(reward);
+    }
+  }
+  function startAction(s, type, seconds) { s.action = { type, total: seconds, remaining: seconds }; }
+  function completeAction(s) {
+    if (!s.action) return;
+    const type = s.action.type;
+    s.action = null;
+    if (type === 'dough') { s.inventory.dough++; S.gainXP(s, C.doughXP); S.log(s, 'prep', 'Dough ready. Add sauce and cheese to prepare 8 slices.'); }
+    if (type === 'prepare') { s.inventory.slices += C.slicesPerBatch; S.gainXP(s, C.prepXP); S.log(s, 'prep', `${C.slicesPerBatch} slices ready. Unsold slices expire at closing.`); }
+    if (type === 'train') { S.gainXP(s, C.trainingXP); S.log(s, 'prep', `Training done. +${C.trainingXP} skill progress. The weights remain unimpressed.`); }
+    if (type === 'clean') { const before = S.disgust(s); s.dirt = 0; s.rats = 0; S.log(s, 'prep', `Counter cleaned. Rats evicted. Disgust −${before.toFixed(1)}. Your cans are safe.`); }
+    if (type === 'food') { const gain = Math.min(C.foodHealth, C.maxHealth - s.health); s.health += gain; S.log(s, 'prep', `Pizza delivered. +${gain} health. Someone else did the cooking.`); }
+  }
+  function action(s, type, id, quantity = 1) {
+    const why = reason(s, type, id, quantity);
+    if (why) return no(why);
+    if (['dough', 'prepare', 'train', 'clean'].includes(type)) {
+      if (!s.action) {
+        if (type === 'dough') s.inventory.flour--;
+        if (type === 'prepare') { s.inventory.dough--; s.inventory.sauce--; s.inventory.cheese--; }
+        if (type === 'train') s.trained = true;
+        startAction(s, type, C.work.total);
+      }
+      s.action.remaining = Math.max(0, s.action.remaining - clickPower(s, type));
+      if (!s.action.remaining) completeAction(s);
+      return okay();
+    }
+    switch (type) {
+      case 'buy': {
+        const item = P.DATA.items.find(i => i.id === id);
+        S.money(s, -C.inventoryCosts[id] * quantity, item.group === 'supplies' ? 'supplies' : 'ingredients');
+        s.inventory[id] += quantity;
+        if (item.group === 'toppings') s.lots[id].push({ quantity, expiresOn: s.day + (s.upgrades.includes('mini_fridge') ? C.freshnessDays : 1) - 1 });
+        S.log(s, 'purchase', `Bought ${quantity} ${item.name}. −$${(C.inventoryCosts[id] * quantity / 100).toFixed(2)}.`); break;
+      }
+      case 'upgrade': {
+        const u = C.upgrades[id];
+        S.money(s, -u.cost, 'upgrades'); s.upgrades.push(id); S.rep(s, u.rep);
+        s.dirt = Math.max(0, s.dirt - (u.clean || 0));
+        if (id === 'mini_fridge') Object.values(s.lots).forEach(lots => lots.forEach(l => { l.expiresOn = s.day + C.freshnessDays - 1; }));
+        S.log(s, 'unlock', `${P.DATA.upgrades.find(u => u.id === id).name} installed.`); break;
+      }
+      case 'food': S.money(s, -C.foodCost, 'food'); startAction(s, type, C.foodSeconds); break;
+      case 'recycle': {
+        const units = recycleUnits(s), payout = recycleValue(s);
+        s.waste -= units; s.recycled = true; s.windfall = false;
+        S.money(s, payout, 'recycling');
+        S.log(s, 'prep', `Returned ${units} Pop cans. +$${(payout / 100).toFixed(2)}.`); break;
+      }
+      case 'wheelchair': P.Events.trigger(s, 'wheelchair'); break;
+      case 'price':
+        if (id !== 'up' && id !== 'down') return no('Invalid price change.');
+        s.price = S.clamp(s.price + (id === 'up' ? C.price.step : -C.price.step), C.price.min, C.price.max); break;
+      case 'menu': s.menu = s.menu.includes(id) ? s.menu.filter(x => x !== id) : [...s.menu, id]; break;
+      case 'open':
+        s.phase = 'day'; P.Customers.schedule(s);
+        S.log(s, 'system', `Day ${s.day}: open for business. ${s.today.potential} potential customers. ${s.inventory.slices} slices ready.`); break;
+      case 'close': finishDay(s, true); break;
+      default: return no('Unknown action.');
+    }
+    return okay();
+  }
+  function finishRun(s, reason) {
+    if (s.phase === 'score') return;
+    s.phase = 'score'; s.endReason = reason; s.action = null;
+    s.final = { score: S.score(s), profit: s.stats.income - s.stats.spending, rep: s.rep, slices: s.stats.slices, days: s.stats.days };
+  }
+  function recovery(s) {
+    if (s.phase !== 'management') return;
+    if (s.health <= 0) { finishRun(s, 'health'); return; }
+    if (s.action) return;
+    const minimum = openCost(s), recoveryCash = recycleValue(s);
+    if (s.cash + recoveryCash >= minimum) return;
+    if (!s.sympathyUsed && s.cash < C.events.sympathyThreshold) P.Events.trigger(s, 'sympathy');
+    if (s.cash + recycleValue(s) < minimum) finishRun(s, 'cash');
+  }
+  function finishDay(s, early = false) {
+    if (s.phase !== 'day' || s.today.finalized) return;
+    // A paid food order is delivered before closing; it cannot vanish with its timer.
+    completeAction(s);
+    const t = s.today;
+    t.early = early;
+    t.closed = t.potential - t.served - t.passed - t.soldOut - t.turnedAway;
+    t.wastedDough = s.inventory.dough; t.spoiledSlices = s.inventory.slices;
+    s.inventory.dough = 0; s.inventory.slices = 0;
+    for (const [id, lots] of Object.entries(s.lots)) {
+      const expired = lots.filter(l => l.expiresOn <= s.day).reduce((n, l) => n + l.quantity, 0);
+      t.spoiledToppings += expired; s.inventory[id] -= expired;
+      s.lots[id] = lots.filter(l => l.expiresOn > s.day);
+    }
+    s.dirt = Math.min(C.disgust.max, s.dirt + t.spoiledSlices * C.disgust.spoiledSlice + t.wastedDough * C.disgust.wastedDough + t.spoiledToppings * C.disgust.spoiledTopping);
+    S.rep(s, t.turnedAway * C.reputation.turnedAway + (early ? C.reputation.early : C.reputation.fullDay));
+    s.health = Math.max(0, s.health - C.healthLoss);
+    P.Events.end(s);
+    s.stats.days++;
+    const revenue = t.income.slices + t.income.drinks;
+    s.stats.bestRevenue = Math.max(s.stats.bestRevenue, revenue);
+    s.stats.bestSlices = Math.max(s.stats.bestSlices, t.served);
+    t.finalized = true;
+    s.report = JSON.parse(JSON.stringify({ ...t, endCash: s.cash, revenue,
+      incomeTotal: S.sum(t.income), expenseTotal: S.sum(t.expenses), net: S.sum(t.income) - S.sum(t.expenses),
+      repChange: s.rep - t.startRep, healthChange: s.health - t.startHealth, disgustChange: S.disgust(s) - t.startDisgust,
+      endHealth: s.health, endRep: s.rep, endDisgust: S.disgust(s) }));
+    s.history.push(s.report);
+    if (s.history.length > C.maxHistory) s.history.shift();
+    s.phase = 'report'; s.dayRun = null;
+    S.log(s, 'system', `Day ${s.day} closed. ${t.served} slices sold. The receipt is ready.`);
+  }
+  function continueDay(s) {
+    if (s.phase !== 'report') return no('No report to continue.');
+    if (s.health <= 0) { finishRun(s, 'health'); return okay(); }
+    if (s.day >= C.maxDays) { finishRun(s, 'complete'); return okay(); }
+    s.day++; s.phase = 'management'; s.recycled = false; s.trained = false;
+    s.modifiers = { ...s.tomorrow }; s.tomorrow = { bonus: 0, multiplier: 1 };
+    s.today = S.daily(s); s.report = null;
+    P.Events.begin(s);
+    S.log(s, 'system', `Day ${s.day}. Open when you are ready.`);
+    recovery(s);
+    return okay();
+  }
+  function tick(s, seconds, speed = 1) {
+    if (s.phase !== 'management' && s.phase !== 'day') return false;
+    let changed = false;
+    const dt = Math.max(0, seconds) * (s.phase === 'day' ? speed : 1);
+    if (s.action?.type === 'food') {
+      s.action.remaining -= dt; changed = true;
+      if (s.action.remaining <= 0) completeAction(s);
+    }
+    if (s.phase === 'day') {
+      const run = s.dayRun;
+      run.elapsed = Math.min(run.duration, run.elapsed + dt);
+      while (run.next < run.arrivals.length && run.arrivals[run.next] <= run.elapsed) {
+        if (!run.customer || run.customer.stage === 'result') run.customer = { number: run.next + 1, stage: 'arriving', revealAt: run.arrivals[run.next] + C.service.decisionSeconds };
+        if (run.customer.revealAt > run.elapsed) break;
+        P.Customers.resolve(s);
+        run.customer = { ...run.customer, stage: 'result', outcome: s.lastCustomer };
+        run.next++;
+        // Let the player see and acknowledge every newly earned unlock.
+        if (s.pendingMilestones.length) { run.elapsed = Math.min(run.elapsed, run.customer.revealAt); break; }
+      }
+      if (run.elapsed >= run.duration) finishDay(s);
+      changed = true;
+    }
+    return changed;
+  }
+  P.Logic = { action, reason, unlocks, tick, finishDay, continueDay, finishRun, recovery, openCost, recycleUnits, recycleValue, clickPower };
+})(Pizza);
+
+</script>
+<script>
+(function (P) {
+  'use strict';
+  const C = P.CONFIG;
+  const clone = value => JSON.parse(JSON.stringify(value));
+  let problem = '';
+  function write(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); problem = ''; return true; }
+    catch (_) { problem = 'Saving is unavailable in this browser. Keep this tab open to continue your run.'; return false; }
+  }
+  function read(key) {
+    try { const value = localStorage.getItem(key); return value ? JSON.parse(value) : null; }
+    catch (_) { problem = 'A saved file could not be read. A fresh run is available.'; return null; }
+  }
+  function valid(s) {
+    try {
+      const nonnegative = n => Number.isFinite(n) && n >= 0;
+      const integer = n => Number.isSafeInteger(n) && n >= 0;
+      const milestones = list => Array.isArray(list) && list.every(m => integer(m.at) && Array.isArray(m.names) && m.names.every(n => typeof n === 'string'));
+      const ledger = day => {
+        if (!day || !integer(day.day)) return false;
+        if (!['slices', 'drinks', 'recycling', 'events'].every(k => integer(day.income[k]))) return false;
+        if (!['ingredients', 'supplies', 'upgrades', 'food', 'events'].every(k => integer(day.expenses[k]))) return false;
+        if (!['potential', 'served', 'passed', 'soldOut', 'turnedAway', 'closed', 'drinks', 'spoiledSlices', 'wastedDough', 'spoiledToppings', 'startCash', 'startHealth', 'startRep', 'startDisgust'].every(k => nonnegative(day[k]))) return false;
+        if (!['delighted', 'satisfied', 'neutral', 'disgusted'].every(k => integer(day.reactions[k]))) return false;
+        if (!Object.entries(day.sales).every(([id, n]) => integer(n) && P.DATA.recipes.some(r => r.id === id))) return false;
+        if (day.milestones !== undefined && !milestones(day.milestones)) return false;
+        return Array.isArray(day.events) && day.events.every(e => P.DATA.events.some(item => item.id === e.id) && typeof e.name === 'string' && typeof e.text === 'string' && typeof e.effect === 'string');
+      };
+      const report = r => ledger(r) && r.finalized === true && ['endCash', 'revenue', 'incomeTotal', 'expenseTotal', 'net', 'repChange', 'healthChange', 'disgustChange', 'endHealth', 'endRep', 'endDisgust'].every(k => Number.isFinite(r[k]));
+      if (!s || s.version !== C.saveVersion || !['management', 'report', 'score'].includes(s.phase)) return false;
+      if (!Number.isInteger(s.day) || s.day < 1 || s.day > C.maxDays || !integer(s.cash)) return false;
+      if (![s.health, s.rep, s.dirt, s.rats, s.waste, s.xp].every(nonnegative) || s.health > C.maxHealth || s.xp > C.skillMax * C.skillXP) return false;
+      if (!integer(s.price) || s.price < C.price.min || s.price > C.price.max || !integer(s.rng) || s.rng > 0xffffffff || !integer(s.logId)) return false;
+      if (!['trained', 'recycled', 'windfall', 'sympathyUsed', 'bestsRecorded', 'wheelchairBuilt'].every(k => typeof s[k] === 'boolean')) return false;
+      if (!integer(s.waste) || s.waste > C.recycling.capacity || !milestones(s.pendingMilestones) || !milestones(s.today.milestones)) return false;
+      if (!P.DATA.items.every(i => integer(s.inventory[i.id])) || !integer(s.inventory.dough) || !integer(s.inventory.slices)) return false;
+      if (!Array.isArray(s.upgrades) || new Set(s.upgrades).size !== s.upgrades.length || !s.upgrades.every(id => C.upgrades[id])) return false;
+      if (!Array.isArray(s.menu) || !s.menu.length || new Set(s.menu).size !== s.menu.length || s.menu.length > P.State.slots(s)) return false;
+      if (!s.menu.every(id => P.DATA.recipes.some(r => r.id === id && P.State.recipeUnlocked(s, r)))) return false;
+      for (const id of Object.keys(C.toppingUnlocks)) {
+        if (!Array.isArray(s.lots[id]) || !s.lots[id].every(l => integer(l.quantity) && integer(l.expiresOn))) return false;
+        if (s.lots[id].reduce((n, l) => n + l.quantity, 0) !== s.inventory[id]) return false;
+      }
+      if (!['income', 'spending', 'slices', 'customers', 'days', 'bestRevenue', 'bestSlices'].every(k => integer(s.stats[k])) || !ledger(s.today) || s.today.day !== s.day) return false;
+      if (!Array.isArray(s.log) || s.log.length > C.maxLog || !s.log.every(l => typeof l.text === 'string' && ['system', 'prep', 'purchase', 'unlock', 'sale', 'miss', 'pass', 'warning', 'event'].includes(l.type))) return false;
+      if (!Array.isArray(s.history) || s.history.length > C.maxHistory || !s.history.every(report) || !Array.isArray(s.unlocks)) return false;
+      if (!['bonus', 'multiplier'].every(k => nonnegative(s.modifiers[k]) && nonnegative(s.tomorrow[k]))) return false;
+      if (s.action && (!['dough', 'prepare', 'train', 'clean', 'food'].includes(s.action.type) || !nonnegative(s.action.remaining) || !nonnegative(s.action.total) || !s.action.total || s.action.remaining > s.action.total)) return false;
+      if (s.phase === 'report' && (!report(s.report) || s.report.day !== s.day)) return false;
+      if (s.phase === 'score' && (!s.final || !['score', 'profit', 'rep', 'slices', 'days'].every(k => Number.isFinite(s.final[k])) || !['health', 'cash', 'complete'].includes(s.endReason))) return false;
+      return true;
+    } catch (_) { return false; }
+  }
+  function save(s, checkpoint) {
+    if (s.phase === 'day') {
+      if (!checkpoint) return false;
+      return write(C.keys.run, { version: C.saveVersion, restoreDay: true, state: checkpoint });
+    }
+    return write(C.keys.run, { version: C.saveVersion, restoreDay: false, state: s });
+  }
+  function load() {
+    const file = read(C.keys.run);
+    if (!file) return { state: null, notice: problem };
+    let migrated = false;
+    if (file.state?.version === 1) {
+      const s = file.state;
+      // Old recycling was general rubbish, not refundable Pop cans.
+      s.dirt = Math.min(C.disgust.max, s.dirt + s.waste); s.waste = 0;
+      s.wheelchairBuilt = false; s.pendingMilestones = []; s.lastCustomer = null;
+      if (s.today) s.today.milestones = [];
+      if (s.action && ['dough', 'train'].includes(s.action.type) && s.action.total > 0) {
+        s.action.remaining = Math.ceil(s.action.remaining / s.action.total * C.work.total);
+        s.action.total = C.work.total;
+      }
+      s.version = C.saveVersion; migrated = true;
+    }
+    if (!valid(file.state)) return { state: null, notice: 'The old save is incompatible or damaged. Starting a fresh run.' };
+    return { state: file.state, notice: [file.restoreDay ? 'Restored your prepared day. Your stock and cash are back to the moment before opening.' : '', migrated ? 'Run updated. Click to finish manual work. Old rubbish is now dirt; sell Pop to start collecting cans.' : ''].filter(Boolean).join(' ') };
+  }
+  function bests() {
+    const value = read(C.keys.bests);
+    return value && ['score', 'profit', 'rep', 'slices', 'days'].every(k => Number.isFinite(value[k]) || value[k] === null) ? value : { score: null, profit: null, rep: 0, slices: 0, days: 0 };
+  }
+  function record(s) {
+    if (s.phase !== 'score' || s.bestsRecorded) return;
+    const previous = bests(), next = { ...previous };
+    s.previousBest = previous.score;
+    s.newBest = previous.score === null || s.final.score > previous.score;
+    Object.keys(next).forEach(k => { next[k] = next[k] === null ? s.final[k] : Math.max(next[k], s.final[k]); });
+    if (write(C.keys.bests, next)) s.bestsRecorded = true;
+  }
+  function settings() {
+    const value = read(C.keys.settings) || {};
+    return { sound: value.sound === true, reducedMotion: value.reducedMotion === true, speed: C.speeds.includes(value.speed) ? value.speed : 1 };
+  }
+  function clear(all = false) {
+    try { localStorage.removeItem(C.keys.run); if (all) { localStorage.removeItem(C.keys.bests); localStorage.removeItem(C.keys.settings); } return true; }
+    catch (_) { problem = 'Your browser did not allow saved data to be cleared.'; return false; }
+  }
+  P.Save = { clone, valid, save, load, bests, record, settings, saveSettings: value => write(C.keys.settings, value), clear, problem: () => problem };
+})(Pizza);
+
+</script>
+<script>
+(()=>{
+'use strict';
+// Five-by-seven bitmap lettering for world signs, drawn directly into Canvas.
+const glyphs={P:['11110','10001','10001','11110','10000','10000','10000'],I:['11111','00100','00100','00100','00100','00100','11111'],Z:['11111','00001','00010','00100','01000','10000','11111'],A:['01110','10001','10001','11111','10001','10001','10001'],O:['01110','10001','10001','10001','10001','10001','01110'],E:['11111','10000','10000','11110','10000','10000','11111'],N:['10001','11001','11001','10101','10011','10011','10001'],C:['01111','10000','10000','10000','10000','10000','01111'],L:['10000','10000','10000','10000','10000','10000','11111'],S:['01111','10000','10000','01110','00001','00001','11110'],D:['11110','10001','10001','10001','10001','10001','11110']};
+const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const artboard=document.createElement('canvas');artboard.width=640;artboard.height=220;
+let walkElapsed=0,lastPaint=0,wasFrozen=false,lastVisitor=null,lastVM=null,frame=0;
+function drawScene(vm){
+ const canvas=artboard,x=canvas.getContext('2d');x.imageSmoothingEnabled=false;
+ const time=vm.phase==='prep'?600:vm.phase==='report'?1140:660+480*vm.serviceProgress, dark=vm.phase==='report', dusk=vm.phase==='service'&&vm.serviceProgress>.61;
+ const p=dark?{sky:'#263f4b',far:'#344c48',trees:'#2a443d',field:'#4b5e47',road:'#293c3f',line:'#7f947e',pole:'#1e3431',wall:'#aa9269',window:'#b8ac6e',front:'#81644b',roof:'#2a3c32',cloud:'#43565a'}:dusk?{sky:'#c6a781',far:'#9b9f76',trees:'#677a58',field:'#8e9762',road:'#646d5e',line:'#bbbd93',pole:'#4d5c45',wall:'#dbc795',window:'#8e9c72',front:'#b38a57',roof:'#445b43',cloud:'#e4c49a'}:{sky:'#abcab6',far:'#94b291',trees:'#648d65',field:'#a1b875',road:'#737d68',line:'#d5d9b5',pole:'#4e694d',wall:'#e9d7a0',window:'#6f936f',front:'#c69d61',roof:'#45694d',cloud:'#e2e8c7'};
+ const r=(a,b,w,h,c)=>{x.fillStyle=c;x.fillRect(Math.round(a),Math.round(b),w,h)};
+ const line=(a,b,c,d,col)=>{x.strokeStyle=col;x.lineWidth=1;x.beginPath();x.moveTo(a,b);x.lineTo(c,d);x.stroke()};
+ const txt=(str,a,b,scale,col)=>{for(let k=0;k<str.length;k++){const g=glyphs[str[k]];if(!g)continue;g.forEach((row,j)=>[...row].forEach((v,i)=>{if(v==='1')r(a+(k*6+i)*scale,b+j*scale,scale,scale,col)}));}};
+ r(0,0,640,220,p.sky);
+ if(dark){r(507,35,13,15,'#dddcae');r(503,39,4,7,'#dddcae');r(516,34,7,11,p.sky);[[69,37],[164,55],[350,27],[430,58],[566,77],[589,24],[263,31],[396,26]].forEach(([a,b])=>r(a,b,1,1,'#b8c9ba'));}
+ else{const position=(time-600)/540;const sx=115+Math.min(1,position)*415,sy=29+Math.pow(position-.35,2)*125;r(sx,sy,18,14,'#f2dfa0');r(sx+3,sy-3,12,20,'#f2dfa0');r(42,52,49,5,p.cloud);r(51,47,25,5,p.cloud);r(510,68,65,5,p.cloud);r(527,62,29,6,p.cloud);}
+ r(0,110,640,79,p.far);r(0,102,85,8,p.far);r(85,107,110,4,p.far);r(440,101,105,9,p.far);r(545,106,95,5,p.far);
+ for(const [a,b,w]of [[26,107,20],[78,101,17],[136,113,15],[467,104,22],[548,109,19],[594,102,20]]){r(a,b,w,49,p.trees);r(a+3,b-8,w-6,8,p.trees);r(a+6,b-13,w-12,5,p.trees);}
+ r(0,151,640,44,p.field);r(0,195,640,25,p.road);r(0,192,640,3,p.line);for(let i=0;i<9;i++)r(i*84+12,213,28,2,p.line);
+ r(95,58,4,131,p.pole);r(82,67,30,4,p.pole);line(0,59,95,69,p.pole);line(95,69,460,80,p.pole);line(460,80,640,58,p.pole);r(459,72,4,117,p.pole);r(447,79,28,3,p.pole);
+ // One modest stand. One microwave. Geometry is deliberately simple.
+ // A few clumps of verge grass and gravel catch the changing light.
+ for(let i=0;i<77;i++){let gx=(i*179+17)%640,gy=155+(i*43)%35;r(gx,gy,2+(i%3),1,dark?'#54664c':dusk?'#9a9a6d':'#aebe81');if(i%5===0)r(gx+1,gy-2,1,2,dark?'#415b44':'#86a467');}
+ for(let i=0;i<48;i++){let gx=(i*197+97)%640,gy=197+(i*7)%22;r(gx,gy,1+(i%4),1,dark?'#344747':dusk?'#707565':'#7e866e');}
+ r(200,78,212,108,p.roof);r(205,86,202,96,p.wall);r(205,85,202,6,p.roof);
+ r(230,50,150,29,'#3c503c');r(233,53,144,23,dark?'#c8be8c':'#eee1b1');txt('PIZZA',261,57,2,'#9c4630');
+ r(197,79,218,10,'#344c37');for(let i=0;i<12;i++)r(199+i*18,80,18,7,i%2?'#e0cb92':'#a74731');r(197,87,218,5,p.roof);
+ r(217,101,178,50,p.roof);r(221,104,170,45,p.window);r(225,120,162,3,p.roof);
+ r(232,109,9,11,'#9b5135');r(231,107,11,3,'#d2c69b');r(248,106,13,14,'#cfc59b');r(252,112,5,2,'#9b9b70');
+ // Lamp is lit only at dusk and night.
+ r(305,92,2,9,p.roof);r(300,100,12,4,p.roof);if(dark||dusk)r(303,104,6,2,'#f0da7b');
+ r(280,124,12,12,'#d3a174');r(279,121,14,5,'#a3432d');r(290,126,4,2,'#a3432d');r(283,130,1,1,p.roof);r(289,130,1,1,p.roof);r(276,137,21,14,'#ece0b7');r(276,138,4,13,'#8a9d7d');r(293,138,4,13,'#8a9d7d');
+ if(vm.microwave){r(349,124,33,24,'#c6c8ab');r(352,127,21,17,p.roof);r(354,129,17,13,'#65806d');r(376,128,3,4,p.roof);r(376,135,3,2,'#71866c');r(376,140,3,2,'#71866c');}
+ r(215,150,182,6,p.roof);r(217,150,178,3,'#c8ad73');r(213,156,186,25,p.front);r(218,165,176,1,dark?'#907551':'#af874c');r(218,178,176,1,p.roof);
+ r(310,147,25,3,'#d2c795');for(let i=0;i<Math.min(6,vm.stock.slices);i++){r(311+i*4,145,3,2,'#ecc567');r(311+i*4,144,2,1,'#b98244');}
+ // Service counter panels and apron, with a little wear at the feet.
+ for(const gx of [223,249,278,306,335,365,389]){r(gx,157,1,20,dark?'#765d47':'#ac8755');r(gx+1,158,1,17,dark?'#937656':'#d1ac70');}
+ r(219,159,174,1,dark?'#9d815d':'#d7b575');r(206,93,3,88,dark?'#a18c65':'#d2bb86');
+ r(349,164,42,11,vm.phase==='service'?'#3d6a40':'#a04530');txt(vm.phase==='service'?'OPEN':'CLOSED',vm.phase==='service'?358:352,166,1,'#f0e2ad');
+ r(206,183,9,5,p.roof);r(398,183,9,5,p.roof);r(197,188,220,3,dark?'#394d3d':'#8ca465');
+ r(428,164,17,25,'#526e54');r(425,161,23,4,'#718769');r(432,167,2,19,'#3b5641');r(440,167,2,19,'#3b5641');
+ r(44,184,12,3,'#6c8d55');r(47,178,2,8,'#6c8d55');r(53,180,2,5,'#6c8d55');r(579,185,11,2,'#6c8d55');r(584,177,2,8,'#6c8d55');
+ if(vm.phase==='service'&&vm.reaction){const duration=walkElapsed;const walking=!reducedMotion&&duration<900;const a=Math.round(reducedMotion?477:620-Math.min(1,duration/900)*143),b=158;const foot=walking?Math.floor(duration/140)%2:0;const shirt=['#977e54','#71918a','#6f83a1','#aa6d4d'][(vm.reaction.visitor||0)%4];r(a,b,9,10,'#caa181');r(a-1,b-2,10,4,'#494b35');r(a-2,b+10,13,17,shirt);r(a,b+27,3,12-foot*2,'#314c3e');r(a+6,b+27,3,10+foot*2,'#314c3e');r(a-1,b+37-foot*2,5,2,'#273b31');r(a+5,b+36+foot*2,6,2,'#273b31');}
+}
+
+function paint(vm){
+  lastVM=vm;
+  const visitor=vm.phase==='service'?vm.reaction?.visitor:null;
+  const now=performance.now(),frozen=vm.paused||document.getElementById('sheet').open||document.hidden;
+  if(visitor!==lastVisitor){lastVisitor=visitor;walkElapsed=0;}
+  else if(visitor&&!frozen&&!wasFrozen){walkElapsed=Math.min(905,walkElapsed+Math.max(0,now-lastPaint));}
+  lastPaint=now;wasFrozen=frozen;
+  drawScene(vm);
+  const display=document.getElementById('scene');
+  const box=display.getBoundingClientRect();if(!box.height||!box.width)return;
+  const height=box.width>700&&box.height<220?177:211;
+  const width=Math.round(height*box.width/box.height);
+  if(display.width!==width||display.height!==height){display.width=width;display.height=height;}
+  const g=display.getContext('2d');g.imageSmoothingEnabled=false;
+  const ox=Math.round((width-640)/2),oy=height===177?-32:-6;
+  // Sky and power lines continue beyond the composition on short wide displays.
+  // Only the distant verge is tiled. Keep celestial objects and poles unique.
+  g.drawImage(artboard,0,0,1,1,0,0,width,height);
+  const side=72,treeTop=88;
+  for(let dist=0;dist<ox;dist+=side){
+    g.save();g.translate(ox-dist,0);g.scale(-1,1);g.drawImage(artboard,0,treeTop,side,220-treeTop,0,oy+treeTop,side,220-treeTop);g.restore();
+    g.save();g.translate(ox+640+dist+side,0);g.scale(-1,1);g.drawImage(artboard,640-side,treeTop,side,220-treeTop,0,oy+treeTop,side,220-treeTop);g.restore();
+  }
+  if(ox>0){
+    g.strokeStyle=vm.phase==='report'?'#1e3431':vm.phase==='service'&&vm.serviceProgress>.61?'#4d5c45':'#4e694d';
+    g.lineWidth=1;g.beginPath();g.moveTo(0,oy+59-ox*.1);g.lineTo(ox,oy+59);g.moveTo(ox+640,oy+58);g.lineTo(width,oy+58-ox*.12);g.stroke();
+  }
+  g.drawImage(artboard,ox,oy);
+  if(frame)cancelAnimationFrame(frame);
+  if(visitor&&!frozen&&!reducedMotion&&walkElapsed<905){frame=requestAnimationFrame(()=>paint(lastVM));}
+}
+window.addEventListener('resize',()=>{if(lastVM)paint(lastVM);});
+document.addEventListener('visibilitychange',()=>{if(lastVM)paint(lastVM);});
+window.StandScene={paint};
+})();
+</script>
+<script>
+/* The review adapter translates checkpoint state into the one-day surface.
+   Simulation, transactions, probability, work, settlement and save validation
+   are supplied by the unmodified candidate modules above. */
+(() => {
+  'use strict';
+  const P = window.Pizza;
+  const C = P.CONFIG;
+  const copy = JSON.parse(document.getElementById('stand-copy').textContent);
+  const seed = 6;
+  const ids = ['flour', 'sauce', 'cheese', 'napkins', 'paper_plates'];
+  const supportedStock = new Set(ids);
+  const cash = cents => '$' + (cents / 100).toFixed(2);
+  const fill = (template, params = {}) => template.replace(/\{(\w+)\}/g, (token, k) => params[k] ?? token);
+  const entriesByEffect = new Map();
+  copy.events.forEach(entry => {
+    if (!entriesByEffect.has(entry.effect)) entriesByEffect.set(entry.effect, []);
+    entriesByEffect.get(entry.effect).push(entry);
+  });
+  const cost = id => id === 'microwave' ? C.upgrades.clean_microwave.cost : C.inventoryCosts[id];
+
+  // These keys belong exclusively to this prototype, including on a file URL.
+  for (const slot of ['run', 'bests', 'settings']) C.keys[slot] = 'roadside.one-day.design-v1.' + slot;
+  const naturalEnd = P.Events.end;
+  const reviewHash = new URLSearchParams(window.location.hash.slice(1));
+  const forcedEvent = reviewHash.get('event');
+  const previewEvent = copy.events.find(e => e.id === forcedEvent);
+  const previewType = P.DATA.events.find(e => e.id === previewEvent?.effect)?.type;
+  for (const [k, lines] of Object.entries(copy.reactions)) P.DATA.reactions[k] = [...lines];
+  P.DATA.recipes.find(r => r.id === 'plain').name = copy.names.plain;
+  function configureEvent(day) {
+    for (const event of P.DATA.events) {
+      const choices = entriesByEffect.get(event.id);
+      const content = choices[(day - 1) % choices.length];
+      event.name = content.title;
+      event.text = content.message;
+    }
+  }
+  P.Events.end = s => {
+    if (forcedEvent === 'none') return;
+    if (previewEvent && ['random', 'conditional'].includes(previewType)) {
+      const entry = P.DATA.events.find(e => e.id === previewEvent.effect);
+      entry.name = previewEvent.title;
+      entry.text = previewEvent.message;
+      if (P.Events.trigger(s, previewEvent.effect)) s.today.events.at(-1).copyId = previewEvent.id;
+      return;
+    }
+    naturalEnd(s);
+  };
+  const loaded = P.Save.load();
+  let state = loaded.state || P.State.create(seed);
+  configureEvent(state.day);
+  // The engine validates its own save. Keep optional presentation history
+  // tolerant of old or damaged entries without discarding a playable run.
+  if (Array.isArray(state.reviewLog)) {
+    state.reviewLog = state.reviewLog.filter(row => row && Object.hasOwn(copy.counter, row.key) &&
+      row.params && typeof row.params === 'object' && typeof row.time === 'string' &&
+      typeof row.kind === 'string').slice(-C.maxLog);
+  }
+  let checkpoint = null;
+  let paused = false;
+  let panelOpen = false;
+  let notice = loaded.notice ? (loaded.state ? copy.feedback.restore : copy.feedback.incompatible) :
+    (!loaded.state ? copy.feedback.start : '');
+  let saveNotice = '';
+  let lastTime = performance.now();
+  let lastPaint = '';
+  const logEntries = () => Array.isArray(state.reviewLog) ? state.reviewLog : [];
+  function addLog(key, params, kind, number) {
+    state.reviewLog = logEntries();
+    const elapsed = state.dayRun?.elapsed ?? (key === 'closed' ? C.daySeconds : 0);
+    const duration = state.dayRun?.duration ?? C.daySeconds;
+    state.reviewLog.push({ key, params, kind, number, time: clock(elapsed / duration) });
+    if (state.reviewLog.length > C.maxLog) state.reviewLog.shift();
+  }
+  function clock(fraction) {
+    const minute = 11 * 60 + Math.floor(Math.min(1, fraction) * 8 * 60);
+    return String(Math.floor(minute / 60)).padStart(2, '0') + ':' + String(minute % 60).padStart(2, '0');
+  }
+  function persist() {
+    if (!P.Save.save(state, checkpoint)) saveNotice = copy.feedback.saveUnavailable;
+  }
+  function missingResources() {
+    return ['dough', 'sauce', 'cheese'].filter(id => !state.inventory[id]);
+  }
+  function workReason(kind) {
+    if (state.phase !== 'management') return copy.feedback.beforeOpen;
+    if (state.action) return state.action.type === kind ? '' : copy.feedback.finishWork;
+    if (kind === 'dough') return state.inventory.flour ? '' : copy.feedback.noFlour;
+    const missing = missingResources();
+    return missing.length ? fill(copy.feedback.noIngredients, {
+      items: missing.map(id => '1 ' + (copy.names[id] || id).toLowerCase()).join(' + ')
+    }) : '';
+  }
+  function openReason() {
+    if (state.phase !== 'management') return copy.feedback.beforeOpen;
+    if (state.action) return copy.feedback.finishWork;
+    if (!state.health) return copy.feedback.noHealth;
+    const microwave = state.upgrades.includes('clean_microwave');
+    if (!state.inventory.slices) return microwave ? copy.feedback.noTray : copy.feedback.noMicrowaveOrTray;
+    return microwave ? '' : copy.feedback.noMicrowave;
+  }
+  function availableToBuy(id) {
+    if (state.phase !== 'management') return copy.feedback.beforeOpen;
+    if (id === 'microwave' && state.upgrades.includes('clean_microwave')) return copy.feedback.installedAlready;
+    return state.cash >= cost(id) ? '' : copy.feedback.noCash;
+  }
+  function entryLine(row) {
+    const p = { ...row.params };
+    if (p.mood) p.line = copy.reactions[p.mood]?.[p.lineIndex] || p.line;
+    return fill(copy.counter[row.key], p);
+  }
+  function currentOutcome() {
+    const customer = state.dayRun?.customer;
+    if (!customer) return null;
+    const visitor = customer.number;
+    if (customer.stage === 'arriving') return { kind: 'arriving', text: copy.counter.arrivalShort, visitor, amount: 0 };
+    const outcome = customer.outcome;
+    const isMiss = outcome.kind === 'miss';
+    const text = isMiss ? (state.inventory.slices ? copy.counter.atCapacity : copy.counter.soldOut) : outcome.text;
+    return { visitor, kind: outcome.kind, text, amount: outcome.revenue };
+  }
+  function recordOutcome(customer) {
+    const result = customer.outcome;
+    let key = 'sale';
+    if (result.kind === 'passed') key = 'walk';
+    if (result.kind === 'miss') key = state.inventory.slices ? 'busy' : 'out';
+    const params = { n: customer.number, line: result.text, money: cash(result.revenue),
+      mood: result.kind, lineIndex: copy.reactions[result.kind]?.indexOf(result.text) };
+    addLog(key, params, result.kind === 'miss' || result.kind === 'passed' ? 'walk' : 'sale', customer.number);
+  }
+  // Translate the dispatched checkpoint effect for the editable receipt. The
+  // numerical values come from config; writing a line never applies its effect.
+  function effectSummary(id) {
+    const E = C.events;
+    const values = {
+      big_game: { count: E.bigGame }, rain: { percent: 100 * E.rain },
+      scratch: { cash: cash(E.scratch) }, good_tv: { rep: E.interview }, bad_tv: { rep: E.interview },
+      cat: { rep: E.catRep, dirt: E.catDirt }, garbage: {}, windfall: { multiple: C.recycling.windfall },
+      weekend: { count: E.weekend }, rats: {}, sympathy: { cash: cash(E.sympathyCash) },
+      wheelchair: { count: C.recycling.capacity, rep: C.recycling.wheelchairRep }
+    };
+    return fill(copy.effects[id], values[id]);
+  }
+  function receiptFor(r) {
+    const events = r.events.map(e => {
+      const candidates = entriesByEffect.get(e.id);
+      const content = copy.events.find(v => v.id === e.copyId) || candidates[(r.day - 1) % candidates.length];
+      return { title: content.title, message: content.message, effect: effectSummary(e.id) };
+    });
+    let template = copy.receipt.sellThroughClue, count = 0;
+    if (r.soldOut) { template = copy.receipt.stockClue; count = r.soldOut; }
+    else if (r.turnedAway) { template = copy.receipt.capacityClue; count = r.turnedAway; }
+    else if (r.passed) template = state.inventory.napkins ? copy.receipt.wasteClue : copy.receipt.supplyClue;
+    else if (r.spoiledSlices) { template = copy.receipt.overprepClue; count = r.spoiledSlices; }
+    const clue = fill(template, { count, passed: r.passed, visitors: r.potential });
+    return { prepared: r.served + r.spoiledSlices, sold: r.served, leftovers: r.spoiledSlices,
+      sales: r.revenue, spending: r.expenseTotal, change: r.net, clue, events,
+      eventTitle: events.map(e => e.title).join(' / '),
+      eventMessage: events.length ? events.map(e => e.message + ' ' + e.effect).join(' ') : copy.receipt.quiet,
+      startCash: r.startCash, endCash: r.endCash, healthChange: r.healthChange,
+      visitors: r.potential, passed: r.passed, soldOut: r.soldOut };
+  }
+  function viewModel() {
+    const phase = state.phase === 'management' ? 'prep' : state.phase === 'day' ? 'service' : 'report';
+    const run = state.dayRun, t = state.today, r = state.report;
+    const receipt = r ? receiptFor(r) : null;
+    const work = state.action ? { kind: state.action.type === 'prepare' ? 'slices' : 'dough',
+      progress: Math.round(100 * (1 - state.action.remaining / state.action.total)) } : null;
+    const noDough = workReason('dough'), noSlices = workReason('prepare'), noOpen = openReason();
+    const costs = {}, canBuy = {}, buyReason = {};
+    for (const id of [...ids, 'microwave']) {
+      costs[id] = cost(id); buyReason[id] = availableToBuy(id); canBuy[id] = !buyReason[id];
+    }
+    return { phase, day: state.day, cash: state.cash, health: state.health, reputation: state.rep, price: state.price,
+      stock: { ...state.inventory }, costs, microwave: state.upgrades.includes('clean_microwave'), work,
+      workStep: { dough: P.Logic.clickPower(state, 'dough'), slices: P.Logic.clickPower(state, 'prepare') },
+      forecast: { visitors: run || receipt ? t.potential : P.Customers.forecast(state), capacity: P.State.capacity(state),
+        chance: Math.round(P.Customers.chance(state) * 1000) / 10 },
+      prepared: receipt?.prepared ?? (state.inventory.slices + t.served), sold: t.served,
+      possibleSales: state.inventory.slices * state.price, sales: t.income.slices + t.income.drinks, spending: P.State.sum(t.expenses), openingCash: t.startCash,
+      paused, visitorsSeen: run?.customer?.number ?? (receipt ? t.potential : 0),
+      serviceProgress: run ? run.elapsed / run.duration : receipt ? 1 : 0,
+      log: logEntries().map(row => ({ time: row.time, text: entryLine(row), kind: row.kind, visitor: row.number })),
+      reaction: currentOutcome(), receipt, notice, saveNotice, ready: !noOpen, openReason: noOpen,
+      canBuy, buyReason, canDough: !noDough, canPrepare: !noSlices, workReasons: { dough: noDough, slices: noSlices },
+      priceMin: C.price.min, priceMax: C.price.max, priceStep: C.price.step, batchSize: C.slicesPerBatch,
+      dayTerminal: state.phase === 'score' || (phase === 'report' && (state.health === 0 || state.day >= C.maxDays)) };
+  }
+  function render() {
+    window.StandView.render(viewModel(), copy);
+  }
+  function reset() {
+    checkpoint = null; paused = false; panelOpen = false; saveNotice = ''; lastPaint = '';
+    state = P.State.create(seed); configureEvent(1); notice = copy.feedback.start; persist(); render();
+  }
+  function action(name, id) {
+    if (name === 'panel') { panelOpen = id === true || id === 'true'; lastTime = performance.now(); return; }
+    if (name === 'reset') { reset(); return; }
+    if (name === 'pause') {
+      if (state.phase === 'day') { paused = !paused; lastTime = performance.now(); render(); }
+      return;
+    }
+    if (name === 'next') {
+      if (state.phase !== 'report') return;
+      if (viewModel().dayTerminal) { reset(); return; }
+      // An end-of-day modifier may refer to the next day's event copy.
+      configureEvent(state.day + 1);
+      P.Logic.continueDay(state);
+      state.reviewLog = []; notice = copy.feedback.newDay; persist(); render(); return;
+    }
+    if (state.phase !== 'management') return;
+    let type = name, item = id;
+    if (name === 'work') type = id === 'slices' ? 'prepare' : id;
+    if (name === 'microwave' || (name === 'buy' && item === 'microwave')) { type = 'upgrade'; item = 'clean_microwave'; }
+    if (type === 'price' && (String(id) === '1' || String(id) === '-1')) item = Number(id) === 1 ? 'up' : 'down';
+    if (!['buy', 'upgrade', 'dough', 'prepare', 'price', 'open'].includes(type)) return;
+    if (type === 'buy' && !supportedStock.has(item)) return;
+    if (type === 'upgrade' && item !== 'clean_microwave') return;
+    if (type === 'open') {
+      const why = openReason();
+      if (why) { notice = why; render(); return; }
+      checkpoint = P.Save.clone(state);
+    }
+    const result = P.Logic.action(state, type, item);
+    if (!result.ok) {
+      notice = type === 'buy' || type === 'upgrade' ? availableToBuy(type === 'upgrade' ? 'microwave' : item) :
+        workReason(type); render(); return;
+    }
+    switch (type) {
+      case 'buy': notice = fill(copy.feedback.bought, { item: copy.names[item], cost: cash(cost(item)) }); break;
+      case 'upgrade': notice = fill(copy.feedback.installed, { cost: cash(cost('microwave')) }); break;
+      case 'dough':
+      case 'prepare': {
+        const makingDough = type === 'dough';
+        if (!state.action) notice = makingDough ? copy.feedback.doughReady : fill(copy.feedback.slicesReady, { batch: C.slicesPerBatch });
+        else notice = fill(makingDough ? copy.feedback.doughWorking : copy.feedback.slicesWorking,
+          { progress: Math.round(100 * (1 - state.action.remaining / state.action.total)) });
+        break;
+      }
+      case 'price': notice = fill(copy.feedback.price, { price: cash(state.price) }); break;
+      case 'open':
+        state.reviewLog = []; notice = ''; paused = false; lastTime = performance.now(); lastPaint = '';
+        addLog('opened', { visitors: state.today.potential }, 'open', 0);
+        break;
+    }
+    persist(); render();
+  }
+  // Small steps preserve the checkpoint's separate arrival and decision beats.
+  // Hidden tabs and secondary panels suspend the review's wall clock.
+  function tick() {
+    const now = performance.now();
+    const delta = Math.min((now - lastTime) / 1000, 0.3);
+    lastTime = now;
+    if (document.hidden || paused || panelOpen || state.phase !== 'day') return;
+    const before = state.dayRun.customer;
+    P.Logic.tick(state, delta);
+    if (state.phase === 'report') {
+      addLog('closed', { sold: state.today.served }, 'close', 0);
+      checkpoint = null; notice = ''; persist(); render(); return;
+    }
+    const current = state.dayRun.customer;
+    if (current && current.number !== before?.number)
+      addLog('arrived', { n: current.number }, 'arrival', current.number);
+    if (current?.stage === 'result' && (before?.stage !== 'result' || before.number !== current.number))
+      recordOutcome(current);
+    // The first day is below all milestones. Later continuing samples use the
+    // same checkpoint unlocks; acknowledge them after settlement of each beat.
+    if (state.pendingMilestones.length) state.pendingMilestones = [];
+    const frameKey = Math.floor(state.dayRun.elapsed * 4) + '/' + (current?.number || 0) + '/' + current?.stage;
+    if (frameKey !== lastPaint) { lastPaint = frameKey; render(); }
+  }
+  window.Stand = { action };
+  document.addEventListener('stand-action', event => action(event.detail.action, event.detail.id));
+  document.addEventListener('visibilitychange', () => { lastTime = performance.now(); });
+  window.setInterval(tick, 120);
+  render();
+})();
+
+</script>
+</body></html>
