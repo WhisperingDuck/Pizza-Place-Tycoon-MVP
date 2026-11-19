@@ -22,7 +22,7 @@ Give each entry a permanent, unique lowercase ID. Use underscores between words.
 
 1. Save the JSON and run `python3 package.py`. It checks missing strings, placeholders, repeat IDs and unknown effects before replacing the playable file.
 2. To audition your example, add `#event=awning_drip` to the local HTML file’s address **and reload**. Reset the sample, make one batch, install the microwave and open. Forcing a review event replaces the natural closing draw and runs the chosen engine effect once during settlement.
-3. Read the actual receipt. Check the long message in the compact layout and confirm that the next morning’s forecast reflects the rain. For a quiet closing, repeat with `#event=none`. For the regular sample, remove the fragment, reload and reset.
+3. Read the actual receipt. Check the long message in the compact layout and confirm that the next morning’s forecast reflects the rain. For a quiet closing, repeat with `#mode=sample&event=none`. For the regular sample, use `#mode=sample`, reload and reset. Removing the entire fragment returns to the continuing run.
 4. Shorten labels if they wrap awkwardly at 390 pixels. Customer lines can be longer; the full counter log retains them. Keep `draft: true` on each event until the owner approves that line.
 
 The standalone file embeds a snapshot of the JSON at packaging time. Edit the source JSON to keep revisions reproducible. Changing an event’s ID changes its preview address. Changing only its title or message preserves the address.

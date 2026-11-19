@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "checks": 168,
+  "browsers": [
+    "chromium",
+    "webkit"
+  ],
+  "sizes": [
+    [
+      1596,
+      947
+    ],
+    [
+      1024,
+      600
+    ],
+    [
+      390,
+      844
+    ]
+  ]
+}

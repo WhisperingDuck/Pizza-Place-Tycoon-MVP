@@ -1,20 +1,17 @@
-# One-day design review
+# Stand integration QA
 
-**Final result: passed** for the Wednesday prototype walkthrough. The owner's decision on feel and pace is open.
+The one-day stand is the owner's approved visual and interaction reference. Its continuing-game integration passed browser review on November 19, 2026.
 
-| CSS viewport | Preparation | Service | Receipt and following day |
+| CSS viewport | Preparation | Service | Receipt and continuation |
 | --- | --- | --- | --- |
-| 1596 × 947 | Flour and dough together, sauce and cheese at the tray, full price board | Four recent entries and full log | Receipt, observation and next-day button visible |
-| 1024 × 600 | Same controls below a shallower landscape | Three recent entries | Continue visible beneath the receipt |
-| 390 × 844 | Two prep stations above the price board | Totals and three recent entries stacked | Receipt above the observation and next-day action |
+| 1596 × 947 | Stand, three prep areas and price board | Totals and recent counter entries | Receipt, observation and next-day button visible |
+| 1024 × 600 | Same controls under a shallower landscape | Totals and three recent entries | Complete receipt and continuation visible |
+| 390 × 844 | Two prep stations above the price board | Stacked totals and recent log | Receipt, closing-note link and next-day action visible |
 
-The review used macOS WebKit with the HTML loaded from memory and external requests blocked. The real interface controls drove purchases, five dough presses, four slice presses, pricing, opening, pause and resume, log inspection, closing, day-two preparation and confirmed reset. A controlled clock made the captures repeatable. At all three viewports, the document fit the window horizontally and vertically through the core route.
+Chromium and WebKit each passed the complete sample and Days 1–5 at every viewport. The document and primary action fit each size. Screenshots were reviewed for scene composition, service feedback, phone receipts and long copy. Secondary panels keep their headings and Back control visible while their contents scroll.
 
-The original November drawing supplied the stand proportions, overhead sign, awning, trees, poles, counter and road. The microwave appears after purchase, slices appear on the counter after prep, and closing changes the light and sign. The captures show the actual ready desktop counter and a compact service transaction.
+The sample retains the approved $3.25 / $53 result. The continuing run uses unchanged v2.2.0 rules, normal randomness and compatible saves. Browser checks cover partial work, service restoration, settled receipts, five-day ledgers, restarts, isolated saves, Enter/Space, Tab/Shift+Tab and Escape/Back focus return. The actual standalone file passed a 20.5-second real-time sample without external requests.
 
-- **Cash reconciliation.** At $3.25 and one batch, four sales plus two walkaways account for all six visitors. $64 opening cash − $4 ingredients − $20 equipment + $13 sales = $53 closing cash. Four slices expire. Day 2 opens with $53, 9/10 health and the microwave installed.
-- **Keyboard.** Enter opens Stockroom, Tab stays in the dialog, Escape returns focus to Stockroom and Space buys flour. Back returns focus to the log without advancing the queue. Manual pause persists across panel use.
-- **Content and edge cases.** A quiet receipt has an empty-event line. A forced rain event shows its effect. A long test message fits behind the full closing note on the phone, with its final sentence accessible. Packaging checks required copy, duplicate IDs, placeholders and unknown effect references.
-- **Candidate.** All 36 checkpoint checks pass. The adapter also passed save isolation, mid-service reload to the pre-opening checkpoint and settled-receipt reload checks. Tested rule work uses measured presses for both jobs. The earlier 26-check revision has no confirmed source match.
+A queued native dialog close event could interfere with a newly opened panel. Closing now restores focus and clears its pause synchronously; stale events leave an open panel alone. The regression route opens and closes all four secondary panels consecutively.
 
-The original candidate and its tests remain separate from the sketch. Full-run interface coverage, physical-device testing and the owner's release playthrough belong to the integration and itch.io review.
+See `review-status.md` for provenance, results and remaining owner review. `verification/` holds the final passing browser log, summary and selected captures. The earlier approved reference captures remain in `previews/`.

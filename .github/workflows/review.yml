@@ -21,7 +21,7 @@ jobs:
         run: npm test
       - name: Install browser checks
         run: |
-          npm install --ignore-scripts --no-audit --no-fund --package-lock=false
+          npm ci --ignore-scripts --no-audit --no-fund
           npx playwright install --with-deps chromium webkit
       - name: Exercise keyboard and all three review sizes
         run: npm run test:browser

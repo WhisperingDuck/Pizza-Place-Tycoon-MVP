@@ -29,7 +29,7 @@ Edit interface text, reactions, catalogue labels and event copy in [source/conte
 ```sh
 python3 package.py
 npm test
-npm install
+npm ci
 npx playwright install --with-deps chromium webkit
 npm run test:browser
 ```
@@ -37,3 +37,7 @@ npm run test:browser
 The PR workflow checks packaging, checkpoint checksums, save/simulation regressions, both Chromium and WebKit at **1596 × 947**, **1024 × 600** and **390 × 844**, plus a real-time sample. Captures and the portable HTML are collected as an artifact.
 
 This is a draft review build. Owner approval of the itch.io draft is separate; this workflow does not publish, deploy or merge it.
+
+The November 19 integration passed all **36 checkpoint checks, 17 model checks and 168 browser checks**. See [review-status.md](review-status.md) and [verification/](verification/) for results and captures. The actual HTML opened from disk passed the real-time sample with $53 and no external requests.
+
+Service has a 20-second minimum; the checkpoint extends busy days so each visitor has time to arrive and decide. Reloading service restores the prepared checkpoint. The continuing run can proceed to Day 6; its 100-day limit remains.
