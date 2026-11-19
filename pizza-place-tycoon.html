@@ -212,8 +212,15 @@ function paintSheet(force=false){
  el('sheetBody').scrollTop=scroll;
 }
 function show(type,button){opener=button;activeDialog=type;lastSheet='';dispatch('panel',true);paintSheet(true);el('sheet').showModal();window.StandScene?.paint(vm);el('closeSheet').focus({preventScroll:true});}
-function close(){if(el('sheet').open)el('sheet').close();}
-el('sheet').addEventListener('close',()=>{activeDialog='';lastSheet='';dispatch('panel',false);window.StandScene?.paint(vm);if(opener?.isConnected&&!opener.disabled)opener.focus({preventScroll:true});opener=null;});
+function finishClose(){
+ if(el('sheet').open||!activeDialog)return;
+ activeDialog='';lastSheet='';dispatch('panel',false);window.StandScene?.paint(vm);
+ if(opener?.isConnected&&!opener.disabled)opener.focus({preventScroll:true});opener=null;
+}
+function close(){if(el('sheet').open){el('sheet').close();finishClose();}}
+// Complete focus return now; a queued native close event may arrive after
+// another panel opens, and must not clear that panel's pause or opener.
+el('sheet').addEventListener('close',finishClose);
 el('sheet').addEventListener('click',e=>{if(e.target!==el('sheet'))return;const r=el('sheet').getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)close();});
 el('closeSheet').addEventListener('click',close);
 document.addEventListener('keydown',e=>{
