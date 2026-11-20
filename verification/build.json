@@ -1,0 +1,9 @@
+{
+  "version": "2.3.0",
+  "html": "pizza-place-tycoon.html",
+  "sha256": "60ec51559bff28ba3bef65ab2eb45bac5621ffb512660713f5822bc7aa88555b",
+  "model_checks": 31,
+  "browser_checks": 180,
+  "checkpoint_reference_checks": 36,
+  "comparison_closing_cash_cents": 5300
+}

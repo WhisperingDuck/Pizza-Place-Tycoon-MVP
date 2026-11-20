@@ -1,0 +1,98 @@
+LAYOUT chromium-1596 empty {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1279,"y":842.703125,"right":1424,"bottom":882.375},"unique":true}
+LAYOUT chromium-1596 prepared {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1279,"y":842.703125,"right":1424,"bottom":882.375},"unique":true}
+LAYOUT chromium-1596 service {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1251.546875,"y":842.703125,"right":1424,"bottom":882.375},"unique":true}
+LAYOUT chromium-1596 receipt {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1226.359375,"y":842.703125,"right":1424,"bottom":882.375},"unique":true}
+LAYOUT chromium-1596 day2 {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1279,"y":842.703125,"right":1424,"bottom":882.375},"unique":true}
+PASS chromium-1596 discovery, failed mix, repeat protection, menu swap and reload
+LAYOUT chromium-1596 day2 prep {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1279,"y":842.703125,"right":1424,"bottom":882.375},"unique":true}
+LAYOUT chromium-1596 day2 receipt {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1226.359375,"y":842.703125,"right":1424,"bottom":882.375},"unique":true}
+LAYOUT chromium-1596 day3 prep {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1279,"y":842.703125,"right":1424,"bottom":882.375},"unique":true}
+LAYOUT chromium-1596 day3 receipt {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1226.359375,"y":842.703125,"right":1424,"bottom":882.375},"unique":true}
+LAYOUT chromium-1596 day4 prep {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1279,"y":842.703125,"right":1424,"bottom":882.375},"unique":true}
+LAYOUT chromium-1596 day4 receipt {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1226.359375,"y":842.703125,"right":1424,"bottom":882.375},"unique":true}
+LAYOUT chromium-1596 day5 prep {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1279,"y":842.703125,"right":1424,"bottom":882.375},"unique":true}
+LAYOUT chromium-1596 day5 receipt {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1226.359375,"y":842.703125,"right":1424,"bottom":882.375},"unique":true}
+PASS chromium-1596 keyboard, Days 1–5, save/reload, separate sample and restart
+LAYOUT chromium-1024 empty {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":847,"y":474.34375,"right":992,"bottom":510.015625},"unique":true}
+LAYOUT chromium-1024 prepared {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":847,"y":474.34375,"right":992,"bottom":510.015625},"unique":true}
+LAYOUT chromium-1024 service {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":827.546875,"y":474.1875,"right":992,"bottom":509.859375},"unique":true}
+LAYOUT chromium-1024 receipt {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":802.359375,"y":474.1875,"right":992,"bottom":509.859375},"unique":true}
+LAYOUT chromium-1024 day2 {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":847,"y":474.34375,"right":992,"bottom":510.015625},"unique":true}
+PASS chromium-1024 discovery, failed mix, repeat protection, menu swap and reload
+LAYOUT chromium-1024 day2 prep {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":847,"y":474.34375,"right":992,"bottom":510.015625},"unique":true}
+LAYOUT chromium-1024 day2 receipt {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":802.359375,"y":474.1875,"right":992,"bottom":509.859375},"unique":true}
+LAYOUT chromium-1024 day3 prep {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":847,"y":474.34375,"right":992,"bottom":510.015625},"unique":true}
+LAYOUT chromium-1024 day3 receipt {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":802.359375,"y":474.1875,"right":992,"bottom":509.859375},"unique":true}
+LAYOUT chromium-1024 day4 prep {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":847,"y":474.34375,"right":992,"bottom":510.015625},"unique":true}
+LAYOUT chromium-1024 day4 receipt {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":802.359375,"y":474.1875,"right":992,"bottom":509.859375},"unique":true}
+LAYOUT chromium-1024 day5 prep {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":847,"y":474.34375,"right":992,"bottom":510.015625},"unique":true}
+LAYOUT chromium-1024 day5 receipt {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":802.359375,"y":474.1875,"right":992,"bottom":509.859375},"unique":true}
+PASS chromium-1024 keyboard, Days 1–5, save/reload, separate sample and restart
+LAYOUT chromium-390 empty {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":253,"y":720.0625,"right":369,"bottom":754.0625},"unique":true}
+LAYOUT chromium-390 prepared {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":253,"y":682.34375,"right":369,"bottom":716.34375},"unique":true}
+LAYOUT chromium-390 service {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":233.75,"y":713.546875,"right":369,"bottom":747.546875},"unique":true}
+LAYOUT chromium-390 receipt {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":212.171875,"y":656.984375,"right":369,"bottom":690.984375},"unique":true}
+LAYOUT chromium-390 day2 {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":253,"y":689.734375,"right":369,"bottom":723.734375},"unique":true}
+PASS chromium-390 discovery, failed mix, repeat protection, menu swap and reload
+LAYOUT chromium-390 day2 prep {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":253,"y":682.34375,"right":369,"bottom":716.34375},"unique":true}
+LAYOUT chromium-390 day2 receipt {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":212.171875,"y":676.578125,"right":369,"bottom":710.578125},"unique":true}
+LAYOUT chromium-390 day3 prep {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":253,"y":682.34375,"right":369,"bottom":716.34375},"unique":true}
+LAYOUT chromium-390 day3 receipt {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":212.171875,"y":690.078125,"right":369,"bottom":724.078125},"unique":true}
+LAYOUT chromium-390 day4 prep {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":253,"y":682.34375,"right":369,"bottom":716.34375},"unique":true}
+LAYOUT chromium-390 day4 receipt {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":212.171875,"y":670.484375,"right":369,"bottom":704.484375},"unique":true}
+LAYOUT chromium-390 day5 prep {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":253,"y":682.34375,"right":369,"bottom":716.34375},"unique":true}
+LAYOUT chromium-390 day5 receipt {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":212.171875,"y":670.484375,"right":369,"bottom":704.484375},"unique":true}
+LAYOUT chromium-390 event none {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":212.171875,"y":656.984375,"right":369,"bottom":690.984375},"unique":true}
+LAYOUT chromium-390 event rain_check {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":212.171875,"y":670.484375,"right":369,"bottom":704.484375},"unique":true}
+PASS chromium-390 quiet closing and long editable rain event
+PASS chromium-390 keyboard, Days 1–5, save/reload, separate sample and restart
+LAYOUT webkit-1596 empty {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1279,"y":842.75,"right":1424,"bottom":881.75},"unique":true}
+LAYOUT webkit-1596 prepared {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1279,"y":842.75,"right":1424,"bottom":881.75},"unique":true}
+LAYOUT webkit-1596 service {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1251.546875,"y":842.75,"right":1424,"bottom":881.75},"unique":true}
+LAYOUT webkit-1596 receipt {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1226.359375,"y":842.75,"right":1424,"bottom":881.75},"unique":true}
+LAYOUT webkit-1596 day2 {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1279,"y":842.75,"right":1424,"bottom":881.75},"unique":true}
+PASS webkit-1596 discovery, failed mix, repeat protection, menu swap and reload
+LAYOUT webkit-1596 day2 prep {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1279,"y":842.75,"right":1424,"bottom":881.75},"unique":true}
+LAYOUT webkit-1596 day2 receipt {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1226.359375,"y":842.75,"right":1424,"bottom":881.75},"unique":true}
+LAYOUT webkit-1596 day3 prep {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1279,"y":842.75,"right":1424,"bottom":881.75},"unique":true}
+LAYOUT webkit-1596 day3 receipt {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1226.359375,"y":842.75,"right":1424,"bottom":881.75},"unique":true}
+LAYOUT webkit-1596 day4 prep {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1279,"y":842.75,"right":1424,"bottom":881.75},"unique":true}
+LAYOUT webkit-1596 day4 receipt {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1226.359375,"y":842.75,"right":1424,"bottom":881.75},"unique":true}
+LAYOUT webkit-1596 day5 prep {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1279,"y":842.75,"right":1424,"bottom":881.75},"unique":true}
+LAYOUT webkit-1596 day5 receipt {"width":1596,"height":947,"scrollWidth":1596,"scrollHeight":947,"primary":{"x":1226.359375,"y":842.75,"right":1424,"bottom":881.75},"unique":true}
+PASS webkit-1596 keyboard, Days 1–5, save/reload, separate sample and restart
+LAYOUT webkit-1024 empty {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":847,"y":473,"right":992,"bottom":508},"unique":true}
+LAYOUT webkit-1024 prepared {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":847,"y":473,"right":992,"bottom":508},"unique":true}
+LAYOUT webkit-1024 service {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":827.546875,"y":473,"right":992,"bottom":508},"unique":true}
+LAYOUT webkit-1024 receipt {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":802.359375,"y":473,"right":992,"bottom":508},"unique":true}
+LAYOUT webkit-1024 day2 {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":847,"y":473,"right":992,"bottom":508},"unique":true}
+PASS webkit-1024 discovery, failed mix, repeat protection, menu swap and reload
+LAYOUT webkit-1024 day2 prep {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":847,"y":473,"right":992,"bottom":508},"unique":true}
+LAYOUT webkit-1024 day2 receipt {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":802.359375,"y":473,"right":992,"bottom":508},"unique":true}
+LAYOUT webkit-1024 day3 prep {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":847,"y":473,"right":992,"bottom":508},"unique":true}
+LAYOUT webkit-1024 day3 receipt {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":802.359375,"y":473,"right":992,"bottom":508},"unique":true}
+LAYOUT webkit-1024 day4 prep {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":847,"y":473,"right":992,"bottom":508},"unique":true}
+LAYOUT webkit-1024 day4 receipt {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":802.359375,"y":473,"right":992,"bottom":508},"unique":true}
+LAYOUT webkit-1024 day5 prep {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":847,"y":473,"right":992,"bottom":508},"unique":true}
+LAYOUT webkit-1024 day5 receipt {"width":1024,"height":600,"scrollWidth":1024,"scrollHeight":600,"primary":{"x":802.359375,"y":473,"right":992,"bottom":508},"unique":true}
+PASS webkit-1024 keyboard, Days 1–5, save/reload, separate sample and restart
+LAYOUT webkit-390 empty {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":253,"y":716.328125,"right":369,"bottom":750.328125},"unique":true}
+LAYOUT webkit-390 prepared {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":253,"y":679.328125,"right":369,"bottom":713.328125},"unique":true}
+LAYOUT webkit-390 service {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":233.75,"y":703.328125,"right":369,"bottom":737.328125},"unique":true}
+LAYOUT webkit-390 receipt {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":212.171875,"y":651.328125,"right":369,"bottom":685.328125},"unique":true}
+LAYOUT webkit-390 day2 {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":253,"y":686.328125,"right":369,"bottom":720.328125},"unique":true}
+PASS webkit-390 discovery, failed mix, repeat protection, menu swap and reload
+LAYOUT webkit-390 day2 prep {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":253,"y":679.328125,"right":369,"bottom":713.328125},"unique":true}
+LAYOUT webkit-390 day2 receipt {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":212.171875,"y":670.328125,"right":369,"bottom":704.328125},"unique":true}
+LAYOUT webkit-390 day3 prep {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":253,"y":679.328125,"right":369,"bottom":713.328125},"unique":true}
+LAYOUT webkit-390 day3 receipt {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":212.171875,"y":683.328125,"right":369,"bottom":717.328125},"unique":true}
+LAYOUT webkit-390 day4 prep {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":253,"y":679.328125,"right":369,"bottom":713.328125},"unique":true}
+LAYOUT webkit-390 day4 receipt {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":212.171875,"y":664.328125,"right":369,"bottom":698.328125},"unique":true}
+LAYOUT webkit-390 day5 prep {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":253,"y":679.328125,"right":369,"bottom":713.328125},"unique":true}
+LAYOUT webkit-390 day5 receipt {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":212.171875,"y":664.328125,"right":369,"bottom":698.328125},"unique":true}
+LAYOUT webkit-390 event none {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":212.171875,"y":651.328125,"right":369,"bottom":685.328125},"unique":true}
+LAYOUT webkit-390 event rain_check {"width":390,"height":844,"scrollWidth":390,"scrollHeight":844,"primary":{"x":212.171875,"y":664.328125,"right":369,"bottom":698.328125},"unique":true}
+PASS webkit-390 quiet closing and long editable rain event
+PASS webkit-390 keyboard, Days 1–5, save/reload, separate sample and restart
+PASS local-file real-time sample 20.4s, prepared save and zero external requests
+180 browser checks passed.
