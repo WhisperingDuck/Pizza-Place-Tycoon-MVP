@@ -1,0 +1,24 @@
+{
+  "maxToppings": 3,
+  "ingredients": [
+    {"id":"pepperoni","name":"Pepperoni","cost":55,"day":3,"sold":12},
+    {"id":"mushroom","name":"Mushroom","cost":35,"day":3,"sold":20},
+    {"id":"green_peppers","name":"Green Peppers","cost":35,"day":4,"sold":35},
+    {"id":"onion","name":"Onion","cost":25,"day":2,"sold":8},
+    {"id":"pickles","name":"Pickles","cost":30,"day":2,"sold":8},
+    {"id":"pineapple","name":"Pineapple","cost":40,"day":4,"sold":35},
+    {"id":"ham","name":"Ham","cost":60,"day":5,"sold":45}
+  ],
+  "recipes": [
+    {"id":"plain","name":"Plain Slice","ingredients":[],"bonus":0,"delight":0,"note":"Cheese-adjacent optimism on dough.","clue":"The one you started with."},
+    {"id":"pepperoni","name":"Pepperoni Slice","ingredients":["pepperoni"],"bonus":100,"delight":0.02,"note":"The safe crowd-pleaser with enough pepperoni to look intentional.","clue":"A familiar red circle. Keep this one simple."},
+    {"id":"mushroom","name":"Mushroom Slice","ingredients":["mushroom"],"bonus":75,"delight":0.02,"note":"A familiar mushroom slice with roadside-foraged energy.","clue":"One topping, found in the woods."},
+    {"id":"green_peppers","name":"Green Pepper Slice","ingredients":["green_peppers"],"bonus":75,"delight":0.02,"note":"A bright pepper slice that looks slightly fresher than the building.","clue":"One green topping. No need to overthink it."},
+    {"id":"classic","name":"The Classic","ingredients":["pepperoni","mushroom"],"bonus":175,"delight":0.07,"note":"Pepperoni and mushroom. Safe, sturdy and hard to argue with.","clue":"The red circles and the woodland topping get along."},
+    {"id":"dill_icious","name":"Dill-icious","ingredients":["pickles","onion"],"bonus":125,"delight":0.04,"note":"Pickles and onion for customers who respect brine.","clue":"Briny and sharp. Try the two toppings in the Day 2 delivery."},
+    {"id":"forest_forage","name":"Forest Forage","ingredients":["mushroom","green_peppers","onion"],"bonus":175,"delight":0.06,"note":"A woodsy vegetable slice with mushrooms, peppers and onion.","clue":"Three vegetables: woodland, green and sharp."},
+    {"id":"ham_cheese","name":"Classic Ham & Cheese","ingredients":["ham"],"bonus":100,"delight":0.03,"note":"A plainspoken ham-and-cheese slice for uncomplicated customers.","clue":"The cheese is already on the slice. Add one mild meat."},
+    {"id":"hawaiian","name":"Hawaiian Dream","ingredients":["pineapple","ham"],"bonus":175,"delight":0.06,"note":"Pineapple and ham. The classic debate in slice form.","clue":"A tropical fruit and a mild meat. A familiar argument."},
+    {"id":"sweet_savory","name":"Sweet & Savory","ingredients":["onion","pineapple"],"bonus":125,"delight":0.04,"note":"Pineapple and onion. A confident little argument.","clue":"Sweet tropical fruit meets the sharp vegetable."}
+  ]
+}
