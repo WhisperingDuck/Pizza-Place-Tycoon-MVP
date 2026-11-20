@@ -2,11 +2,12 @@
 
 Download **[pizza-place-tycoon.html](pizza-place-tycoon.html)** and open it in a browser. It is self-contained and makes no external requests.
 
-The continuing game uses the approved roadside stand, prep controls, live counter log and receipt, backed by the unchanged v2.2.0 checkpoint. Play Days 1–5 for this review; the checkpoint's 100-day limit remains unchanged.
+**v2.3.0** carries the approved stand into a continuing game with clearer customer outcomes, a persistent slices-sold total and a recipe notebook. Play Days 1–5 to reach the early deliveries and try discoveries. The 100-day limit remains.
 
 - **Stand**: clean, train, order food, return cans, manage recipes and read the previous five receipts.
 - **Stockroom**: buy five units per press. The three buttons at the prep bench buy one unit each.
 - **Equipment**: the checkpoint's six upgrades, with their actual prices, unlocks and effects.
+- **Recipes**: select one to three stocked toppings and test a prepared slice. Successful combinations fill the notebook; failed mixes stay in the notes. Tests use one slice and one portion of each topping. Repeating a known or failed mix costs nothing. Put a new discovery on the menu directly from its reveal.
 - **Play sample**: switch to the repeatable seed-6 comparison. **Return to run** restores the continuing game. The two saves and restart controls are separate.
 - **Restart run**: asks before replacing the continuing save. Cancelling keeps it intact.
 
@@ -18,13 +19,13 @@ Six visitors produce four sales and two walkaways: $64 − $4 ingredients − $2
 
 ## Saves and keyboard
 
-The continuing game retains the checkpoint's `pizza-place-rebuild.run.v1` key, version-2 schema and built-in version-1 migration. A partial job survives reload. Reloading service restores the complete prepared checkpoint with the same random state; a settled receipt is not settled again. Sample saves retain `roadside.one-day.design-v1.*`.
+The continuing game retains the `pizza-place-rebuild.run.v1` key and migrates schema 1/2 to 3. Cash, stock, progress and original unlocked recipes carry forward. A valid original save is backed up once when storage permits. A partial job and discoveries survive reload. Reloading service restores the complete prepared checkpoint with the same luck; a settled receipt is not settled again. The original sample remains on schema 2 in its separate `roadside.one-day.design-v1.*` slots.
 
 Tab/Shift+Tab move between controls. Enter and Space activate buttons. Dialogs trap Tab; Escape/Back closes them and restores focus. Service pauses in a panel and while the tab is hidden. A manually paused day stays paused after a panel closes.
 
 ## Editing and checks
 
-Edit interface text, reactions, catalogue labels and event copy in [source/content.json](source/content.json). Economic effects remain in [checkpoint/js/config.js](checkpoint/js/config.js) and the checkpoint rules; changing an event's prose does not change its effect. [COPY.md](COPY.md) describes previews.
+Edit interface text, outcome labels, reactions, equipment copy and events in [source/content.json](source/content.json). Edit current recipe names, clues, combinations, topping prices and deliveries in [source/recipe-book.json](source/recipe-book.json). Other continuing-game balance is in [engine/js/config.js](engine/js/config.js). The original checkpoint is the isolated comparison engine. [COPY.md](COPY.md) describes previews; [engine/README.md](engine/README.md) describes the rule changes.
 
 ```sh
 python3 package.py
@@ -38,6 +39,6 @@ The PR workflow checks packaging, checkpoint checksums, save/simulation regressi
 
 This is a draft review build. Owner approval of the itch.io draft is separate; this workflow does not publish, deploy or merge it.
 
-The November 19 integration passed all **36 checkpoint checks, 17 model checks and 168 browser checks**. See [review-status.md](review-status.md) and [verification/](verification/) for results and captures. The actual HTML opened from disk passed the real-time sample with $53 and no external requests.
+This version passes **31 model checks and 180 browser checks**. The 36 original checkpoint checks remain a separate reference. See [review-status.md](review-status.md) and [verification/](verification/) for results and captures. The actual HTML opened from disk passes the real-time sample with $53 and no external requests.
 
 Service has a 20-second minimum; the checkpoint extends busy days so each visitor has time to arrive and decide. Reloading service restores the prepared checkpoint. The continuing run can proceed to Day 6; its 100-day limit remains.

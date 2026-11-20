@@ -1,6 +1,6 @@
 {
   "passed": true,
-  "checks": 168,
+  "checks": 180,
   "browsers": [
     "chromium",
     "webkit"

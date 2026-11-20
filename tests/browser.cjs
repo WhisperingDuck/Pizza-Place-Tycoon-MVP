@@ -44,6 +44,30 @@ async function closeDay(page){
  await tap(page,'#primary');await page.clock.runFor(Math.ceil(duration*1000)+1000);
  assert.equal(await page.locator('#report').isVisible(),true,'day settles after its checkpoint-defined duration');
 }
+async function discover(page,tag){
+ const cash=await page.locator('#cash').textContent(),sold=await page.locator('#totalSold').textContent();
+ await tap(page,'#tools [data-dialog="recipes"]');
+ await page.locator('#sheet [data-action="selectTopping"][data-id="onion"]').press('Space');
+ await tap(page,'#sheet [data-action="selectTopping"][data-id="pickles"]');
+ await tap(page,'#sheet [data-action="experiment"]');
+ assert.equal(await page.locator('.recipe-result h3').textContent(),'Dill-icious');
+ assert.equal(await page.locator('.recipe-result').getAttribute('data-found'),'true');
+ assert.equal(await page.locator('#cash').textContent(),cash);assert.equal(await page.locator('#totalSold').textContent(),sold);
+ assert.equal(await page.locator('#sheet [data-action="experiment"]').isDisabled(),true);
+ await capture(page,tag+'-recipe-found');
+ await tap(page,'.recipe-result [data-action="menu"][data-id="dill_icious"]');
+ await tap(page,'#sheet [data-action="selectTopping"][data-id="pickles"]');
+ await tap(page,'#sheet [data-action="experiment"]');
+ assert.equal(await page.locator('.recipe-result').getAttribute('data-found'),'false');
+ assert.equal(await page.locator('#sheet [data-action="experiment"]').isDisabled(),true);
+ await page.keyboard.press('Escape');await page.reload();
+ assert.equal(await page.locator('#trayCount').textContent(),'6 slices');
+ assert.equal(await page.locator('#discoveryCount').textContent(),'2 / 10 recipes found');
+ await tap(page,'#tools [data-dialog="recipes"]');
+ const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem(Pizza.CONFIG.keys.run)).state);
+ assert(saved.recipeBook.known.includes('dill_icious'));assert.deepEqual(saved.menu,['dill_icious']);assert.equal(saved.recipeBook.attempts.length,2);
+ await page.keyboard.press('Escape');checks++;console.log('PASS '+tag+' discovery, failed mix, repeat protection, menu swap and reload');
+}
 async function tools(page,name){
  const selector='#tools [data-dialog="'+name+'"]';await tap(page,selector);
  assert(await page.locator('#sheet').evaluate(el=>el.open));
@@ -64,7 +88,7 @@ async function run(){
   const tag=engine+'-'+width;
   await layout(page,tag+' empty');await prep(page,true,true);await layout(page,tag+' prepared');
   await capture(page,tag+'-prep');
-  for(const name of ['stock','equipment','stand','log'])await tools(page,name);
+  for(const name of ['stock','equipment','recipes','stand','log'])await tools(page,name);
   await tap(page,'#primary');await page.clock.runFor(3000);await tap(page,'#primary');
   const before=await page.locator('#serviceFill').getAttribute('style');await page.clock.runFor(5000);
   assert.equal(await page.locator('#serviceFill').getAttribute('style'),before);
@@ -72,6 +96,8 @@ async function run(){
   await layout(page,tag+' service');await capture(page,tag+'-service');
   await page.reload();assert.equal(await page.locator('#prep').isVisible(),true);assert.equal(await page.locator('#trayCount').textContent(),'8 slices');
   await closeDay(page);assert.equal(await page.locator('#cash').textContent(),'$53.00');
+  assert.equal(await page.locator('#totalSold').textContent(),'4');
+  await tap(page,'#tools [data-dialog="log"]');assert(await page.locator('#sheetBody [data-tone="positive"]').count());assert(await page.locator('#sheetBody [data-tone="negative"]').count());await page.keyboard.press('Escape');
   assert.equal(await page.locator('#rSales').textContent(),'$13.00');assert.equal(await page.locator('#rSpent').textContent(),'$24.00');
   await layout(page,tag+' receipt');await capture(page,tag+'-receipt');
   await tap(page,'#readNote');assert((await page.locator('#sheetBody').textContent()).includes('$53.00'));await page.keyboard.press('Escape');
@@ -80,7 +106,9 @@ async function run(){
   await tap(page,'#restart');await page.keyboard.press('Escape');assert.equal(await page.locator('#day').textContent(),'Day 02');
   await tap(page,'#restart');await tap(page,'[data-confirm-reset]');assert.equal(await page.locator('#day').textContent(),'Day 01');assert.equal(await page.locator('#cash').textContent(),'$64.00');
   await tap(page,'#modeSwitch');await page.waitForURL(url=>!url.hash,{timeout:15000});await page.waitForFunction(()=>document.getElementById('edition').textContent.startsWith('Continuing'));
-  await page.evaluate(()=>localStorage.setItem(Pizza.CONFIG.keys.run,JSON.stringify({version:2,restoreDay:false,state:Pizza.State.create(6)})));await page.reload();
+  const fixture=await page.evaluate(()=>({key:Pizza.CONFIG.keys.run,value:JSON.stringify({version:Pizza.CONFIG.saveVersion,restoreDay:false,state:Pizza.State.create(6)})}));
+  // Install after pagehide saves the outgoing run, before the next document boots.
+  await page.addInitScript(({key,value})=>{if(!sessionStorage.getItem('reviewRunSeeded')){localStorage.setItem(key,value);sessionStorage.setItem('reviewRunSeeded','true')}},fixture);await page.reload();
   await prep(page,true);await closeDay(page);
   for(let day=2;day<=5;day++){
    await tap(page,'#primary');await tap(page,'[data-dialog="stand"]');
@@ -88,7 +116,9 @@ async function run(){
    if(day===4){await tap(page,'#sheet [data-action="food"]');await page.clock.runFor(5500);assert.equal(await page.locator('#health').textContent(),'10/10');}
    await page.keyboard.press('Escape');await tap(page,'[data-dialog="stock"]');
    for(const id of ['napkins','paper_plates'])if(Number(await page.locator('#m'+id+'Count').textContent())<5)await tap(page,'#m'+id+'Buy');
-   await page.keyboard.press('Escape');await prep(page);await layout(page,tag+' day'+day+' prep');await closeDay(page);
+   for(const id of ['onion','pickles'])if(Number(await page.locator('#m'+id+'Count').textContent())<5)await tap(page,'#m'+id+'Buy');
+   await page.keyboard.press('Escape');await prep(page);if(day===2)await discover(page,tag);await layout(page,tag+' day'+day+' prep');await closeDay(page);
+   if(day===2)assert.equal(await page.locator('#rTasted').textContent(),'2');
    const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem(Pizza.CONFIG.keys.run)).state);
    assert.equal(saved.day,day);assert.equal(saved.history.length,day);assert.equal(saved.report.startCash+saved.report.incomeTotal-saved.report.expenseTotal,saved.cash);assert.equal(await page.evaluate(()=>Pizza.Save.valid(JSON.parse(localStorage.getItem(Pizza.CONFIG.keys.run)).state)),true);
    await layout(page,tag+' day'+day+' receipt');

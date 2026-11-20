@@ -1,4 +1,10 @@
-# Days 1–5 on Route 1
+# Route 1 · v2.3.0
+
+**Recipe route.** In the continuing run, the header keeps total slices sold visible. Day 2 introduces Onion and Pickles (or sales can unlock them sooner). Buy toppings in Stockroom, prep slices, open Recipes and choose the mix to test. A successful reveal has a direct menu action. A failed test is recorded; repeating it spends nothing. Recipes and test notes survive reload. Taste tests appear separately on the receipt and never increase sales progress.
+
+Pepperoni and Mushroom arrive by Day 3, Green Peppers and Pineapple by Day 4, and Ham by Day 5. The notebook shows delivery/sales requirements and clues for undiscovered combinations. It contains ten recipes, including the starting Plain Slice. In a one-slot menu, a new discovery can replace the current recipe directly; Plain remains the fallback during service.
+
+Customer entries carry explicit reaction labels, positive/negative styling and actual reputation changes. Neutral and unhappy reactions remain distinct from payment: a sale can earn money while harming reputation.
 
 **Repeatable sample walkthrough.** Buy one flour, one sauce and one cheese. Finish the dough, then the eight-slice batch. Install the Clean Microwave, raise the plain slice price once to $3.25 and open. Watch the first two visitors. Read the receipt and continue to Day 2. Reset the sample to replay the same customers.
 
@@ -16,6 +22,6 @@
 
 **Small windows and keyboard.** At 1024 × 600, the landscape and counter shorten, and the live feed shows three recent entries. At 390 × 844, the two prep stations sit above the full-width price board. Service totals sit above the three-entry log. Open stand, Pause and Prepare for Day 2 share the action strip below the counter. The full log and long closing notes scroll inside their panels.
 
-Stockroom sells the complete checkpoint catalogue during prep in packs of five; the bench buys single units. Locked toppings show their unlock requirements. Equipment lists all six checkpoint upgrades and their actual owned, affordable or locked states. Stand contains cleaning, once-daily training, a timed food order, recycling, recipes and the last five receipts. Opening a panel suspends service. Tab and Shift+Tab cycle through its controls. Back or Escape closes it and restores the invoking control. A manually paused day stays paused. Restart asks before replacing the selected mode's save.
+Stockroom sells the continuing catalogue during prep in packs of five; the bench buys single units. Locked toppings show their unlock requirements. Equipment lists all six checkpoint upgrades and their actual owned, affordable or locked states. Stand contains cleaning, once-daily training, a timed food order, recycling, recipes and the last five receipts. Opening a panel suspends service. Tab and Shift+Tab cycle through its controls. Back or Escape closes it and restores the invoking control. A manually paused day stays paused. Restart asks before replacing the selected mode's save.
 
-**Work and saves.** This review uses the v2.2.0 checkpoint’s click-to-fill jobs. A partial job survives a reload. Reloading service returns to the prepared moment before opening. Reloading a settled receipt preserves its totals. The continuing run uses the checkpoint's original keys and save validation. The sample uses its own isolated keys. Switch modes through the footer; restarting either mode leaves the other saved. The exact Monday revision behind the reported 26 checks has yet to be identified.
+**Work and saves.** Both modes retain click-to-fill work. The continuing run migrates existing schema-1/2 saves to schema 3 while keeping the original key, cash, progress, inventory and original unlocked recipes. Partial work and the notebook survive reload. Reloading service returns to the prepared checkpoint, including completed taste tests. A settled receipt stays settled. The comparison keeps the original v2.2.0 schema and its own isolated keys. Restarting either mode preserves the other save.

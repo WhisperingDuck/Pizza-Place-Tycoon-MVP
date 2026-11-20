@@ -1,0 +1,36 @@
+
+> pizza-place-tycoon-review@2.3.0 test
+> node tests/model.cjs
+
+PASS $3.25 sample closes with $53
+PASS partial prep restores without a second ingredient charge
+PASS service reload restores prepared stock and identical luck
+PASS receipt reload and idle ticks never settle twice
+PASS run and sample restart stay isolated
+PASS pause and open panel freeze the service clock
+PASS v2.2.0 continuing key and saves are reused
+PASS damaged saves recover without touching the sample
+PASS v1 migration still uses checkpoint rules
+PASS five days preserve cash, history, stock and health
+PASS food completes while a prep panel is open
+PASS catalogue purchases and locked recipes use engine reasons
+PASS milestones remain visible and unlock menus
+PASS health ending shows a score before confirmed restart
+PASS cash ending applies checkpoint recovery only once
+PASS closing events reconcile all other income
+PASS preview events cannot alter the continuing run
+PASS deliveries introduce experiments by Day 2 without auto-discovering recipes
+PASS a successful combination spends exactly one slice and one of each topping
+PASS duplicate recipes and failed combinations do not charge a second time
+PASS a discovered recipe can replace the single starting menu slot and sell
+PASS discovery persists through reload and service checkpoint restoration
+PASS experiments reject missing slices, missing stock and service input without spending
+PASS locked toppings, duplicates and overfull combinations cannot be tested
+PASS legacy v2 runs migrate recipes, stock, history and cash with a backup
+PASS malformed discovery saves fail gracefully
+PASS positive, negative and neutral customer outcomes retain distinct labels
+PASS resetting the current run clears discoveries and preserves the sample
+PASS all nine discoverable recipes match their intended combinations
+PASS a bad customer reaction is negative even when the customer paid
+PASS presentation history cannot break a valid discovered-recipe save
+31 model checks passed.
