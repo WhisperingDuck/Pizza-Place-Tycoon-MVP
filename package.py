@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT / "source"
 ENGINE = ROOT / "checkpoint" / "js"
+CURRENT_ENGINE = ROOT / "engine" / "js"
 OUTPUT = ROOT / "pizza-place-tycoon.html"
 ENGINE_MODULES = ("config", "data", "state", "events", "customers", "logic", "save")
 MARKER = "<!-- STAND_SCRIPTS -->"
@@ -135,14 +136,48 @@ def script(content):
 
 def main():
     content = json.loads((SOURCE / "content.json").read_text(encoding="utf-8"), object_pairs_hook=unique_keys)
+    book = json.loads((SOURCE / "recipe-book.json").read_text(encoding="utf-8"), object_pairs_hook=unique_keys)
+    ingredient_ids = set()
+    if book.get("maxToppings") != 3:
+        raise ValueError("The notebook supports three selected toppings")
+    for item in book["ingredients"]:
+        if item["id"] in ingredient_ids or not re.fullmatch(r"[a-z][a-z0-9_]*", item["id"]):
+            raise ValueError("Invalid or duplicate topping ID")
+        ingredient_ids.add(item["id"])
+        require_text(item, "name", item["id"])
+        for key in ("cost", "day", "sold"):
+            if type(item[key]) is not int or item[key] <= 0:
+                raise ValueError("Invalid topping balance: " + item["id"])
+    recipe_ids, combinations = set(), set()
+    for recipe in book["recipes"]:
+        combo = tuple(sorted(recipe["ingredients"]))
+        if not re.fullmatch(r"[a-z][a-z0-9_]*", recipe["id"]) or recipe["id"] in recipe_ids or combo in combinations or len(combo) != len(set(combo)) or len(combo) > book["maxToppings"] or not set(combo) <= ingredient_ids:
+            raise ValueError("Invalid or duplicate recipe: " + recipe["id"])
+        if type(recipe["bonus"]) is not int or recipe["bonus"] < 0 or not 0 <= recipe["delight"] <= 1:
+            raise ValueError("Invalid recipe balance")
+        for key in ("name", "note", "clue"):
+            require_text(recipe, key, recipe["id"])
+        recipe_ids.add(recipe["id"]); combinations.add(combo)
+    if book["recipes"][0]["id"] != "plain" or book["recipes"][0]["ingredients"]:
+        raise ValueError("Plain Slice must be the first recipe without extra toppings")
+    for group, keys in {"outcomes": "delighted satisfied neutral disgusted passed soldOut capacity arrival system discovery", "discovery": "beforeOpen finishWork choose limit locked known repeat needSlice needStock found notYet"}.items():
+        for key in keys.split():
+            require_text(content[group], key, group)
     surface = (SOURCE / "surface.html").read_text(encoding="utf-8")
     validate(content, surface)
     if surface.count(MARKER) != 1:
         raise ValueError(f"Expected exactly one {MARKER} in the interface template")
     encoded = json.dumps(content, ensure_ascii=False, indent=2).replace("<", "\\u003c")
     pieces = ['<script id="stand-copy" type="application/json">\n' + encoded + '\n</script>']
+    pieces.append('<script id="recipe-data" type="application/json">\n' + json.dumps(book, ensure_ascii=False).replace("<", "\\u003c") + '\n</script>')
+    pieces.append(script((SOURCE / "mode.js").read_text(encoding="utf-8")))
+    pieces.append(script("window.Pizza = {}; Pizza.RECIPE_BOOK = JSON.parse(document.getElementById('recipe-data').textContent);"))
     for name in ENGINE_MODULES:
-        pieces.append(script((ENGINE / (name + ".js")).read_text(encoding="utf-8")))
+        original = (ENGINE / (name + ".js")).read_text(encoding="utf-8")
+        current = (CURRENT_ENGINE / (name + ".js")).read_text(encoding="utf-8")
+        pieces.append(script("if (window.PizzaMode.sample) {\n" + original + "\n} else {\n" + current + "\n}"))
+        if name == "customers":
+            pieces.append(script("if (!window.PizzaMode.sample) {\n" + (CURRENT_ENGINE / "recipes.js").read_text(encoding="utf-8") + "\n}"))
     for file in ("scene.js", "adapter.js"):
         pieces.append(script((SOURCE / file).read_text(encoding="utf-8")))
     final = surface.replace(MARKER, "\n".join(pieces))

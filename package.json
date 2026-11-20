@@ -8,5 +8,6 @@
   },
   "devDependencies": {
     "playwright": "1.51.1"
-  }
+  },
+  "version": "2.3.0"
 }

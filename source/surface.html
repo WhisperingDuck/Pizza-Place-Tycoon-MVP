@@ -48,6 +48,22 @@ body{display:flow-root;min-height:100vh}
 .sheet-ledger dd{margin:0;font-weight:bold}.sheet-ledger .sum{border-top:1px solid var(--ink);padding-top:6px}
 .floor{flex-wrap:wrap}.floor-left{min-width:0}.floor .link{white-space:nowrap}
 @media(max-width:700px){.floor{font-size:10px;gap:6px}.floor-left{flex:1 1 100%}.floor .link{padding:5px 0}.tool-row{gap:10px}.tool-row .smallbutton{font-size:12px}.links{gap:8px}.links .link{font-size:10px}.bar{padding-inline:12px}.bar h2{font-size:10px;letter-spacing:.03em}}
+.run-progress{display:flex;justify-content:space-between;gap:16px;padding:6px 27px;border-bottom:1px solid var(--ink);background:#dce1c6;font-size:11px;font-weight:bold;line-height:1.3}
+.run-progress span{min-width:0}.stats .stat:last-child dd{color:#31593e}.stats .stat:last-child dt{color:#35452e}
+.log li[data-tone=positive]{border-left:3px solid #386147;padding-left:8px}.log li[data-tone=negative]{border-left:3px solid #a04731;padding-left:8px}.log li[data-tone=reward]{border-left:3px solid #9a6a24;padding-left:8px}
+.log-label{display:inline-block!important;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.035em;margin-right:7px;color:var(--sub)}
+.log li[data-tone=positive] .log-label{color:#2c5b3e}.log li[data-tone=negative] .log-label{color:#913f2d}.log-effect{font-weight:bold;display:block;color:inherit;font-size:11px}
+.scene-reaction[data-tone=positive]{border-color:#386147}.scene-reaction[data-tone=negative]{border-color:#a04731}
+.ingredient-picker{display:grid;grid-template-columns:1fr 1fr;gap:8px;border:0;padding:0;margin:14px 0}
+.ingredient-picker legend{font-weight:bold;margin-bottom:9px}.topping-choice{text-align:left;padding:10px;border:1px solid var(--line);background:var(--pale);min-height:51px;white-space:normal}
+.topping-choice small{display:block;font-size:11px;font-weight:400;margin-top:4px}.topping-choice[aria-pressed=true]{background:#31593e;color:#fff5cf;border-color:#263b2e;box-shadow:inset 0 0 0 2px #d6b770}.topping-choice:disabled{opacity:.6;cursor:default}
+.test-area{padding:12px;background:#dfe3cb;border:1px solid var(--line)}.test-area strong,.test-area small{display:block}.test-area small{margin:7px 0;font-size:12px}.test-area button{width:100%;margin-top:6px}
+.recipe-result{padding:13px;border:2px solid #9c864f;background:#f6edc9;margin-top:14px}.recipe-result h3{font-size:21px;margin:7px 0}.recipe-result[data-found=true]{box-shadow:3px 3px 0 #c8b57e;animation:recipe-reveal .25s ease-out}.recipe-result p{margin-bottom:0}
+.recipe-card{padding:12px 0;border-bottom:1px dotted var(--line)}.recipe-card header{display:flex;gap:10px;justify-content:space-between;align-items:baseline}.recipe-card h3{margin:0}.recipe-card p{margin:5px 0;color:var(--sub)}.recipe-card .smallbutton{margin-top:5px}.recipe-card .recipe-status{font-size:11px;text-transform:uppercase;font-weight:bold;color:#31593e}.recipe-card .recipe-clue{font-style:italic}.test-notes{padding-left:20px}.test-notes li{margin:9px 0}.test-notes small{display:block;color:var(--sub)}
+@keyframes recipe-reveal{from{transform:translateY(5px);opacity:.6}to{transform:translateY(0);opacity:1}}
+@media(max-width:700px){.stats{gap:5px}.stat{display:grid;gap:3px}.stat dt{font-size:8px}.stat dd{font-size:17px}.run-progress{padding:6px 12px;gap:8px;font-size:10px}.run-progress span:last-child{text-align:right;flex-shrink:0}.ingredient-picker{gap:6px}.topping-choice{padding:8px;font-size:12px}.links{gap:7px}.links .link{font-size:10px}.bar h2{font-size:9px}.log-label{font-size:9px}.log-effect{font-size:10px}}
+@media(min-width:701px) and (max-height:690px){.run-progress{padding-block:4px;font-size:10px}.stats{gap:23px}}
+@media(prefers-reduced-motion:reduce){.recipe-result[data-found=true]{animation:none}}
 </style></head>
 <body>
 <main class="shell">
@@ -55,13 +71,14 @@ body{display:flow-root;min-height:100vh}
 <header class="mast">
 <div class="brand"><span class="illustration" data-art="brand" aria-hidden="true"></span><h1><span data-ui="brand"></span><small data-ui="brandSub"></small></h1></div>
 <div class="daybox"><b id="day"></b><small class="phase" id="phase"></small></div>
-<dl class="stats"><div class="stat"><dt data-ui="cash"></dt><dd id="cash"></dd></div><div class="stat"><dt data-ui="health"></dt><dd id="health"></dd></div><div class="stat"><dt data-ui="reputation"></dt><dd id="rep"></dd></div></dl>
+<dl class="stats"><div class="stat"><dt data-ui="cash"></dt><dd id="cash"></dd></div><div class="stat"><dt data-ui="health"></dt><dd id="health"></dd></div><div class="stat"><dt data-ui="reputation"></dt><dd id="rep"></dd></div><div class="stat"><dt data-ui="lifetimeSlices"></dt><dd id="totalSold"></dd></div></dl>
 </header>
+<div class="run-progress"><span id="unlockProgress"></span><span id="discoveryCount"></span></div>
 <section class="world" id="world"><canvas id="scene" width="640" height="220" role="img"></canvas>
 <div class="world-top"><div class="route"><span class="route-sign" aria-hidden="true">1</span><span data-ui="route"></span></div><span class="clock"><svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="6"/><path d="M8 4v4l3 1"/></svg><span id="clock"></span></span></div>
 <span class="scene-stamp"><i class="lamp"></i><span id="sceneLabel"></span></span><div id="bubble" class="scene-reaction" hidden><small id="bubbleTag"></small><span id="bubbleLine"></span></div>
 </section>
-<div class="bar"><h2 id="benchLabel"></h2><nav class="links" id="tools"><button class="link" data-dialog="stock" data-ui="stockroom"></button><button class="link" data-dialog="equipment" data-ui="equipment"></button><button class="link" data-dialog="stand" data-ui="stand"></button><button class="link" data-dialog="log" data-ui="logShort"></button></nav></div>
+<div class="bar"><h2 id="benchLabel"></h2><nav class="links" id="tools"><button class="link" data-dialog="stock" data-ui="stockroom"></button><button class="link" data-dialog="equipment" data-ui="equipment"></button><button class="link" data-dialog="recipes" data-ui="recipes"></button><button class="link" data-dialog="stand" data-ui="stand"></button><button class="link" data-dialog="log" data-ui="logShort"></button></nav></div>
 <section id="prep" class="bench">
 <section class="block" data-station="dough"><div class="titleline"><h3 data-ui="doughStation"></h3><span class="count-tag" id="doughCount"></span></div><div class="ingredients" id="flourRow"></div><div class="workrow"><button class="workbutton" data-action="dough"><span id="doughAction"></span><span aria-hidden="true" class="arrow" id="doughPct"></span></button><p class="requirement" id="doughHint"></p></div></section>
 <section class="block" data-station="slices"><div class="titleline"><h3 data-ui="sliceStation"></h3><span class="count-tag" id="trayCount"></span></div><div class="ingredients" id="fillRows"></div><div class="workrow"><button class="workbutton" data-action="prepare"><span id="slicesAction"></span><span class="arrow" aria-hidden="true" id="slicesPct"></span></button><p class="requirement" id="slicesHint"></p></div></section>
@@ -71,7 +88,7 @@ body{display:flow-root;min-height:100vh}
 <div class="live-totals"><h3 class="section-head" data-ui="window"></h3><div class="counter-figures"><div><b id="sold"></b><span data-ui="sold"></span></div><div><b id="left"></b><span data-ui="remaining"></span></div><div><b id="takings"></b><span data-ui="sales"></span></div></div><div class="timeline"><i id="serviceFill"></i></div><p class="live-status" id="serviceCount"></p></div>
 <div><div class="log-head"><h3 class="section-head" data-ui="counterLog"></h3><button class="link" data-dialog="log" data-ui="fullLog"></button></div><ol class="log inline" id="liveLog"></ol></div>
 </section>
-<section class="report-grid" id="report" hidden><div class="receipt"><header><h3 class="section-head" data-ui="receipt"></h3><small id="receiptNumber"></small></header><dl><div><dt id="rSoldLabel" data-ui="soldPrepared"></dt><dd id="rSold"></dd></div><div><dt id="rSalesLabel" data-ui="sales"></dt><dd id="rSales"></dd></div><div><dt id="rLeftLabel" data-ui="leftovers"></dt><dd id="rLeft"></dd></div><div><dt id="rSpentLabel" data-ui="spending"></dt><dd id="rSpent"></dd></div><div id="rOtherRow" hidden><dt data-ui="otherIncome"></dt><dd id="rOther"></dd></div></dl><div class="ledger-tot"><span id="rChangeLabel" data-ui="change"></span><b id="rChange"></b></div></div>
+<section class="report-grid" id="report" hidden><div class="receipt"><header><h3 class="section-head" data-ui="receipt"></h3><small id="receiptNumber"></small></header><dl><div><dt id="rSoldLabel" data-ui="soldPrepared"></dt><dd id="rSold"></dd></div><div><dt id="rSalesLabel" data-ui="sales"></dt><dd id="rSales"></dd></div><div><dt id="rLeftLabel" data-ui="leftovers"></dt><dd id="rLeft"></dd></div><div><dt id="rSpentLabel" data-ui="spending"></dt><dd id="rSpent"></dd></div><div id="rTastedRow" hidden><dt data-ui="tasted"></dt><dd id="rTasted"></dd></div><div id="rOtherRow" hidden><dt data-ui="otherIncome"></dt><dd id="rOther"></dd></div></dl><div class="ledger-tot"><span id="rChangeLabel" data-ui="change"></span><b id="rChange"></b></div></div>
 <div class="report-notes"><div><span class="kicker" data-ui="tomorrow"></span><p id="rClue"></p></div><div class="eventline"><span class="kicker" id="eventTitle"></span><p id="rEvent"></p><button id="readNote" class="link" data-dialog="note" data-ui="fullReceipt" hidden></button></div></div>
 </section>
 <div class="task"><div class="task-copy"><strong id="taskTitle"></strong><small id="taskHint"></small></div><button class="equipmentBuy" id="buyMicrowave" data-action="microwave"></button><button class="main-action" id="primary"></button></div>
@@ -88,7 +105,7 @@ const each=(selector,fn)=>document.querySelectorAll(selector).forEach(fn);
 const fmt=n=>'$'+(Math.abs(n||0)/100).toFixed(2), signed=n=>(n<0?'−':n>0?'+':'')+fmt(n);
 const safe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const replace=(text,values={})=>String(text??'').replace(/\{(\w+)\}/g,(_,key)=>String(values[key]??''));
-let vm,ui,activeDialog='',opener=null,lastPhase='',lastSheet='',lastLog='',previousNotice='',previousReaction='';
+let vm,ui,activeDialog='',opener=null,lastPhase='',lastSheet='',lastLog='',previousNotice='',previousReaction='',shownTest='';
 const pictures={
  brand:['.......rrr..','.....rryyyr.','...rryyttyr.','.rryttyyyyr.','ryyytyyyyr..','rrtyyttyyr..','.rryytyyr...','..rtyyyyr...','...ryyyr....','....ryr.....','.....r......'],
  flour:['..ggggg...','..gpppg...','...gpg....','..gpppg...','.gpppppg..','.gpgggpg..','.gpgpgpg..','.gpgggpg..','.gpppppg..','.ggggggg..'],
@@ -108,7 +125,7 @@ function stockPaint(id,prefix){
  btn.title=reason||'';btn.disabled=vm.phase!=='prep'||Boolean(reason);
 }
 function put(id,v){const n=el(id),s=String(v??'');if(n.textContent!==s)n.textContent=s;}
-function logRows(items,limit){return [...items].reverse().slice(0,limit).map(row=>'<li><time>'+safe(row.time)+'</time><span>'+safe(row.text)+'</span></li>').join('');}
+function logRows(items,limit){return [...items].reverse().slice(0,limit).map(row=>'<li data-tone="'+safe(row.tone||'neutral')+'"><time>'+safe(row.time)+'</time><span><span class="log-label">'+safe(row.outcome)+'</span>'+safe(row.text)+(row.effect?'<small class="log-effect">'+safe(row.effect)+'</small>':'')+'</span></li>').join('');}
 function dispatch(action,id,quantity=1){window.Stand.action(action,id,quantity);}
 function work(kind,buttonAction){
  const button=document.querySelector('[data-action="'+buttonAction+'"]'),working=vm.work?.kind===kind,otherWork=vm.work&&!working;
@@ -136,7 +153,7 @@ function service(){
  put('serviceCount',replace(ui.visitorCount,{count:vm.visitorsSeen,total:vm.forecast.visitors}));
  const list=logRows(vm.log||[],4);if(list!==lastLog){el('liveLog').innerHTML=list;lastLog=list;}
  const rx=vm.reaction||null, bubble=el('bubble');bubble.hidden=!rx?.text;
- if(rx?.text){put('bubbleTag',replace(ui.visitor,{n:rx.visitor})+(rx.amount?'  +'+fmt(rx.amount):''));put('bubbleLine',rx.text);}
+ if(rx?.text){put('bubbleTag',replace(ui.visitor,{n:rx.visitor})+(rx.amount?'  +'+fmt(rx.amount):''));put('bubbleLine',rx.text);bubble.dataset.tone=['disgusted','passed','miss'].includes(rx.kind)?'negative':['delighted','satisfied'].includes(rx.kind)?'positive':'neutral';}
  put('taskTitle',vm.paused?ui.servicePaused:!rx?ui.serviceStarted:rx.amount?ui.serviceSale:rx.kind==='arriving'?ui.serviceArrival:ui.servicePass);
  put('taskHint',rx?.amount?replace(ui.paid,{paid:fmt(rx.amount),n:rx.visitor}):rx?replace(ui.visitor,{n:rx.visitor}):ui.waiting);
  el('buyMicrowave').hidden=true;el('primary').disabled=false;el('primary').dataset.action='pause';put('primary',vm.paused?ui.resume:ui.pause);
@@ -152,7 +169,7 @@ function report(){
     delete el('primary').dataset.action;el('primary').dataset.dialog='reset';put('primary',vm.sample?ui.resetSample:ui.restart);
     return;
   }
-  const r=vm.receipt;if(!r)return;
+  const r=vm.receipt;if(!r)return;el('rTastedRow').hidden=!r.tasted;put('rTasted',r.tasted);
   put('rSoldLabel',ui.soldPrepared);put('rSalesLabel',ui.sales);put('rSpentLabel',ui.spending);put('rLeftLabel',ui.leftovers);put('rChangeLabel',ui.change);
   put('receiptNumber',replace(ui.receiptNo,{day:String(vm.day).padStart(2,'0')}));put('rSold',r.sold+' / '+r.prepared);put('rLeft',r.leftovers);put('rSales',fmt(r.sales));put('rSpent',fmt(r.spending));put('rChange',signed(r.change));el('rChange').classList.toggle('costneg',r.change<0);
   el('rOtherRow').hidden=!r.otherIncome;put('rOther',fmt(r.otherIncome));
@@ -162,6 +179,39 @@ function report(){
 }
 function toolRow(title,detail,button){return '<div class="tool-row"><div><strong>'+safe(title)+'</strong><small>'+safe(detail)+'</small></div>'+button+'</div>';}
 function toolButton(action,id,label,reason){return '<button class="smallbutton" data-action="'+safe(action)+'" data-id="'+safe(id||'')+'" '+(reason?'disabled':'')+'>'+safe(label)+'</button>';}
+function recipeCard(item){
+ const label=item.active?ui.removeRecipe:vm.slots===1?ui.useRecipe:ui.addDiscovered;
+ const detail=item.ingredientNames||ui.plainBase;
+ return '<article class="recipe-card"><header><h3>'+safe(item.name)+'</h3><b>'+fmt(item.price)+'</b></header>'+
+  '<p>'+safe(detail)+'</p><p>'+safe(item.note)+'</p>'+
+  (item.active?'<span class="recipe-status">'+safe(ui.menuStatus)+'</span>':'')+
+  (item.active&&!item.stocked?'<p>'+safe(ui.missingToppings)+'</p>':'')+
+  '<div>'+toolButton('menu',item.id,label,item.reason)+'</div>'+
+  (item.reason?'<p class="sheet-note">'+safe(item.reason)+'</p>':'')+'</article>';
+}
+function recipeNotebook(){
+ if(vm.sample)return '<p>'+safe(ui.referenceRecipes)+'</p>'+vm.recipes.filter(item=>item.unlocked).map(recipeCard).join('');
+ const book=vm.notebook,chosen=book.choices.filter(item=>item.selected),mix=chosen.map(item=>item.name).join(' + ');
+ let html='<p>'+safe(ui.notebookIntro)+'</p><p class="sheet-note">'+safe(ui.notebookRules)+'</p>';
+ if(book.nextDay)html+='<p class="sheet-note">'+safe(replace(ui.nextDelivery,{day:book.nextDay,items:book.nextItems}))+'</p>';
+ html+='<fieldset class="ingredient-picker"><legend>'+safe(ui.chooseToppings)+'</legend>';
+ html+=book.choices.map(item=>'<button class="topping-choice" data-action="selectTopping" data-id="'+safe(item.id)+'" aria-pressed="'+item.selected+'" '+
+  (vm.phase!=='prep'||!item.available||!item.stock&&!item.selected||chosen.length>=3&&!item.selected?'disabled':'')+'>'+safe(item.name)+
+  '<small>'+safe(item.available?replace(ui.stockAmount,{count:item.stock}):replace(ui.delivery,{day:item.day,sold:item.sold}))+'</small></button>').join('');
+ html+='</fieldset><div class="test-area"><strong>'+safe(ui.selectedMix)+': '+safe(mix||ui.noSelection)+'</strong><small>'+safe(chosen.length?replace(ui.testCost,{ingredients:mix}):ui.noSelection)+'</small>'+
+  toolButton('experiment','',ui.testRecipe,book.canTry?'':book.reason)+'<small id="experimentReason">'+safe(book.reason)+'</small></div>';
+ if(book.last?.matches){
+  const recipe=vm.recipes.find(item=>item.id===book.last.id);
+  html+='<section class="recipe-result" data-found="'+book.last.found+'" role="status"><span class="kicker">'+safe(book.last.found?ui.foundRecipe:ui.failedRecipe)+'</span><h3>'+safe(book.last.name||book.last.ingredients)+'</h3><p>'+safe(book.last.found?ui.foundHelp:ui.failedHelp)+'</p>'+
+   (recipe?toolButton('menu',recipe.id,recipe.active?ui.menuStatus:ui.useRecipe,recipe.active?'active':recipe.reason):'')+'</section>';
+ }
+ html+='<section class="sheet-section"><h3>'+safe(replace(ui.discoveredCount,{count:book.known,total:book.total}))+'</h3><p class="sheet-note">'+safe(ui.recipeHelp)+'</p>';
+ html+=vm.recipes.filter(item=>item.unlocked).map(recipeCard).join('');
+ html+='</section><section class="sheet-section"><h3>'+safe(ui.recipeClues)+'</h3>'+
+  vm.recipes.filter(item=>!item.unlocked).map(item=>'<article class="recipe-card"><h3>'+safe(ui.mysteryRecipe)+'</h3><p class="recipe-clue">'+safe(item.clue)+'</p></article>').join('')+'</section>';
+ if(book.attempts.length)html+='<section class="sheet-section"><h3>'+safe(ui.triedMixes)+'</h3><ol class="test-notes">'+book.attempts.slice().reverse().map(attempt=>'<li>'+safe(attempt.names)+'<small>'+safe(replace(ui.testHistoryDay,{day:attempt.day}))+' · '+safe(attempt.name||ui.failedMix)+'</small></li>').join('')+'</ol></section>';
+ return html;
+}
 function ledger(r){
  const rows=[[ui.openingCash,fmt(r.startCash)],[ui.sales,fmt(r.sales)],[ui.otherIncome,fmt(r.otherIncome)],
  [ui.ingredientsSpent,'−'+fmt(r.expenses.ingredients)],[ui.suppliesSpent,'−'+fmt(r.expenses.supplies)],
@@ -175,15 +225,15 @@ function standTools(){
  html+='<p class="sheet-note">'+safe(ui.foodHint)+'</p>';
  if(vm.canRecover)html+=toolRow(ui.recoveryHint,'',toolButton('recover','',ui.recovery,''));
  html+='<section class="sheet-section"><h3>'+safe(replace(ui.menuTitle,{count:vm.slots}))+'</h3>';
- html+=vm.recipes.map(item=>toolRow(item.name+' · '+fmt(item.price),item.reason||item.note,toolButton('menu',item.id,item.active?ui.removeRecipe:item.unlocked?ui.addRecipe:ui.locked,item.reason))).join('');
- html+='<p class="sheet-note">'+safe(ui.nextUnlock)+'</p><p class="sheet-note">'+safe(ui.supportHint)+'</p></section><section class="sheet-section"><h3>'+safe(ui.history)+'</h3>';
+ html+=vm.recipes.filter(item=>item.unlocked).map(recipeCard).join('');
+ html+='<p class="sheet-note">'+safe(vm.sample?ui.nextUnlock:ui.notebookUnlocks)+'</p><p class="sheet-note">'+safe(ui.supportHint)+'</p></section><section class="sheet-section"><h3>'+safe(ui.history)+'</h3>';
  html+=vm.history.length?vm.history.slice(-5).reverse().map(r=>'<details><summary>'+safe(replace(ui.receiptSummary,{day:r.day,sold:r.sold,cash:fmt(r.endCash)}))+'</summary>'+ledger(r)+'</details>').join(''):'<p>'+safe(ui.historyEmpty)+'</p>';
  if(vm.phase==='service')html+='<p class="sheet-note">'+safe(ui.pauseInPanel)+'</p>';
  return html+'</section>';
 }
 function paintSheet(force=false){
- if(!activeDialog)return;const names={stock:ui.stockroom,equipment:ui.equipment,log:ui.counterLog,reset:vm.sample?ui.resetTitle:ui.restartTitle,note:ui.receiptDetail,stand:ui.stand};put('sheetTitle',names[activeDialog]);
- let html='';const D=activeDialog,key=JSON.stringify([D,vm.phase,vm.cash,vm.stock,vm.upgrades,vm.recipes,vm.work,vm.health,vm.disgust,vm.xp,vm.cans,vm.log?.length,vm.receipt?.eventMessage,vm.notice]);
+ if(!activeDialog)return;const names={stock:ui.stockroom,equipment:ui.equipment,recipes:ui.notebookTitle,log:ui.counterLog,reset:vm.sample?ui.resetTitle:ui.restartTitle,note:ui.receiptDetail,stand:ui.stand};put('sheetTitle',names[activeDialog]);
+ let html='';const D=activeDialog,key=JSON.stringify([D,vm.phase,vm.cash,vm.stock,vm.upgrades,vm.recipes,vm.notebook,vm.work,vm.health,vm.disgust,vm.xp,vm.cans,vm.log?.length,vm.receipt?.eventMessage,vm.notice]);
  if(!force&&lastSheet===key)return;lastSheet=key;
  if(D==='stock'){
    html='<div class="large-line"><h3>'+safe(ui.budget)+'</h3><b>'+fmt(vm.cash)+'</b></div>';
@@ -194,13 +244,15 @@ function paintSheet(force=false){
    html+='<p class="sheet-note">'+safe(vm.phase==='prep'?ui.stockHint:ui.readOnly)+'</p>';
  } else if(D==='equipment'){
    html=vm.upgrades.map(item=>toolRow(item.name+' · '+fmt(item.cost),item.effect+' '+(item.reason||item.note),item.owned?'<b>'+safe(ui.owned)+'</b>':toolButton('upgrade',item.id,replace(ui.buyPrice,{cost:fmt(item.cost)}),item.reason))).join('');
+ } else if(D==='recipes'){
+   html=recipeNotebook();
  } else if(D==='stand'){
    html=standTools();
  } else if(D==='log'){
    html=vm.log?.length?'<ol class="log">'+logRows(vm.log,Number.MAX_SAFE_INTEGER)+'</ol>':'<p>'+safe(ui.fullLogEmpty)+'</p>';
    if(vm.phase==='service')html+='<p class="sheet-note">'+safe(ui.pauseInPanel)+'</p>';
  } else if(D==='note'){
-   html='<h3>'+safe(ui.tomorrow)+'</h3><p>'+safe(vm.receipt?.clue)+'</p><h3>'+safe(vm.receipt?.eventTitle||ui.event)+'</h3><p>'+safe(vm.receipt?.eventMessage||ui.noEvent)+'</p>'+(vm.receipt?'<h3>'+safe(ui.ledgerTitle)+'</h3>'+ledger(vm.receipt):'')+(vm.receipt?.milestones.length?'<h3>'+safe(ui.milestones)+'</h3><p>'+safe(vm.receipt.milestones.map(m=>m.names.join(', ')).join(' · '))+'</p>':'');
+   html='<h3>'+safe(ui.tomorrow)+'</h3><p>'+safe(vm.receipt?.clue)+'</p><h3>'+safe(vm.receipt?.eventTitle||ui.event)+'</h3><p>'+safe(vm.receipt?.eventMessage||ui.noEvent)+'</p>'+(vm.receipt?'<h3>'+safe(ui.ledgerTitle)+'</h3>'+ledger(vm.receipt):'')+(vm.receipt?.milestones.length?'<h3>'+safe(ui.milestones)+'</h3><p>'+safe(vm.receipt.milestones.map(m=>m.names.join(', ')).join(' · '))+'</p>':'')+(vm.receipt?.discoveries.length?'<h3>'+safe(ui.discoveredToday)+'</h3><p>'+safe(vm.receipt.discoveries.join(', '))+'</p>':'');
  } else {
    html='<p>'+safe(vm.sample?ui.resetDetail:ui.restartDetail)+'</p><button class="smallbutton" data-confirm-reset>'+safe(vm.sample?ui.resetConfirm:ui.runRestartConfirm)+'</button>';
  }
@@ -210,6 +262,10 @@ function paintSheet(force=false){
   if(vm.notice&&D!=='log'&&D!=='reset'){const feedback=document.createElement('p');feedback.className='sheet-feedback';feedback.textContent=vm.notice;el('sheetBody').append(feedback);}
  if(focusKey){const restored=[...el('sheetBody').querySelectorAll('button')].find(b=>b.dataset.action===focusKey&&b.dataset.id===focusId&&!b.disabled);(restored||el('closeSheet')).focus({preventScroll:true});}
  el('sheetBody').scrollTop=scroll;
+ if(D==='recipes'&&vm.notebook?.last?.matches){
+  const key=vm.notebook.last.day+'/'+vm.notebook.last.ingredients,result=el('sheetBody').querySelector('.recipe-result');
+  if(result&&key!==shownTest){shownTest=key;result.tabIndex=-1;result.focus({preventScroll:true});result.scrollIntoView({block:'nearest'});}
+ }
 }
 function show(type,button){opener=button;activeDialog=type;lastSheet='';dispatch('panel',true);paintSheet(true);el('sheet').showModal();window.StandScene?.paint(vm);el('closeSheet').focus({preventScroll:true});}
 function finishClose(){
@@ -257,9 +313,13 @@ function receiptOverflow(){
 window.addEventListener('resize',receiptOverflow);
 function render(model,content){
  const first=!ui;vm=model;ui=content.ui;if(first)init();
+ if(vm.notebook&&!vm.notebook.attempts.length)shownTest='';
  const phase=vm.phase,shift=lastPhase&&lastPhase!==phase,wasOnPhaseControl=shift&&(document.activeElement===el('primary')||[el('prep'),el('service'),el('report')].some(p=>p.contains(document.activeElement)));
  ['prep','service','report'].forEach(s=>el(s).hidden=s!==phase);
  put('day',replace(ui.day,{day:String(vm.day).padStart(2,'0')}));put('phase',ui[phase+'Phase']);put('cash',fmt(vm.cash));put('health',vm.health+ui.healthSuffix);put('rep',vm.reputation);put('benchLabel',ui[phase+'Bench']);
+ put('totalSold',vm.salesTotal);el('totalSold').title=ui.lifetimeHint;
+ put('unlockProgress',vm.nextMilestone?replace(ui.salesMilestone,{sold:vm.salesTotal,at:vm.nextMilestone.at}):ui.allMilestones);
+ put('discoveryCount',vm.notebook?replace(ui.discoveredCount,{count:vm.notebook.known,total:vm.notebook.total}):ui.referenceLabel);
  const scenePhase=phase[0].toUpperCase()+phase.slice(1);put('sceneLabel',ui['scene'+scenePhase]);el('scene').setAttribute('aria-label',ui['sceneAlt'+scenePhase]);el('world').dataset.phase=phase;updateClock();el('bubble').hidden=true;
  delete el('primary').dataset.dialog;
   put('edition',vm.sample?ui.sampleEdition:ui.runEdition);put('modeSwitch',vm.sample?ui.returnRun:ui.playSample);put('restart',vm.sample?ui.resetSample:ui.restart);

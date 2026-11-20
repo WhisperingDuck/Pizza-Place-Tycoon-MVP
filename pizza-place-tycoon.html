@@ -48,6 +48,22 @@ body{display:flow-root;min-height:100vh}
 .sheet-ledger dd{margin:0;font-weight:bold}.sheet-ledger .sum{border-top:1px solid var(--ink);padding-top:6px}
 .floor{flex-wrap:wrap}.floor-left{min-width:0}.floor .link{white-space:nowrap}
 @media(max-width:700px){.floor{font-size:10px;gap:6px}.floor-left{flex:1 1 100%}.floor .link{padding:5px 0}.tool-row{gap:10px}.tool-row .smallbutton{font-size:12px}.links{gap:8px}.links .link{font-size:10px}.bar{padding-inline:12px}.bar h2{font-size:10px;letter-spacing:.03em}}
+.run-progress{display:flex;justify-content:space-between;gap:16px;padding:6px 27px;border-bottom:1px solid var(--ink);background:#dce1c6;font-size:11px;font-weight:bold;line-height:1.3}
+.run-progress span{min-width:0}.stats .stat:last-child dd{color:#31593e}.stats .stat:last-child dt{color:#35452e}
+.log li[data-tone=positive]{border-left:3px solid #386147;padding-left:8px}.log li[data-tone=negative]{border-left:3px solid #a04731;padding-left:8px}.log li[data-tone=reward]{border-left:3px solid #9a6a24;padding-left:8px}
+.log-label{display:inline-block!important;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.035em;margin-right:7px;color:var(--sub)}
+.log li[data-tone=positive] .log-label{color:#2c5b3e}.log li[data-tone=negative] .log-label{color:#913f2d}.log-effect{font-weight:bold;display:block;color:inherit;font-size:11px}
+.scene-reaction[data-tone=positive]{border-color:#386147}.scene-reaction[data-tone=negative]{border-color:#a04731}
+.ingredient-picker{display:grid;grid-template-columns:1fr 1fr;gap:8px;border:0;padding:0;margin:14px 0}
+.ingredient-picker legend{font-weight:bold;margin-bottom:9px}.topping-choice{text-align:left;padding:10px;border:1px solid var(--line);background:var(--pale);min-height:51px;white-space:normal}
+.topping-choice small{display:block;font-size:11px;font-weight:400;margin-top:4px}.topping-choice[aria-pressed=true]{background:#31593e;color:#fff5cf;border-color:#263b2e;box-shadow:inset 0 0 0 2px #d6b770}.topping-choice:disabled{opacity:.6;cursor:default}
+.test-area{padding:12px;background:#dfe3cb;border:1px solid var(--line)}.test-area strong,.test-area small{display:block}.test-area small{margin:7px 0;font-size:12px}.test-area button{width:100%;margin-top:6px}
+.recipe-result{padding:13px;border:2px solid #9c864f;background:#f6edc9;margin-top:14px}.recipe-result h3{font-size:21px;margin:7px 0}.recipe-result[data-found=true]{box-shadow:3px 3px 0 #c8b57e;animation:recipe-reveal .25s ease-out}.recipe-result p{margin-bottom:0}
+.recipe-card{padding:12px 0;border-bottom:1px dotted var(--line)}.recipe-card header{display:flex;gap:10px;justify-content:space-between;align-items:baseline}.recipe-card h3{margin:0}.recipe-card p{margin:5px 0;color:var(--sub)}.recipe-card .smallbutton{margin-top:5px}.recipe-card .recipe-status{font-size:11px;text-transform:uppercase;font-weight:bold;color:#31593e}.recipe-card .recipe-clue{font-style:italic}.test-notes{padding-left:20px}.test-notes li{margin:9px 0}.test-notes small{display:block;color:var(--sub)}
+@keyframes recipe-reveal{from{transform:translateY(5px);opacity:.6}to{transform:translateY(0);opacity:1}}
+@media(max-width:700px){.stats{gap:5px}.stat{display:grid;gap:3px}.stat dt{font-size:8px}.stat dd{font-size:17px}.run-progress{padding:6px 12px;gap:8px;font-size:10px}.run-progress span:last-child{text-align:right;flex-shrink:0}.ingredient-picker{gap:6px}.topping-choice{padding:8px;font-size:12px}.links{gap:7px}.links .link{font-size:10px}.bar h2{font-size:9px}.log-label{font-size:9px}.log-effect{font-size:10px}}
+@media(min-width:701px) and (max-height:690px){.run-progress{padding-block:4px;font-size:10px}.stats{gap:23px}}
+@media(prefers-reduced-motion:reduce){.recipe-result[data-found=true]{animation:none}}
 </style></head>
 <body>
 <main class="shell">
@@ -55,13 +71,14 @@ body{display:flow-root;min-height:100vh}
 <header class="mast">
 <div class="brand"><span class="illustration" data-art="brand" aria-hidden="true"></span><h1><span data-ui="brand"></span><small data-ui="brandSub"></small></h1></div>
 <div class="daybox"><b id="day"></b><small class="phase" id="phase"></small></div>
-<dl class="stats"><div class="stat"><dt data-ui="cash"></dt><dd id="cash"></dd></div><div class="stat"><dt data-ui="health"></dt><dd id="health"></dd></div><div class="stat"><dt data-ui="reputation"></dt><dd id="rep"></dd></div></dl>
+<dl class="stats"><div class="stat"><dt data-ui="cash"></dt><dd id="cash"></dd></div><div class="stat"><dt data-ui="health"></dt><dd id="health"></dd></div><div class="stat"><dt data-ui="reputation"></dt><dd id="rep"></dd></div><div class="stat"><dt data-ui="lifetimeSlices"></dt><dd id="totalSold"></dd></div></dl>
 </header>
+<div class="run-progress"><span id="unlockProgress"></span><span id="discoveryCount"></span></div>
 <section class="world" id="world"><canvas id="scene" width="640" height="220" role="img"></canvas>
 <div class="world-top"><div class="route"><span class="route-sign" aria-hidden="true">1</span><span data-ui="route"></span></div><span class="clock"><svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="6"/><path d="M8 4v4l3 1"/></svg><span id="clock"></span></span></div>
 <span class="scene-stamp"><i class="lamp"></i><span id="sceneLabel"></span></span><div id="bubble" class="scene-reaction" hidden><small id="bubbleTag"></small><span id="bubbleLine"></span></div>
 </section>
-<div class="bar"><h2 id="benchLabel"></h2><nav class="links" id="tools"><button class="link" data-dialog="stock" data-ui="stockroom"></button><button class="link" data-dialog="equipment" data-ui="equipment"></button><button class="link" data-dialog="stand" data-ui="stand"></button><button class="link" data-dialog="log" data-ui="logShort"></button></nav></div>
+<div class="bar"><h2 id="benchLabel"></h2><nav class="links" id="tools"><button class="link" data-dialog="stock" data-ui="stockroom"></button><button class="link" data-dialog="equipment" data-ui="equipment"></button><button class="link" data-dialog="recipes" data-ui="recipes"></button><button class="link" data-dialog="stand" data-ui="stand"></button><button class="link" data-dialog="log" data-ui="logShort"></button></nav></div>
 <section id="prep" class="bench">
 <section class="block" data-station="dough"><div class="titleline"><h3 data-ui="doughStation"></h3><span class="count-tag" id="doughCount"></span></div><div class="ingredients" id="flourRow"></div><div class="workrow"><button class="workbutton" data-action="dough"><span id="doughAction"></span><span aria-hidden="true" class="arrow" id="doughPct"></span></button><p class="requirement" id="doughHint"></p></div></section>
 <section class="block" data-station="slices"><div class="titleline"><h3 data-ui="sliceStation"></h3><span class="count-tag" id="trayCount"></span></div><div class="ingredients" id="fillRows"></div><div class="workrow"><button class="workbutton" data-action="prepare"><span id="slicesAction"></span><span class="arrow" aria-hidden="true" id="slicesPct"></span></button><p class="requirement" id="slicesHint"></p></div></section>
@@ -71,7 +88,7 @@ body{display:flow-root;min-height:100vh}
 <div class="live-totals"><h3 class="section-head" data-ui="window"></h3><div class="counter-figures"><div><b id="sold"></b><span data-ui="sold"></span></div><div><b id="left"></b><span data-ui="remaining"></span></div><div><b id="takings"></b><span data-ui="sales"></span></div></div><div class="timeline"><i id="serviceFill"></i></div><p class="live-status" id="serviceCount"></p></div>
 <div><div class="log-head"><h3 class="section-head" data-ui="counterLog"></h3><button class="link" data-dialog="log" data-ui="fullLog"></button></div><ol class="log inline" id="liveLog"></ol></div>
 </section>
-<section class="report-grid" id="report" hidden><div class="receipt"><header><h3 class="section-head" data-ui="receipt"></h3><small id="receiptNumber"></small></header><dl><div><dt id="rSoldLabel" data-ui="soldPrepared"></dt><dd id="rSold"></dd></div><div><dt id="rSalesLabel" data-ui="sales"></dt><dd id="rSales"></dd></div><div><dt id="rLeftLabel" data-ui="leftovers"></dt><dd id="rLeft"></dd></div><div><dt id="rSpentLabel" data-ui="spending"></dt><dd id="rSpent"></dd></div><div id="rOtherRow" hidden><dt data-ui="otherIncome"></dt><dd id="rOther"></dd></div></dl><div class="ledger-tot"><span id="rChangeLabel" data-ui="change"></span><b id="rChange"></b></div></div>
+<section class="report-grid" id="report" hidden><div class="receipt"><header><h3 class="section-head" data-ui="receipt"></h3><small id="receiptNumber"></small></header><dl><div><dt id="rSoldLabel" data-ui="soldPrepared"></dt><dd id="rSold"></dd></div><div><dt id="rSalesLabel" data-ui="sales"></dt><dd id="rSales"></dd></div><div><dt id="rLeftLabel" data-ui="leftovers"></dt><dd id="rLeft"></dd></div><div><dt id="rSpentLabel" data-ui="spending"></dt><dd id="rSpent"></dd></div><div id="rTastedRow" hidden><dt data-ui="tasted"></dt><dd id="rTasted"></dd></div><div id="rOtherRow" hidden><dt data-ui="otherIncome"></dt><dd id="rOther"></dd></div></dl><div class="ledger-tot"><span id="rChangeLabel" data-ui="change"></span><b id="rChange"></b></div></div>
 <div class="report-notes"><div><span class="kicker" data-ui="tomorrow"></span><p id="rClue"></p></div><div class="eventline"><span class="kicker" id="eventTitle"></span><p id="rEvent"></p><button id="readNote" class="link" data-dialog="note" data-ui="fullReceipt" hidden></button></div></div>
 </section>
 <div class="task"><div class="task-copy"><strong id="taskTitle"></strong><small id="taskHint"></small></div><button class="equipmentBuy" id="buyMicrowave" data-action="microwave"></button><button class="main-action" id="primary"></button></div>
@@ -88,7 +105,7 @@ const each=(selector,fn)=>document.querySelectorAll(selector).forEach(fn);
 const fmt=n=>'$'+(Math.abs(n||0)/100).toFixed(2), signed=n=>(n<0?'−':n>0?'+':'')+fmt(n);
 const safe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const replace=(text,values={})=>String(text??'').replace(/\{(\w+)\}/g,(_,key)=>String(values[key]??''));
-let vm,ui,activeDialog='',opener=null,lastPhase='',lastSheet='',lastLog='',previousNotice='',previousReaction='';
+let vm,ui,activeDialog='',opener=null,lastPhase='',lastSheet='',lastLog='',previousNotice='',previousReaction='',shownTest='';
 const pictures={
  brand:['.......rrr..','.....rryyyr.','...rryyttyr.','.rryttyyyyr.','ryyytyyyyr..','rrtyyttyyr..','.rryytyyr...','..rtyyyyr...','...ryyyr....','....ryr.....','.....r......'],
  flour:['..ggggg...','..gpppg...','...gpg....','..gpppg...','.gpppppg..','.gpgggpg..','.gpgpgpg..','.gpgggpg..','.gpppppg..','.ggggggg..'],
@@ -108,7 +125,7 @@ function stockPaint(id,prefix){
  btn.title=reason||'';btn.disabled=vm.phase!=='prep'||Boolean(reason);
 }
 function put(id,v){const n=el(id),s=String(v??'');if(n.textContent!==s)n.textContent=s;}
-function logRows(items,limit){return [...items].reverse().slice(0,limit).map(row=>'<li><time>'+safe(row.time)+'</time><span>'+safe(row.text)+'</span></li>').join('');}
+function logRows(items,limit){return [...items].reverse().slice(0,limit).map(row=>'<li data-tone="'+safe(row.tone||'neutral')+'"><time>'+safe(row.time)+'</time><span><span class="log-label">'+safe(row.outcome)+'</span>'+safe(row.text)+(row.effect?'<small class="log-effect">'+safe(row.effect)+'</small>':'')+'</span></li>').join('');}
 function dispatch(action,id,quantity=1){window.Stand.action(action,id,quantity);}
 function work(kind,buttonAction){
  const button=document.querySelector('[data-action="'+buttonAction+'"]'),working=vm.work?.kind===kind,otherWork=vm.work&&!working;
@@ -136,7 +153,7 @@ function service(){
  put('serviceCount',replace(ui.visitorCount,{count:vm.visitorsSeen,total:vm.forecast.visitors}));
  const list=logRows(vm.log||[],4);if(list!==lastLog){el('liveLog').innerHTML=list;lastLog=list;}
  const rx=vm.reaction||null, bubble=el('bubble');bubble.hidden=!rx?.text;
- if(rx?.text){put('bubbleTag',replace(ui.visitor,{n:rx.visitor})+(rx.amount?'  +'+fmt(rx.amount):''));put('bubbleLine',rx.text);}
+ if(rx?.text){put('bubbleTag',replace(ui.visitor,{n:rx.visitor})+(rx.amount?'  +'+fmt(rx.amount):''));put('bubbleLine',rx.text);bubble.dataset.tone=['disgusted','passed','miss'].includes(rx.kind)?'negative':['delighted','satisfied'].includes(rx.kind)?'positive':'neutral';}
  put('taskTitle',vm.paused?ui.servicePaused:!rx?ui.serviceStarted:rx.amount?ui.serviceSale:rx.kind==='arriving'?ui.serviceArrival:ui.servicePass);
  put('taskHint',rx?.amount?replace(ui.paid,{paid:fmt(rx.amount),n:rx.visitor}):rx?replace(ui.visitor,{n:rx.visitor}):ui.waiting);
  el('buyMicrowave').hidden=true;el('primary').disabled=false;el('primary').dataset.action='pause';put('primary',vm.paused?ui.resume:ui.pause);
@@ -152,7 +169,7 @@ function report(){
     delete el('primary').dataset.action;el('primary').dataset.dialog='reset';put('primary',vm.sample?ui.resetSample:ui.restart);
     return;
   }
-  const r=vm.receipt;if(!r)return;
+  const r=vm.receipt;if(!r)return;el('rTastedRow').hidden=!r.tasted;put('rTasted',r.tasted);
   put('rSoldLabel',ui.soldPrepared);put('rSalesLabel',ui.sales);put('rSpentLabel',ui.spending);put('rLeftLabel',ui.leftovers);put('rChangeLabel',ui.change);
   put('receiptNumber',replace(ui.receiptNo,{day:String(vm.day).padStart(2,'0')}));put('rSold',r.sold+' / '+r.prepared);put('rLeft',r.leftovers);put('rSales',fmt(r.sales));put('rSpent',fmt(r.spending));put('rChange',signed(r.change));el('rChange').classList.toggle('costneg',r.change<0);
   el('rOtherRow').hidden=!r.otherIncome;put('rOther',fmt(r.otherIncome));
@@ -162,6 +179,39 @@ function report(){
 }
 function toolRow(title,detail,button){return '<div class="tool-row"><div><strong>'+safe(title)+'</strong><small>'+safe(detail)+'</small></div>'+button+'</div>';}
 function toolButton(action,id,label,reason){return '<button class="smallbutton" data-action="'+safe(action)+'" data-id="'+safe(id||'')+'" '+(reason?'disabled':'')+'>'+safe(label)+'</button>';}
+function recipeCard(item){
+ const label=item.active?ui.removeRecipe:vm.slots===1?ui.useRecipe:ui.addDiscovered;
+ const detail=item.ingredientNames||ui.plainBase;
+ return '<article class="recipe-card"><header><h3>'+safe(item.name)+'</h3><b>'+fmt(item.price)+'</b></header>'+
+  '<p>'+safe(detail)+'</p><p>'+safe(item.note)+'</p>'+
+  (item.active?'<span class="recipe-status">'+safe(ui.menuStatus)+'</span>':'')+
+  (item.active&&!item.stocked?'<p>'+safe(ui.missingToppings)+'</p>':'')+
+  '<div>'+toolButton('menu',item.id,label,item.reason)+'</div>'+
+  (item.reason?'<p class="sheet-note">'+safe(item.reason)+'</p>':'')+'</article>';
+}
+function recipeNotebook(){
+ if(vm.sample)return '<p>'+safe(ui.referenceRecipes)+'</p>'+vm.recipes.filter(item=>item.unlocked).map(recipeCard).join('');
+ const book=vm.notebook,chosen=book.choices.filter(item=>item.selected),mix=chosen.map(item=>item.name).join(' + ');
+ let html='<p>'+safe(ui.notebookIntro)+'</p><p class="sheet-note">'+safe(ui.notebookRules)+'</p>';
+ if(book.nextDay)html+='<p class="sheet-note">'+safe(replace(ui.nextDelivery,{day:book.nextDay,items:book.nextItems}))+'</p>';
+ html+='<fieldset class="ingredient-picker"><legend>'+safe(ui.chooseToppings)+'</legend>';
+ html+=book.choices.map(item=>'<button class="topping-choice" data-action="selectTopping" data-id="'+safe(item.id)+'" aria-pressed="'+item.selected+'" '+
+  (vm.phase!=='prep'||!item.available||!item.stock&&!item.selected||chosen.length>=3&&!item.selected?'disabled':'')+'>'+safe(item.name)+
+  '<small>'+safe(item.available?replace(ui.stockAmount,{count:item.stock}):replace(ui.delivery,{day:item.day,sold:item.sold}))+'</small></button>').join('');
+ html+='</fieldset><div class="test-area"><strong>'+safe(ui.selectedMix)+': '+safe(mix||ui.noSelection)+'</strong><small>'+safe(chosen.length?replace(ui.testCost,{ingredients:mix}):ui.noSelection)+'</small>'+
+  toolButton('experiment','',ui.testRecipe,book.canTry?'':book.reason)+'<small id="experimentReason">'+safe(book.reason)+'</small></div>';
+ if(book.last?.matches){
+  const recipe=vm.recipes.find(item=>item.id===book.last.id);
+  html+='<section class="recipe-result" data-found="'+book.last.found+'" role="status"><span class="kicker">'+safe(book.last.found?ui.foundRecipe:ui.failedRecipe)+'</span><h3>'+safe(book.last.name||book.last.ingredients)+'</h3><p>'+safe(book.last.found?ui.foundHelp:ui.failedHelp)+'</p>'+
+   (recipe?toolButton('menu',recipe.id,recipe.active?ui.menuStatus:ui.useRecipe,recipe.active?'active':recipe.reason):'')+'</section>';
+ }
+ html+='<section class="sheet-section"><h3>'+safe(replace(ui.discoveredCount,{count:book.known,total:book.total}))+'</h3><p class="sheet-note">'+safe(ui.recipeHelp)+'</p>';
+ html+=vm.recipes.filter(item=>item.unlocked).map(recipeCard).join('');
+ html+='</section><section class="sheet-section"><h3>'+safe(ui.recipeClues)+'</h3>'+
+  vm.recipes.filter(item=>!item.unlocked).map(item=>'<article class="recipe-card"><h3>'+safe(ui.mysteryRecipe)+'</h3><p class="recipe-clue">'+safe(item.clue)+'</p></article>').join('')+'</section>';
+ if(book.attempts.length)html+='<section class="sheet-section"><h3>'+safe(ui.triedMixes)+'</h3><ol class="test-notes">'+book.attempts.slice().reverse().map(attempt=>'<li>'+safe(attempt.names)+'<small>'+safe(replace(ui.testHistoryDay,{day:attempt.day}))+' · '+safe(attempt.name||ui.failedMix)+'</small></li>').join('')+'</ol></section>';
+ return html;
+}
 function ledger(r){
  const rows=[[ui.openingCash,fmt(r.startCash)],[ui.sales,fmt(r.sales)],[ui.otherIncome,fmt(r.otherIncome)],
  [ui.ingredientsSpent,'−'+fmt(r.expenses.ingredients)],[ui.suppliesSpent,'−'+fmt(r.expenses.supplies)],
@@ -175,15 +225,15 @@ function standTools(){
  html+='<p class="sheet-note">'+safe(ui.foodHint)+'</p>';
  if(vm.canRecover)html+=toolRow(ui.recoveryHint,'',toolButton('recover','',ui.recovery,''));
  html+='<section class="sheet-section"><h3>'+safe(replace(ui.menuTitle,{count:vm.slots}))+'</h3>';
- html+=vm.recipes.map(item=>toolRow(item.name+' · '+fmt(item.price),item.reason||item.note,toolButton('menu',item.id,item.active?ui.removeRecipe:item.unlocked?ui.addRecipe:ui.locked,item.reason))).join('');
- html+='<p class="sheet-note">'+safe(ui.nextUnlock)+'</p><p class="sheet-note">'+safe(ui.supportHint)+'</p></section><section class="sheet-section"><h3>'+safe(ui.history)+'</h3>';
+ html+=vm.recipes.filter(item=>item.unlocked).map(recipeCard).join('');
+ html+='<p class="sheet-note">'+safe(vm.sample?ui.nextUnlock:ui.notebookUnlocks)+'</p><p class="sheet-note">'+safe(ui.supportHint)+'</p></section><section class="sheet-section"><h3>'+safe(ui.history)+'</h3>';
  html+=vm.history.length?vm.history.slice(-5).reverse().map(r=>'<details><summary>'+safe(replace(ui.receiptSummary,{day:r.day,sold:r.sold,cash:fmt(r.endCash)}))+'</summary>'+ledger(r)+'</details>').join(''):'<p>'+safe(ui.historyEmpty)+'</p>';
  if(vm.phase==='service')html+='<p class="sheet-note">'+safe(ui.pauseInPanel)+'</p>';
  return html+'</section>';
 }
 function paintSheet(force=false){
- if(!activeDialog)return;const names={stock:ui.stockroom,equipment:ui.equipment,log:ui.counterLog,reset:vm.sample?ui.resetTitle:ui.restartTitle,note:ui.receiptDetail,stand:ui.stand};put('sheetTitle',names[activeDialog]);
- let html='';const D=activeDialog,key=JSON.stringify([D,vm.phase,vm.cash,vm.stock,vm.upgrades,vm.recipes,vm.work,vm.health,vm.disgust,vm.xp,vm.cans,vm.log?.length,vm.receipt?.eventMessage,vm.notice]);
+ if(!activeDialog)return;const names={stock:ui.stockroom,equipment:ui.equipment,recipes:ui.notebookTitle,log:ui.counterLog,reset:vm.sample?ui.resetTitle:ui.restartTitle,note:ui.receiptDetail,stand:ui.stand};put('sheetTitle',names[activeDialog]);
+ let html='';const D=activeDialog,key=JSON.stringify([D,vm.phase,vm.cash,vm.stock,vm.upgrades,vm.recipes,vm.notebook,vm.work,vm.health,vm.disgust,vm.xp,vm.cans,vm.log?.length,vm.receipt?.eventMessage,vm.notice]);
  if(!force&&lastSheet===key)return;lastSheet=key;
  if(D==='stock'){
    html='<div class="large-line"><h3>'+safe(ui.budget)+'</h3><b>'+fmt(vm.cash)+'</b></div>';
@@ -194,13 +244,15 @@ function paintSheet(force=false){
    html+='<p class="sheet-note">'+safe(vm.phase==='prep'?ui.stockHint:ui.readOnly)+'</p>';
  } else if(D==='equipment'){
    html=vm.upgrades.map(item=>toolRow(item.name+' · '+fmt(item.cost),item.effect+' '+(item.reason||item.note),item.owned?'<b>'+safe(ui.owned)+'</b>':toolButton('upgrade',item.id,replace(ui.buyPrice,{cost:fmt(item.cost)}),item.reason))).join('');
+ } else if(D==='recipes'){
+   html=recipeNotebook();
  } else if(D==='stand'){
    html=standTools();
  } else if(D==='log'){
    html=vm.log?.length?'<ol class="log">'+logRows(vm.log,Number.MAX_SAFE_INTEGER)+'</ol>':'<p>'+safe(ui.fullLogEmpty)+'</p>';
    if(vm.phase==='service')html+='<p class="sheet-note">'+safe(ui.pauseInPanel)+'</p>';
  } else if(D==='note'){
-   html='<h3>'+safe(ui.tomorrow)+'</h3><p>'+safe(vm.receipt?.clue)+'</p><h3>'+safe(vm.receipt?.eventTitle||ui.event)+'</h3><p>'+safe(vm.receipt?.eventMessage||ui.noEvent)+'</p>'+(vm.receipt?'<h3>'+safe(ui.ledgerTitle)+'</h3>'+ledger(vm.receipt):'')+(vm.receipt?.milestones.length?'<h3>'+safe(ui.milestones)+'</h3><p>'+safe(vm.receipt.milestones.map(m=>m.names.join(', ')).join(' · '))+'</p>':'');
+   html='<h3>'+safe(ui.tomorrow)+'</h3><p>'+safe(vm.receipt?.clue)+'</p><h3>'+safe(vm.receipt?.eventTitle||ui.event)+'</h3><p>'+safe(vm.receipt?.eventMessage||ui.noEvent)+'</p>'+(vm.receipt?'<h3>'+safe(ui.ledgerTitle)+'</h3>'+ledger(vm.receipt):'')+(vm.receipt?.milestones.length?'<h3>'+safe(ui.milestones)+'</h3><p>'+safe(vm.receipt.milestones.map(m=>m.names.join(', ')).join(' · '))+'</p>':'')+(vm.receipt?.discoveries.length?'<h3>'+safe(ui.discoveredToday)+'</h3><p>'+safe(vm.receipt.discoveries.join(', '))+'</p>':'');
  } else {
    html='<p>'+safe(vm.sample?ui.resetDetail:ui.restartDetail)+'</p><button class="smallbutton" data-confirm-reset>'+safe(vm.sample?ui.resetConfirm:ui.runRestartConfirm)+'</button>';
  }
@@ -210,6 +262,10 @@ function paintSheet(force=false){
   if(vm.notice&&D!=='log'&&D!=='reset'){const feedback=document.createElement('p');feedback.className='sheet-feedback';feedback.textContent=vm.notice;el('sheetBody').append(feedback);}
  if(focusKey){const restored=[...el('sheetBody').querySelectorAll('button')].find(b=>b.dataset.action===focusKey&&b.dataset.id===focusId&&!b.disabled);(restored||el('closeSheet')).focus({preventScroll:true});}
  el('sheetBody').scrollTop=scroll;
+ if(D==='recipes'&&vm.notebook?.last?.matches){
+  const key=vm.notebook.last.day+'/'+vm.notebook.last.ingredients,result=el('sheetBody').querySelector('.recipe-result');
+  if(result&&key!==shownTest){shownTest=key;result.tabIndex=-1;result.focus({preventScroll:true});result.scrollIntoView({block:'nearest'});}
+ }
 }
 function show(type,button){opener=button;activeDialog=type;lastSheet='';dispatch('panel',true);paintSheet(true);el('sheet').showModal();window.StandScene?.paint(vm);el('closeSheet').focus({preventScroll:true});}
 function finishClose(){
@@ -257,9 +313,13 @@ function receiptOverflow(){
 window.addEventListener('resize',receiptOverflow);
 function render(model,content){
  const first=!ui;vm=model;ui=content.ui;if(first)init();
+ if(vm.notebook&&!vm.notebook.attempts.length)shownTest='';
  const phase=vm.phase,shift=lastPhase&&lastPhase!==phase,wasOnPhaseControl=shift&&(document.activeElement===el('primary')||[el('prep'),el('service'),el('report')].some(p=>p.contains(document.activeElement)));
  ['prep','service','report'].forEach(s=>el(s).hidden=s!==phase);
  put('day',replace(ui.day,{day:String(vm.day).padStart(2,'0')}));put('phase',ui[phase+'Phase']);put('cash',fmt(vm.cash));put('health',vm.health+ui.healthSuffix);put('rep',vm.reputation);put('benchLabel',ui[phase+'Bench']);
+ put('totalSold',vm.salesTotal);el('totalSold').title=ui.lifetimeHint;
+ put('unlockProgress',vm.nextMilestone?replace(ui.salesMilestone,{sold:vm.salesTotal,at:vm.nextMilestone.at}):ui.allMilestones);
+ put('discoveryCount',vm.notebook?replace(ui.discoveredCount,{count:vm.notebook.known,total:vm.notebook.total}):ui.referenceLabel);
  const scenePhase=phase[0].toUpperCase()+phase.slice(1);put('sceneLabel',ui['scene'+scenePhase]);el('scene').setAttribute('aria-label',ui['sceneAlt'+scenePhase]);el('world').dataset.phase=phase;updateClock();el('bubble').hidden=true;
  delete el('primary').dataset.dialog;
   put('edition',vm.sample?ui.sampleEdition:ui.runEdition);put('modeSwitch',vm.sample?ui.returnRun:ui.playSample);put('restart',vm.sample?ui.resetSample:ui.restart);
@@ -344,7 +404,7 @@ window.StandView={render};
     "buyMicrowave": "Buy microwave · {cost}",
     "open": "Open stand →",
     "window": "At the window",
-    "sold": "Sold",
+    "sold": "Slices sold today",
     "remaining": "On tray",
     "sales": "Sales",
     "counterLog": "Counter log",
@@ -396,9 +456,9 @@ window.StandView={render};
     "servicePass": "The visitor walked on.",
     "serviceArrival": "A visitor approaches.",
     "serviceOutcome": "At the window.",
-    "potentialShort": "Tray value",
+    "potentialShort": "Base tray value",
     "stand": "Stand",
-    "runEdition": "Continuing run · Days 1–5 review",
+    "runEdition": "Continuing run · v2.3.0",
     "sampleEdition": "Repeatable sample day",
     "restart": "Restart run",
     "playSample": "Play sample",
@@ -460,7 +520,47 @@ window.StandView={render};
     "ledgerFormula": "Opening cash + sales + other income − spending = closing cash.",
     "toppings": "Toppings",
     "buyFive": "Buy 5 · {cost}",
-    "buyQuantityDetail": "Buy {quantity} {item} for {cost}. {count} in stock."
+    "buyQuantityDetail": "Buy {quantity} {item} for {cost}. {count} in stock.",
+    "lifetimeSlices": "Slices sold",
+    "lifetimeHint": "Total slices sold in this run",
+    "recipes": "Recipes",
+    "notebookTitle": "Recipe notebook",
+    "notebookIntro": "Buy toppings in Stockroom, then test a mix on a prepared slice.",
+    "notebookRules": "Each test uses 1 prepared slice and 1 portion of each selected topping. Sauce and cheese are included. Tests do not count as sales.",
+    "chooseToppings": "Choose your toppings",
+    "testRecipe": "Taste-test this mix",
+    "testCost": "Uses 1 slice + {ingredients}",
+    "selectedMix": "Your mix",
+    "noSelection": "No toppings selected",
+    "stockAmount": "{count} on hand",
+    "delivery": "Day {day} / {sold} sold",
+    "nextDelivery": "Next delivery: Day {day} · {items}",
+    "foundRecipe": "New recipe found",
+    "failedRecipe": "Not a keeper",
+    "triedMixes": "Your test notes",
+    "failedMix": "No recipe found",
+    "discoveredCount": "{count} / {total} recipes found",
+    "mysteryRecipe": "Undiscovered recipe",
+    "knownRecipes": "Your recipes",
+    "recipeClues": "Pages still to fill",
+    "menuStatus": "On the menu",
+    "addDiscovered": "Add to menu",
+    "missingToppings": "Buy toppings before service",
+    "referenceRecipes": "The comparison keeps the original automatic recipe unlocks. Use the continuing run to experiment.",
+    "salesMilestone": "{sold} / {at} sold · next sales milestone",
+    "allMilestones": "All sales milestones reached",
+    "reputationEffect": "Reputation {change}",
+    "tasted": "Taste-test slices",
+    "discoveredToday": "Recipes found today",
+    "testHistoryDay": "Day {day}",
+    "notebookEdition": "Continuing run · v2.3.0",
+    "recipeHelp": "Recipe prices use the base slice price plus a topping premium. A discovered recipe needs a menu slot and stocked toppings. Plain Slice remains the fallback.",
+    "useRecipe": "Use this recipe",
+    "plainBase": "Sauce + cheese on a prepared slice",
+    "foundHelp": "One slice and your chosen toppings used. A new page for the notebook.",
+    "failedHelp": "The test is in your notes. Try a different combination next time.",
+    "referenceLabel": "v2.2.0 comparison",
+    "notebookUnlocks": "Ingredients arrive by Day 5 or unlock sooner through sales. Extra menu slots and equipment unlock through sales."
   },
   "names": {
     "flour": "Flour",
@@ -510,7 +610,8 @@ window.StandView={render};
     "fallback": "Topping sold out; served plain.",
     "foodReady": "Food delivered. Health restored.",
     "cleanReady": "Counter cleaned.",
-    "trainReady": "Training finished for today."
+    "trainReady": "Training finished for today.",
+    "migrated": "Run updated. Your unlocked recipes are kept in the notebook."
   },
   "counter": {
     "opened": "Sign turned to OPEN. {visitors} visitors expected.",
@@ -796,11 +897,52 @@ window.StandView={render};
     "Unlocks at 75 slices sold.": "Unlocks at 75 slices sold.",
     "Requires 75 slices sold.": "Requires 75 slices sold.",
     "Unlocks at 100 slices sold.": "Unlocks at 100 slices sold.",
-    "Requires 100 slices sold.": "Requires 100 slices sold."
+    "Requires 100 slices sold.": "Requires 100 slices sold.",
+    "Discover this recipe in the notebook first.": "Discover this recipe in the notebook first."
+  },
+  "outcomes": {
+    "delighted": "Delighted",
+    "satisfied": "Satisfied",
+    "neutral": "Neutral",
+    "disgusted": "Unhappy",
+    "passed": "Walked away",
+    "soldOut": "Sold out",
+    "capacity": "At capacity",
+    "arrival": "Arriving",
+    "system": "Stand update",
+    "discovery": "Unlocked"
+  },
+  "discovery": {
+    "beforeOpen": "Try recipes before opening.",
+    "finishWork": "Finish the current job first.",
+    "choose": "Choose one to three toppings. Sauce and cheese are already on the slice.",
+    "limit": "Choose up to three different toppings.",
+    "locked": "That topping is not available yet.",
+    "known": "Already in your notebook. Choose a different mix.",
+    "repeat": "This mix is in your notes. Try a different combination.",
+    "needSlice": "Prep a slice for the taste test first.",
+    "needStock": "Buy at least one portion of each selected topping.",
+    "found": "Discovered: {name}. Add it to the menu when you are ready.",
+    "notYet": "Not a keeper. The sample is gone, but the combination is recorded. Try a different mix."
   }
 }
 </script>
+<script id="recipe-data" type="application/json">
+{"maxToppings": 3, "ingredients": [{"id": "pepperoni", "name": "Pepperoni", "cost": 55, "day": 3, "sold": 12}, {"id": "mushroom", "name": "Mushroom", "cost": 35, "day": 3, "sold": 20}, {"id": "green_peppers", "name": "Green Peppers", "cost": 35, "day": 4, "sold": 35}, {"id": "onion", "name": "Onion", "cost": 25, "day": 2, "sold": 8}, {"id": "pickles", "name": "Pickles", "cost": 30, "day": 2, "sold": 8}, {"id": "pineapple", "name": "Pineapple", "cost": 40, "day": 4, "sold": 35}, {"id": "ham", "name": "Ham", "cost": 60, "day": 5, "sold": 45}], "recipes": [{"id": "plain", "name": "Plain Slice", "ingredients": [], "bonus": 0, "delight": 0, "note": "Cheese-adjacent optimism on dough.", "clue": "The one you started with."}, {"id": "pepperoni", "name": "Pepperoni Slice", "ingredients": ["pepperoni"], "bonus": 100, "delight": 0.02, "note": "The safe crowd-pleaser with enough pepperoni to look intentional.", "clue": "A familiar red circle. Keep this one simple."}, {"id": "mushroom", "name": "Mushroom Slice", "ingredients": ["mushroom"], "bonus": 75, "delight": 0.02, "note": "A familiar mushroom slice with roadside-foraged energy.", "clue": "One topping, found in the woods."}, {"id": "green_peppers", "name": "Green Pepper Slice", "ingredients": ["green_peppers"], "bonus": 75, "delight": 0.02, "note": "A bright pepper slice that looks slightly fresher than the building.", "clue": "One green topping. No need to overthink it."}, {"id": "classic", "name": "The Classic", "ingredients": ["pepperoni", "mushroom"], "bonus": 175, "delight": 0.07, "note": "Pepperoni and mushroom. Safe, sturdy and hard to argue with.", "clue": "The red circles and the woodland topping get along."}, {"id": "dill_icious", "name": "Dill-icious", "ingredients": ["pickles", "onion"], "bonus": 125, "delight": 0.04, "note": "Pickles and onion for customers who respect brine.", "clue": "Briny and sharp. Try the two toppings in the Day 2 delivery."}, {"id": "forest_forage", "name": "Forest Forage", "ingredients": ["mushroom", "green_peppers", "onion"], "bonus": 175, "delight": 0.06, "note": "A woodsy vegetable slice with mushrooms, peppers and onion.", "clue": "Three vegetables: woodland, green and sharp."}, {"id": "ham_cheese", "name": "Classic Ham & Cheese", "ingredients": ["ham"], "bonus": 100, "delight": 0.03, "note": "A plainspoken ham-and-cheese slice for uncomplicated customers.", "clue": "The cheese is already on the slice. Add one mild meat."}, {"id": "hawaiian", "name": "Hawaiian Dream", "ingredients": ["pineapple", "ham"], "bonus": 175, "delight": 0.06, "note": "Pineapple and ham. The classic debate in slice form.", "clue": "A tropical fruit and a mild meat. A familiar argument."}, {"id": "sweet_savory", "name": "Sweet & Savory", "ingredients": ["onion", "pineapple"], "bonus": 125, "delight": 0.04, "note": "Pineapple and onion. A confident little argument.", "clue": "Sweet tropical fruit meets the sharp vegetable."}]}
+</script>
 <script>
+// The comparison runs the original checkpoint; the continuing run uses the current engine.
+window.PizzaMode = (() => {
+  const hash = new URLSearchParams(window.location.hash.slice(1));
+  return { sample: hash.get('mode') === 'sample' || (hash.has('event') && !hash.has('mode')) };
+})();
+
+</script>
+<script>
+window.Pizza = {}; Pizza.RECIPE_BOOK = JSON.parse(document.getElementById('recipe-data').textContent);
+</script>
+<script>
+if (window.PizzaMode.sample) {
 /* Every economic and simulation value lives here. Money is integer cents. */
 window.Pizza = window.Pizza || {};
 Pizza.DEBUG_MODE = false;
@@ -840,8 +982,50 @@ Pizza.CONFIG = {
   keys: { run: 'pizza-place-rebuild.run.v1', bests: 'pizza-place-rebuild.bests.v1', settings: 'pizza-place-rebuild.settings.v1' }
 };
 
+} else {
+/* Every economic and simulation value lives here. Money is integer cents. */
+window.Pizza = window.Pizza || {};
+Pizza.DEBUG_MODE = false;
+Pizza.CONFIG = {
+  version: '2.3.0', saveVersion: 3, maxDays: 100,
+  startingCash: 6400, startingHealth: 10, maxHealth: 10, startingRep: 2,
+  healthLoss: 1, foodCost: 800, foodHealth: 3, foodSeconds: 5,
+  daySeconds: 20, speeds: [1, 2, 4], baseCustomers: 4, maxCustomers: 100,
+  slicesPerBatch: 8,
+  work: { total: 100, skillBonus: 4, dough: 20, prepare: 25, train: 20, clean: 25 },
+  service: { customerSeconds: 1.9, decisionSeconds: 0.7 },
+  skillXP: 10, skillMax: 9, doughXP: 1, prepXP: 1, trainingXP: 2,
+  price: { start: 300, min: 100, max: 1000, step: 25, sensitivity: 0.06 },
+  buy: { base: 0.52, min: 0.05, max: 0.95, menu: 0.03, maxMenu: 0.15, supply: 0.03, disgust: 0.025 },
+  reaction: { delight: 0.12, skill: 0.012, disgust: 0.03, dirt: 0.025, missing: 0.08, fallback: 0.1, satisfied: 0.58, maxDelight: 0.45, maxDisgust: 0.8 },
+  reputation: { fullDay: 1, early: -2, delighted: 1, disgusted: -1, turnedAway: -1 },
+  disgust: { max: 20, missingSupply: 0.35, perSale: 0.08, spoiledSlice: 0.05, wastedDough: 0.1, spoiledTopping: 0.02, perRat: 1, overflowCan: 0.25 },
+  recycling: { capacity: 24, centsPerUnit: 25, windfall: 10, wheelchairRep: 8 },
+  freshnessDays: 7, popPrice: 150, popChance: 0.25,
+  inventoryCosts: { flour: 100, sauce: 100, cheese: 200, pepperoni: 55, mushroom: 35, green_peppers: 35, napkins: 25, paper_plates: 25, pop: 100 },
+  recipeBonuses: { plain: 0, pepperoni: 100, mushroom: 75, green_peppers: 75, classic: 175 },
+  recipeDelight: { plain: 0, pepperoni: 0.02, mushroom: 0.02, green_peppers: 0.02, classic: 0.07 },
+  orderWeights: { menu: 4, plain: 1 },
+  slots: [[0, 1], [25, 2], [75, 3], [150, 4], [300, 5]],
+  toppingUnlocks: { pepperoni: 25, mushroom: 50, green_peppers: 100 },
+  upgrades: {
+    clean_microwave: { cost: 2000, unlock: 0, capacity: 0, rep: 0, clean: 1 },
+    hand_made_sign: { cost: 2500, unlock: 0, capacity: 0, rep: 2 },
+    folding_table: { cost: 5000, unlock: 25, capacity: 5, rep: 0 },
+    mini_fridge: { cost: 6500, unlock: 75, capacity: 0, rep: 0 },
+    second_microwave: { cost: 7500, unlock: 50, capacity: 5, rep: 0 },
+    tiny_menu_board: { cost: 12000, unlock: 100, capacity: 0, rep: 0, slots: 1 }
+  },
+  events: { chance: 0.32, bigGame: 10, rain: 0.5, scratch: 4500, interview: 5, catRep: 1, catDirt: 1, weekend: 3, weekendDays: [6, 0], weekLength: 7, sympathyThreshold: 500, sympathyCash: 1000, ratPerSlice: 0.015, ratMaxChance: 0.3 },
+  score: { reputation: 10, slices: 2, days: 5, disgust: -5 },
+  maxLog: 100, maxHistory: 100, maxPurchase: 100,
+  keys: { run: 'pizza-place-rebuild.run.v1', bests: 'pizza-place-rebuild.bests.v1', settings: 'pizza-place-rebuild.settings.v1' }
+};
+
+}
 </script>
 <script>
+if (window.PizzaMode.sample) {
 /* MVP content, deliberately independent of the older application's runtime. */
 Pizza.DATA = {
   items: [
@@ -893,8 +1077,76 @@ Pizza.DATA = {
   }
 };
 
+} else {
+/* Current catalogue. The archived checkpoint remains the repeatable comparison. */
+Pizza.DATA = {
+  items: [
+    { id: 'flour', name: 'Flour', group: 'ingredients', icon: 'bag', note: '1 unit makes 1 dough.' },
+    { id: 'sauce', name: 'Sauce', group: 'ingredients', icon: 'jar', note: '1 unit per batch of 8 slices.' },
+    { id: 'cheese', name: 'Cheese', group: 'ingredients', icon: 'cheese', note: '1 unit per batch of 8 slices.' },
+    { id: 'pepperoni', name: 'Pepperoni', group: 'toppings', icon: 'topping', note: '1 portion per pepperoni slice.' },
+    { id: 'mushroom', name: 'Mushroom', group: 'toppings', icon: 'mushroom', note: '1 portion per mushroom slice.' },
+    { id: 'green_peppers', name: 'Green Peppers', group: 'toppings', icon: 'pepper', note: '1 portion per green pepper slice.' },
+    { id: 'napkins', name: 'Napkins', group: 'supplies', icon: 'napkin', note: '1 per sale. Helps buy chance and reactions.' },
+    { id: 'paper_plates', name: 'Paper Plates', group: 'supplies', icon: 'plate', note: '1 per sale. Helps buy chance and reactions.' },
+    { id: 'pop', name: 'Pop', group: 'supplies', icon: 'pop', note: 'Optional $1.50 drink sale. Each sale adds 1 refundable can.' }
+  ],
+  recipes: [
+    { id: 'plain', name: 'Plain Slice', ingredients: [], note: 'Cheese-adjacent optimism on dough.' },
+    { id: 'pepperoni', name: 'Pepperoni Slice', ingredients: ['pepperoni'], note: 'A reliable way to look intentional.' },
+    { id: 'mushroom', name: 'Mushroom Slice', ingredients: ['mushroom'], note: 'A little roadside-foraged energy.' },
+    { id: 'green_peppers', name: 'Green Pepper Slice', ingredients: ['green_peppers'], note: 'Slightly fresher than the building.' },
+    { id: 'classic', name: 'The Classic', ingredients: ['pepperoni', 'mushroom'], note: 'Safe, sturdy and hard to argue with.' }
+  ],
+  upgrades: [
+    { id: 'clean_microwave', name: 'Clean Microwave', icon: 'microwave', tag: 'ESSENTIAL', effect: 'Required to open. Removes 1 dirt.', note: 'Cleaning this thing could not hurt.' },
+    { id: 'hand_made_sign', name: 'Hand Made Sign', icon: 'sign', tag: 'REPUTATION', effect: '+2 reputation. More people stop by.', note: 'Now they know this is a pizza place.' },
+    { id: 'folding_table', name: 'Folding Table', icon: 'table', tag: 'CAPACITY', effect: '+5 customers served per day.', note: 'Technically, it is a table.' },
+    { id: 'mini_fridge', name: 'Mini Fridge', icon: 'fridge', tag: 'FRESHNESS', effect: 'Toppings stay fresh for 7 days.', note: 'Seven days instead of one sad afternoon.' },
+    { id: 'second_microwave', name: 'Second Microwave', icon: 'microwave', tag: 'CAPACITY', effect: '+5 customers served per day.', note: 'Two is better than one.' },
+    { id: 'tiny_menu_board', name: 'Tiny Menu Board', icon: 'menu', tag: 'VARIETY', effect: '+1 active recipe slot.', note: 'Just enough room to imply a real menu.' }
+  ],
+  events: [
+    { id: 'big_game', name: 'Big Game Day', type: 'random', text: 'The big game is on tomorrow. Everyone has opinions and some of them have cash.' },
+    { id: 'rain', name: 'Rain Day', type: 'random', text: 'Tomorrow looks wet. People prefer their pizza indoors.' },
+    { id: 'scratch', name: 'Scratch Ticket Win', type: 'random', text: 'You found a lucky scratch ticket. Finally, a business plan.' },
+    { id: 'good_tv', name: 'Good TV Interview', type: 'random', text: 'You talked about pizza on television. Somehow, it went well.' },
+    { id: 'bad_tv', name: 'Bad TV Interview', type: 'random', text: 'The interview aired. They kept the part about the microwave.' },
+    { id: 'cat', name: 'Cat on the Counter', type: 'random', text: 'The crowd loved it. The counter did not.' },
+    { id: 'garbage', name: 'Garbage Truck Go By', type: 'random', text: 'A garbage truck clears the pile. A brief moment of dignity.' },
+    { id: 'windfall', name: 'Recycling Windfall', type: 'random', text: 'The depot is paying extra for your next collection.' },
+    { id: 'weekend', name: 'Weekend!', type: 'scheduled', text: 'People have free time and questionable lunch plans.' },
+    { id: 'rats', name: 'Rats', type: 'conditional', text: 'A rat found the leftovers. It seems optimistic about the business.' },
+    { id: 'sympathy', name: 'Sympathy Tip', type: 'recovery', text: 'A stranger says they respect the hustle. You are not sure they should.' },
+    { id: 'wheelchair', name: 'A Wheelchair from Cans', type: 'secret', text: 'You redeem the cans. The neighbours supply the parts and help build a wheelchair. Word gets around.' }
+  ],
+  reactions: {
+    delighted: ['“Structural confidence. I like that in a slice.”', '“I would tell someone about this.”', '“Honestly? I have paid more for worse.”'],
+    satisfied: ['“That was, legally speaking, lunch.”', '“Aggressively fine.”', '“Does what it says on the sign.”'],
+    neutral: ['They eat in thoughtful silence.', 'They take a slice and reassess the afternoon.', 'No complaints. No eye contact either.'],
+    disgusted: ['“Is the counter supposed to move?”', 'They ask for a napkin and an explanation.', '“I have concerns about the atmosphere.”'],
+    passed: ['A passerby considers the price and keeps walking.', 'Someone checks the menu. Not today.', 'A person says they already ate. Convincingly.']
+  }
+};
+
+// The notebook is the single source for discovery combinations and topping balance.
+for (const item of Pizza.RECIPE_BOOK.ingredients) {
+  if (!Pizza.DATA.items.some(existing => existing.id === item.id))
+    Pizza.DATA.items.push({ id: item.id, name: item.name, group: 'toppings', icon: 'topping', note: '1 portion per slice that uses this topping.' });
+  Pizza.DATA.items.find(existing => existing.id === item.id).name = item.name;
+  Pizza.CONFIG.inventoryCosts[item.id] = item.cost;
+  Pizza.CONFIG.toppingUnlocks[item.id] = item.sold;
+}
+Pizza.DATA.recipes = Pizza.RECIPE_BOOK.recipes.map(recipe => ({ ...recipe, ingredients: [...recipe.ingredients] }));
+for (const recipe of Pizza.DATA.recipes) {
+  Pizza.CONFIG.recipeBonuses[recipe.id] = recipe.bonus;
+  Pizza.CONFIG.recipeDelight[recipe.id] = recipe.delight;
+}
+
+}
 </script>
 <script>
+if (window.PizzaMode.sample) {
 (function (P) {
   'use strict';
   const C = P.CONFIG;
@@ -959,8 +1211,79 @@ Pizza.DATA = {
   P.State = { create, daily, random, log, sum, clamp, skill, disgust, capacity, slots, unlocked, recipeUnlocked, recipeStocked, money, rep, gainXP, score };
 })(Pizza);
 
+} else {
+(function (P) {
+  'use strict';
+  const C = P.CONFIG;
+  const sum = obj => Object.values(obj).reduce((a, b) => a + b, 0);
+  const clamp = (n, low, high) => Math.max(low, Math.min(high, n));
+  function random(s) {
+    // Saveable PRNG: reloading a prepared day does not reroll its luck.
+    s.rng = (s.rng + 0x6D2B79F5) >>> 0;
+    let t = s.rng;
+    t = Math.imul(t ^ t >>> 15, t | 1);
+    t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  }
+  function log(s, type, text) {
+    s.log.push({ id: ++s.logId, day: s.day, type, text });
+    if (s.log.length > C.maxLog) s.log.shift();
+  }
+  function daily(s) {
+    return { day: s.day, startCash: s.cash, startHealth: s.health, startRep: s.rep,
+      startDisgust: disgust(s), income: { slices: 0, drinks: 0, recycling: 0, events: 0 },
+      expenses: { ingredients: 0, supplies: 0, upgrades: 0, food: 0, events: 0 },
+      potential: 0, served: 0, passed: 0, soldOut: 0, turnedAway: 0, closed: 0,
+      reactions: { delighted: 0, satisfied: 0, neutral: 0, disgusted: 0 },
+      sales: {}, drinks: 0, spoiledSlices: 0, wastedDough: 0, spoiledToppings: 0,
+      events: [], milestones: [], tastedSlices: 0, discoveries: [], early: false, finalized: false };
+  }
+  function create(seed) {
+    const s = { version: C.saveVersion, phase: 'management', day: 1, cash: C.startingCash,
+      health: C.startingHealth, rep: C.startingRep, dirt: 0, rats: 0, waste: 0,
+      xp: 0, price: C.price.start, rng: (seed === undefined ? Date.now() ^ Math.floor(Math.random() * 0xffffffff) : seed) >>> 0,
+      inventory: { dough: 0, slices: 0 }, lots: {}, upgrades: [], menu: ['plain'],
+      trained: false, recycled: false, windfall: false, sympathyUsed: false, action: null,
+      tomorrow: { bonus: 0, multiplier: 1 }, modifiers: { bonus: 0, multiplier: 1 },
+      dayRun: null, report: null, history: [], log: [], logId: 0, endReason: null,
+      stats: { income: 0, spending: 0, slices: 0, customers: 0, days: 0, bestRevenue: 0, bestSlices: 0 },
+      unlocks: [], pendingMilestones: [], wheelchairBuilt: false, lastCustomer: null, bestsRecorded: false, final: null,
+      recipeBook: { known: ['plain'], attempts: [], last: null } };
+    P.DATA.items.forEach(i => { s.inventory[i.id] = 0; if (i.group === 'toppings') s.lots[i.id] = []; });
+    s.today = daily(s);
+    log(s, 'system', 'A roadside stand. A questionable microwave. $64 and a plan.');
+    return s;
+  }
+  function skill(s) { return Math.min(C.skillMax, Math.floor(s.xp / C.skillXP)); }
+  function disgust(s) { return clamp(s.dirt + s.rats * C.disgust.perRat, 0, C.disgust.max); }
+  function capacity(s) { return Math.max(1, Math.floor(s.health + skill(s) + s.upgrades.reduce((v, id) => v + C.upgrades[id].capacity, 0))); }
+  function slots(s) { return C.slots.reduce((v, [at, n]) => s.stats.slices >= at ? n : v, 1) + (s.upgrades.includes('tiny_menu_board') ? C.upgrades.tiny_menu_board.slots : 0); }
+  function unlocked(s, id) {
+    const ingredient = P.RECIPE_BOOK.ingredients.find(item => item.id === id);
+    return !ingredient || s.day >= ingredient.day || s.stats.slices >= ingredient.sold;
+  }
+  function recipeUnlocked(s, recipe) { return s.recipeBook?.known.includes(recipe.id) === true; }
+  function recipeStocked(s, recipe) { return recipe.ingredients.every(id => s.inventory[id] > 0); }
+  function money(s, cents, category) {
+    if (!Number.isInteger(cents) || s.cash + cents < 0) throw new Error('Invalid cash transaction');
+    s.cash += cents;
+    if (cents >= 0) { s.today.income[category] += cents; s.stats.income += cents; }
+    else { s.today.expenses[category] -= cents; s.stats.spending -= cents; }
+  }
+  function rep(s, delta) { s.rep = Math.max(0, s.rep + delta); }
+  function gainXP(s, amount) {
+    const old = skill(s);
+    s.xp = Math.min(C.skillMax * C.skillXP, s.xp + amount);
+    if (skill(s) > old) log(s, 'unlock', `Skill level ${skill(s)}. Each click does more work. Serving capacity increased.`);
+  }
+  function score(s) { return Math.round((s.stats.income - s.stats.spending) / 100 + s.rep * C.score.reputation + s.stats.slices * C.score.slices + s.stats.days * C.score.days + disgust(s) * C.score.disgust); }
+  P.State = { create, daily, random, log, sum, clamp, skill, disgust, capacity, slots, unlocked, recipeUnlocked, recipeStocked, money, rep, gainXP, score };
+})(Pizza);
+
+}
 </script>
 <script>
+if (window.PizzaMode.sample) {
 (function (P) {
   'use strict';
   const C = P.CONFIG, S = P.State;
@@ -1007,8 +1330,57 @@ Pizza.DATA = {
   P.Events = { trigger, randomEvent, begin, end };
 })(Pizza);
 
+} else {
+(function (P) {
+  'use strict';
+  const C = P.CONFIG, S = P.State;
+  function trigger(s, id) {
+    const event = P.DATA.events.find(e => e.id === id);
+    if (!event) return false;
+    let effect = '';
+    switch (id) {
+      case 'big_game': s.tomorrow.bonus += C.events.bigGame; effect = `Tomorrow: +${C.events.bigGame} potential customers.`; break;
+      case 'rain': s.tomorrow.multiplier *= C.events.rain; effect = 'Tomorrow: half the usual foot traffic.'; break;
+      case 'scratch': S.money(s, C.events.scratch, 'events'); effect = `+$${(C.events.scratch / 100).toFixed(2)} cash.`; break;
+      case 'good_tv': S.rep(s, C.events.interview); effect = `+${C.events.interview} reputation.`; break;
+      case 'bad_tv': S.rep(s, -C.events.interview); effect = `−${C.events.interview} reputation (minimum 0).`; break;
+      case 'cat': S.rep(s, C.events.catRep); s.dirt = Math.min(C.disgust.max, s.dirt + C.events.catDirt); effect = '+1 reputation, +1 dirt.'; break;
+      case 'garbage': s.dirt = 0; s.rats = 0; effect = 'Dirt and rats cleared. Your refundable cans stay in their crate.'; break;
+      case 'windfall': s.windfall = true; effect = `Your next recycling payout is ×${C.recycling.windfall}.`; break;
+      case 'weekend': s.modifiers.bonus += C.events.weekend; effect = `Today: +${C.events.weekend} potential customers.`; break;
+      case 'rats': s.rats += 1; effect = '+1 rat, +1 disgust. Clean the counter before opening tomorrow.'; break;
+      case 'wheelchair':
+        if (s.wheelchairBuilt || s.waste < C.recycling.capacity) return false;
+        s.waste = 0; s.wheelchairBuilt = true; S.rep(s, C.recycling.wheelchairRep);
+        effect = `${C.recycling.capacity} cans redeemed for the neighbourhood wheelchair build. +${C.recycling.wheelchairRep} reputation. No cash payout; the refund goes to the project.`;
+        break;
+      case 'sympathy':
+        if (s.sympathyUsed) return false;
+        s.sympathyUsed = true; S.money(s, C.events.sympathyCash, 'events');
+        effect = `+$${(C.events.sympathyCash / 100).toFixed(2)}. Once per run.`; break;
+    }
+    s.today.events.push({ id, name: event.name, text: event.text, effect });
+    S.log(s, 'event', `${event.name} — ${event.text} ${effect}`);
+    return true;
+  }
+  function randomEvent(s) {
+    const pool = P.DATA.events.filter(e => e.type === 'random');
+    return trigger(s, pool[Math.floor(S.random(s) * pool.length)].id);
+  }
+  function begin(s) {
+    if (C.events.weekendDays.includes(s.day % C.events.weekLength)) trigger(s, 'weekend');
+  }
+  function end(s) {
+    if (S.random(s) < C.events.chance) randomEvent(s);
+    if (s.today.spoiledSlices && S.random(s) < Math.min(C.events.ratMaxChance, s.today.spoiledSlices * C.events.ratPerSlice)) trigger(s, 'rats');
+  }
+  P.Events = { trigger, randomEvent, begin, end };
+})(Pizza);
+
+}
 </script>
 <script>
+if (window.PizzaMode.sample) {
 (function (P) {
   'use strict';
   const C = P.CONFIG, S = P.State;
@@ -1099,8 +1471,165 @@ Pizza.DATA = {
   P.Customers = { forecast, factors, chance, schedule, resolve };
 })(Pizza);
 
+} else {
+(function (P) {
+  'use strict';
+  const C = P.CONFIG, S = P.State;
+  function forecast(s) {
+    return S.clamp(Math.round((C.baseCustomers + s.rep + s.modifiers.bonus) * s.modifiers.multiplier), 1, C.maxCustomers);
+  }
+  function factors(s) {
+    const menu = s.menu.map(id => P.DATA.recipes.find(r => r.id === id)).filter(r => r && S.recipeStocked(s, r));
+    return { base: C.buy.base, price: (C.price.start - s.price) / 100 * C.price.sensitivity,
+      menu: Math.min(C.buy.maxMenu, menu.length * C.buy.menu),
+      supplies: (Number(s.inventory.napkins > 0) + Number(s.inventory.paper_plates > 0)) * C.buy.supply,
+      disgust: -S.disgust(s) * C.buy.disgust };
+  }
+  function chance(s) { return S.clamp(S.sum(factors(s)), C.buy.min, C.buy.max); }
+  function schedule(s) {
+    const potential = forecast(s);
+    s.today.potential = potential;
+    // Stratified arrivals make a whole day readable while retaining uncertainty.
+    const duration = Math.max(C.daySeconds, potential * C.service.customerSeconds), slot = duration / potential;
+    const arrivals = Array.from({ length: potential }, (_, i) => (i + 0.12 + S.random(s) * 0.08) * slot);
+    s.dayRun = { elapsed: 0, next: 0, arrivals, duration, customer: null };
+  }
+  function consumeTopping(s, id) {
+    s.inventory[id] -= 1;
+    const lot = s.lots[id].find(l => l.quantity > 0);
+    if (lot) lot.quantity -= 1;
+    s.lots[id] = s.lots[id].filter(l => l.quantity > 0);
+  }
+  function chooseRecipe(s) {
+    const choices = s.menu.map(id => ({ recipe: P.DATA.recipes.find(r => r.id === id), weight: C.orderWeights.menu }));
+    if (!s.menu.includes('plain')) choices.push({ recipe: P.DATA.recipes[0], weight: C.orderWeights.plain });
+    let roll = S.random(s) * choices.reduce((n, c) => n + c.weight, 0);
+    return (choices.find(c => (roll -= c.weight) < 0) || choices[0]).recipe;
+  }
+  function reaction(s, recipe, missing, fallback) {
+    const delight = Math.min(C.reaction.maxDelight, C.reaction.delight + S.skill(s) * C.reaction.skill + C.recipeDelight[recipe.id]);
+    const gross = Math.min(C.reaction.maxDisgust, C.reaction.disgust + S.disgust(s) * C.reaction.dirt + missing * C.reaction.missing + (fallback ? C.reaction.fallback : 0));
+    // Reserve disgust first, then delight; all four bands always total exactly 1.
+    const delighted = Math.min(delight, 1 - gross);
+    const satisfied = Math.min(C.reaction.satisfied, 1 - gross - delighted);
+    const roll = S.random(s);
+    return roll < gross ? 'disgusted' : roll < gross + delighted ? 'delighted' : roll < gross + delighted + satisfied ? 'satisfied' : 'neutral';
+  }
+  function resolve(s) {
+    const t = s.today;
+    const result = (kind, title, text, revenue = 0, rep = 0) => {
+      s.lastCustomer = { kind, title, text, revenue, rep };
+    };
+    if (t.served >= S.capacity(s)) {
+      t.turnedAway++; result('miss', 'Too busy.', 'At serving capacity. −1 reputation at closing.'); S.log(s, 'miss', 'At capacity. A customer sees the queue and chooses inner peace.'); return;
+    }
+    if (s.inventory.slices <= 0) {
+      t.soldOut++; result('miss', 'Sold out.', 'An empty counter. An unfulfilled lunch.'); S.log(s, 'miss', 'Sold out. Someone would have considered a slice.'); return;
+    }
+    if (S.random(s) >= chance(s)) {
+      t.passed++; const lines = P.DATA.reactions.passed;
+      const line = lines[Math.floor(S.random(s) * lines.length)];
+      result('passed', 'Maybe next time.', line); S.log(s, 'pass', line); return;
+    }
+    let recipe = chooseRecipe(s);
+    const fallback = !S.recipeStocked(s, recipe);
+    if (fallback) recipe = P.DATA.recipes[0];
+    const missing = Number(s.inventory.napkins === 0) + Number(s.inventory.paper_plates === 0);
+    s.inventory.slices--;
+    recipe.ingredients.forEach(id => consumeTopping(s, id));
+    ['napkins', 'paper_plates'].forEach(id => { if (s.inventory[id] > 0) s.inventory[id]--; });
+    s.dirt = Math.min(C.disgust.max, s.dirt + C.disgust.perSale + missing * C.disgust.missingSupply);
+    const sliceRevenue = s.price + C.recipeBonuses[recipe.id];
+    S.money(s, sliceRevenue, 'slices');
+    let drinkRevenue = 0;
+    if (s.inventory.pop > 0 && S.random(s) < C.popChance) {
+      s.inventory.pop--; t.drinks++; drinkRevenue = C.popPrice; S.money(s, drinkRevenue, 'drinks');
+      if (s.waste < C.recycling.capacity) s.waste++;
+      else { s.dirt = Math.min(C.disgust.max, s.dirt + C.disgust.overflowCan); S.log(s, 'warning', 'Can crate full. A discarded can adds dirt.'); }
+    }
+    t.served++; t.sales[recipe.id] = (t.sales[recipe.id] || 0) + 1;
+    s.stats.slices++; s.stats.customers++;
+    const mood = reaction(s, recipe, missing, fallback);
+    t.reactions[mood]++;
+    const repBefore = s.rep;
+    if (mood === 'delighted') S.rep(s, C.reputation.delighted);
+    if (mood === 'disgusted') S.rep(s, C.reputation.disgusted);
+    const lines = P.DATA.reactions[mood], line = lines[Math.floor(S.random(s) * lines.length)];
+    result(mood, `${recipe.name}${drinkRevenue ? ' + Pop' : ''}`, `${fallback ? 'Topping sold out; served plain. ' : ''}${line}`, sliceRevenue + drinkRevenue, s.rep - repBefore);
+    S.log(s, mood === 'disgusted' ? 'warning' : 'sale', `${recipe.name}${drinkRevenue ? ' + Pop' : ''} · +$${((sliceRevenue + drinkRevenue) / 100).toFixed(2)} · ${mood}. ${fallback ? 'Topping sold out; served plain. ' : ''}${line}`);
+    P.Logic.unlocks(s);
+  }
+  P.Customers = { forecast, factors, chance, schedule, resolve };
+})(Pizza);
+
+}
 </script>
 <script>
+if (!window.PizzaMode.sample) {
+(function (P) {
+  'use strict';
+  const catalogue = P.RECIPE_BOOK;
+  const selection = value => typeof value === 'string' ? value.split(',').filter(Boolean).sort() : [];
+  const signature = ingredients => [...ingredients].sort().join(',');
+  const match = ingredients => P.DATA.recipes.find(recipe => signature(recipe.ingredients) === signature(ingredients));
+  function check(s, value) {
+    const ingredients = selection(value), key = signature(ingredients);
+    const fail = code => ({ ok: false, code, ingredients });
+    if (s.phase !== 'management') return fail('beforeOpen');
+    if (s.action) return fail('finishWork');
+    if (!ingredients.length) return fail('choose');
+    if (ingredients.length > catalogue.maxToppings || new Set(ingredients).size !== ingredients.length) return fail('limit');
+    if (ingredients.some(id => !catalogue.ingredients.some(item => item.id === id) || !P.State.unlocked(s, id))) return fail('locked');
+    const recipe = match(ingredients);
+    if (recipe && s.recipeBook.known.includes(recipe.id)) return fail('known');
+    if (s.recipeBook.attempts.some(attempt => signature(attempt.ingredients) === key)) return fail('repeat');
+    if (!s.inventory.slices) return fail('needSlice');
+    if (ingredients.some(id => s.inventory[id] < 1)) return fail('needStock');
+    return { ok: true, ingredients, recipe };
+  }
+  function test(s, value) {
+    const result = check(s, value);
+    if (!result.ok) return { ok: false, message: result.code };
+    s.inventory.slices--;
+    for (const id of result.ingredients) {
+      s.inventory[id]--;
+      const lot = s.lots[id].find(entry => entry.quantity > 0);
+      lot.quantity--;
+      s.lots[id] = s.lots[id].filter(entry => entry.quantity > 0);
+    }
+    s.today.tastedSlices++;
+    const attempt = { ingredients: result.ingredients, recipe: result.recipe?.id || null, day: s.day };
+    s.recipeBook.attempts.push(attempt);
+    s.recipeBook.last = attempt;
+    if (result.recipe) {
+      s.recipeBook.known.push(result.recipe.id);
+      s.today.discoveries.push(result.recipe.id);
+      P.State.log(s, 'unlock', 'Discovered ' + result.recipe.name + '.');
+    }
+    return { ok: true, recipe: result.recipe?.id || null, message: result.recipe ? 'found' : 'notYet' };
+  }
+  function valid(s) {
+    const book = s.recipeBook;
+    if (!book || !Array.isArray(book.known) || !book.known.includes('plain') || new Set(book.known).size !== book.known.length ||
+      !book.known.every(id => P.DATA.recipes.some(recipe => recipe.id === id)) || !Array.isArray(book.attempts) || book.attempts.length > 100) return false;
+    const keys = new Set();
+    for (const attempt of book.attempts) {
+      if (!Array.isArray(attempt.ingredients) || !attempt.ingredients.length || attempt.ingredients.length > catalogue.maxToppings ||
+        new Set(attempt.ingredients).size !== attempt.ingredients.length || !attempt.ingredients.every(id => catalogue.ingredients.some(item => item.id === id)) ||
+        !Number.isInteger(attempt.day) || attempt.day < 1 || attempt.day > s.day) return false;
+      const key = signature(attempt.ingredients), recipe = match(attempt.ingredients);
+      if (keys.has(key) || attempt.recipe !== (recipe?.id || null) || (recipe && !book.known.includes(recipe.id))) return false;
+      keys.add(key);
+    }
+    return s.menu.every(id => book.known.includes(id));
+  }
+  P.Recipes = { check, test, valid };
+})(Pizza);
+
+}
+</script>
+<script>
+if (window.PizzaMode.sample) {
 (function (P) {
   'use strict';
   const C = P.CONFIG, S = P.State;
@@ -1334,8 +1863,249 @@ Pizza.DATA = {
   P.Logic = { action, reason, unlocks, tick, finishDay, continueDay, finishRun, recovery, openCost, recycleUnits, recycleValue, clickPower };
 })(Pizza);
 
+} else {
+(function (P) {
+  'use strict';
+  const C = P.CONFIG, S = P.State;
+  const okay = message => ({ ok: true, message: message || '' });
+  const no = message => ({ ok: false, message });
+  function openCost(s) {
+    let cost = s.upgrades.includes('clean_microwave') ? 0 : C.upgrades.clean_microwave.cost;
+    if (s.inventory.slices > 0) return cost;
+    if (!s.inventory.dough && s.action?.type !== 'dough' && !s.inventory.flour) cost += C.inventoryCosts.flour;
+    if (!s.inventory.sauce) cost += C.inventoryCosts.sauce;
+    if (!s.inventory.cheese) cost += C.inventoryCosts.cheese;
+    return cost;
+  }
+  function recycleUnits(s) { return s.waste; }
+  function recycleValue(s) { return recycleUnits(s) * C.recycling.centsPerUnit * (s.windfall ? C.recycling.windfall : 1); }
+  function clickPower(s, type) { return C.work[type] + S.skill(s) * C.work.skillBonus; }
+  function reason(s, action, id, quantity = 1) {
+    if (s.phase !== 'management' && s.phase !== 'day') return 'Read the report to continue.';
+    const management = s.phase === 'management';
+    if (['buy', 'upgrade', 'dough', 'prepare', 'train', 'clean', 'price', 'menu', 'open'].includes(action) && !management) return 'Available before opening.';
+    if (['dough', 'prepare', 'train', 'clean', 'food'].includes(action) && s.action) {
+      if (s.action.type === action && action !== 'food') return '';
+      return 'Finish the current action first.';
+    }
+    if (action === 'buy') {
+      if (!P.DATA.items.some(i => i.id === id)) return 'Unknown item.';
+      if (!Number.isInteger(quantity) || quantity < 1 || quantity > C.maxPurchase) return 'Choose a valid quantity.';
+      if (!S.unlocked(s, id)) {
+        const ingredient = P.RECIPE_BOOK.ingredients.find(item => item.id === id);
+        return `Available on Day ${ingredient.day} or at ${ingredient.sold} slices sold.`;
+      }
+      if (s.cash < C.inventoryCosts[id] * quantity) return 'Not enough cash.';
+    }
+    if (action === 'upgrade') {
+      const u = C.upgrades[id];
+      if (!u) return 'Unknown upgrade.';
+      if (s.upgrades.includes(id)) return 'Already installed.';
+      if (s.stats.slices < u.unlock) return `Requires ${u.unlock} slices sold.`;
+      if (s.cash < u.cost) return 'Not enough cash.';
+    }
+    if (action === 'clean' && !s.dirt && !s.rats) return 'The counter is clean.';
+    if (action === 'dough' && s.inventory.flour < 1) return 'Buy flour first.';
+    if (action === 'prepare') {
+      if (s.inventory.dough < 1) return 'Make dough first.';
+      if (s.inventory.sauce < 1 || s.inventory.cheese < 1) return 'Needs 1 sauce and 1 cheese.';
+    }
+    if (action === 'train') {
+      if (s.trained) return 'Already trained today.';
+      if (S.skill(s) >= C.skillMax) return 'Skill is at maximum.';
+    }
+    if (action === 'food') {
+      if (s.health >= C.maxHealth) return 'Health is full.';
+      if (s.cash < C.foodCost) return 'Not enough cash.';
+    }
+    if (action === 'recycle') {
+      if (!s.waste) return 'Sell Pop to collect refundable cans.';
+    }
+    if (action === 'wheelchair') {
+      if (s.wheelchairBuilt) return 'You already built the wheelchair.';
+      if (s.waste < C.recycling.capacity) return 'Fill the can crate first.';
+    }
+    if (action === 'open') {
+      if (s.action) return 'Finish the current action first.';
+      if (!s.health) return 'Health is empty.';
+      if (!s.upgrades.includes('clean_microwave')) return 'Buy the Clean Microwave first.';
+      if (!s.inventory.slices) return 'Prepare at least one batch of slices.';
+    }
+    if (action === 'close' && management) return 'The stand is not open.';
+    if (action === 'menu') {
+      const recipe = P.DATA.recipes.find(r => r.id === id);
+      if (!recipe || !S.recipeUnlocked(s, recipe)) return 'Discover this recipe in the notebook first.';
+      if (s.menu.includes(id) && s.menu.length === 1) return 'Keep at least one recipe on the menu.';
+      if (!s.menu.includes(id) && s.menu.length >= S.slots(s) && S.slots(s) !== 1) return 'Menu is full. Remove a recipe first.';
+    }
+    return '';
+  }
+  function unlocks(s) {
+    const milestones = new Set([...Object.values(C.toppingUnlocks), ...C.slots.map(([n]) => n), ...Object.values(C.upgrades).map(u => u.unlock)]);
+    for (const at of milestones) {
+      if (!at || s.stats.slices < at || s.unlocks.includes(at)) continue;
+      s.unlocks.push(at);
+      const names = P.DATA.items.filter(i => C.toppingUnlocks[i.id] === at && s.day < P.RECIPE_BOOK.ingredients.find(item => item.id === i.id).day).map(i => i.name);
+      P.DATA.upgrades.filter(u => C.upgrades[u.id].unlock === at).forEach(u => names.push(u.name));
+      if (C.slots.some(([n]) => n === at)) names.push('another menu slot');
+      if (!names.length) continue;
+      S.log(s, 'unlock', `${at} slices sold. Unlocked: ${names.join(', ')}.`);
+      const reward = { at, names };
+      s.pendingMilestones.push(reward);
+      s.today.milestones.push(reward);
+    }
+  }
+  function startAction(s, type, seconds) { s.action = { type, total: seconds, remaining: seconds }; }
+  function completeAction(s) {
+    if (!s.action) return;
+    const type = s.action.type;
+    s.action = null;
+    if (type === 'dough') { s.inventory.dough++; S.gainXP(s, C.doughXP); S.log(s, 'prep', 'Dough ready. Add sauce and cheese to prepare 8 slices.'); }
+    if (type === 'prepare') { s.inventory.slices += C.slicesPerBatch; S.gainXP(s, C.prepXP); S.log(s, 'prep', `${C.slicesPerBatch} slices ready. Unsold slices expire at closing.`); }
+    if (type === 'train') { S.gainXP(s, C.trainingXP); S.log(s, 'prep', `Training done. +${C.trainingXP} skill progress. The weights remain unimpressed.`); }
+    if (type === 'clean') { const before = S.disgust(s); s.dirt = 0; s.rats = 0; S.log(s, 'prep', `Counter cleaned. Rats evicted. Disgust −${before.toFixed(1)}. Your cans are safe.`); }
+    if (type === 'food') { const gain = Math.min(C.foodHealth, C.maxHealth - s.health); s.health += gain; S.log(s, 'prep', `Pizza delivered. +${gain} health. Someone else did the cooking.`); }
+  }
+  function action(s, type, id, quantity = 1) {
+    if (type === 'experiment') return P.Recipes.test(s, id);
+    const why = reason(s, type, id, quantity);
+    if (why) return no(why);
+    if (['dough', 'prepare', 'train', 'clean'].includes(type)) {
+      if (!s.action) {
+        if (type === 'dough') s.inventory.flour--;
+        if (type === 'prepare') { s.inventory.dough--; s.inventory.sauce--; s.inventory.cheese--; }
+        if (type === 'train') s.trained = true;
+        startAction(s, type, C.work.total);
+      }
+      s.action.remaining = Math.max(0, s.action.remaining - clickPower(s, type));
+      if (!s.action.remaining) completeAction(s);
+      return okay();
+    }
+    switch (type) {
+      case 'buy': {
+        const item = P.DATA.items.find(i => i.id === id);
+        S.money(s, -C.inventoryCosts[id] * quantity, item.group === 'supplies' ? 'supplies' : 'ingredients');
+        s.inventory[id] += quantity;
+        if (item.group === 'toppings') s.lots[id].push({ quantity, expiresOn: s.day + (s.upgrades.includes('mini_fridge') ? C.freshnessDays : 1) - 1 });
+        S.log(s, 'purchase', `Bought ${quantity} ${item.name}. −$${(C.inventoryCosts[id] * quantity / 100).toFixed(2)}.`); break;
+      }
+      case 'upgrade': {
+        const u = C.upgrades[id];
+        S.money(s, -u.cost, 'upgrades'); s.upgrades.push(id); S.rep(s, u.rep);
+        s.dirt = Math.max(0, s.dirt - (u.clean || 0));
+        if (id === 'mini_fridge') Object.values(s.lots).forEach(lots => lots.forEach(l => { l.expiresOn = s.day + C.freshnessDays - 1; }));
+        S.log(s, 'unlock', `${P.DATA.upgrades.find(u => u.id === id).name} installed.`); break;
+      }
+      case 'food': S.money(s, -C.foodCost, 'food'); startAction(s, type, C.foodSeconds); break;
+      case 'recycle': {
+        const units = recycleUnits(s), payout = recycleValue(s);
+        s.waste -= units; s.recycled = true; s.windfall = false;
+        S.money(s, payout, 'recycling');
+        S.log(s, 'prep', `Returned ${units} Pop cans. +$${(payout / 100).toFixed(2)}.`); break;
+      }
+      case 'wheelchair': P.Events.trigger(s, 'wheelchair'); break;
+      case 'price':
+        if (id !== 'up' && id !== 'down') return no('Invalid price change.');
+        s.price = S.clamp(s.price + (id === 'up' ? C.price.step : -C.price.step), C.price.min, C.price.max); break;
+      case 'menu': s.menu = s.menu.includes(id) ? s.menu.filter(x => x !== id) : S.slots(s) === 1 ? [id] : [...s.menu, id]; break;
+      case 'open':
+        s.phase = 'day'; P.Customers.schedule(s);
+        S.log(s, 'system', `Day ${s.day}: open for business. ${s.today.potential} potential customers. ${s.inventory.slices} slices ready.`); break;
+      case 'close': finishDay(s, true); break;
+      default: return no('Unknown action.');
+    }
+    return okay();
+  }
+  function finishRun(s, reason) {
+    if (s.phase === 'score') return;
+    s.phase = 'score'; s.endReason = reason; s.action = null;
+    s.final = { score: S.score(s), profit: s.stats.income - s.stats.spending, rep: s.rep, slices: s.stats.slices, days: s.stats.days };
+  }
+  function recovery(s) {
+    if (s.phase !== 'management') return;
+    if (s.health <= 0) { finishRun(s, 'health'); return; }
+    if (s.action) return;
+    const minimum = openCost(s), recoveryCash = recycleValue(s);
+    if (s.cash + recoveryCash >= minimum) return;
+    if (!s.sympathyUsed && s.cash < C.events.sympathyThreshold) P.Events.trigger(s, 'sympathy');
+    if (s.cash + recycleValue(s) < minimum) finishRun(s, 'cash');
+  }
+  function finishDay(s, early = false) {
+    if (s.phase !== 'day' || s.today.finalized) return;
+    // A paid food order is delivered before closing; it cannot vanish with its timer.
+    completeAction(s);
+    const t = s.today;
+    t.early = early;
+    t.closed = t.potential - t.served - t.passed - t.soldOut - t.turnedAway;
+    t.wastedDough = s.inventory.dough; t.spoiledSlices = s.inventory.slices;
+    s.inventory.dough = 0; s.inventory.slices = 0;
+    for (const [id, lots] of Object.entries(s.lots)) {
+      const expired = lots.filter(l => l.expiresOn <= s.day).reduce((n, l) => n + l.quantity, 0);
+      t.spoiledToppings += expired; s.inventory[id] -= expired;
+      s.lots[id] = lots.filter(l => l.expiresOn > s.day);
+    }
+    s.dirt = Math.min(C.disgust.max, s.dirt + t.spoiledSlices * C.disgust.spoiledSlice + t.wastedDough * C.disgust.wastedDough + t.spoiledToppings * C.disgust.spoiledTopping);
+    S.rep(s, t.turnedAway * C.reputation.turnedAway + (early ? C.reputation.early : C.reputation.fullDay));
+    s.health = Math.max(0, s.health - C.healthLoss);
+    P.Events.end(s);
+    s.stats.days++;
+    const revenue = t.income.slices + t.income.drinks;
+    s.stats.bestRevenue = Math.max(s.stats.bestRevenue, revenue);
+    s.stats.bestSlices = Math.max(s.stats.bestSlices, t.served);
+    t.finalized = true;
+    s.report = JSON.parse(JSON.stringify({ ...t, endCash: s.cash, revenue,
+      incomeTotal: S.sum(t.income), expenseTotal: S.sum(t.expenses), net: S.sum(t.income) - S.sum(t.expenses),
+      repChange: s.rep - t.startRep, healthChange: s.health - t.startHealth, disgustChange: S.disgust(s) - t.startDisgust,
+      endHealth: s.health, endRep: s.rep, endDisgust: S.disgust(s) }));
+    s.history.push(s.report);
+    if (s.history.length > C.maxHistory) s.history.shift();
+    s.phase = 'report'; s.dayRun = null;
+    S.log(s, 'system', `Day ${s.day} closed. ${t.served} slices sold. The receipt is ready.`);
+  }
+  function continueDay(s) {
+    if (s.phase !== 'report') return no('No report to continue.');
+    if (s.health <= 0) { finishRun(s, 'health'); return okay(); }
+    if (s.day >= C.maxDays) { finishRun(s, 'complete'); return okay(); }
+    s.day++; s.phase = 'management'; s.recycled = false; s.trained = false;
+    s.modifiers = { ...s.tomorrow }; s.tomorrow = { bonus: 0, multiplier: 1 };
+    s.today = S.daily(s); s.report = null;
+    P.Events.begin(s);
+    S.log(s, 'system', `Day ${s.day}. Open when you are ready.`);
+    recovery(s);
+    return okay();
+  }
+  function tick(s, seconds, speed = 1) {
+    if (s.phase !== 'management' && s.phase !== 'day') return false;
+    let changed = false;
+    const dt = Math.max(0, seconds) * (s.phase === 'day' ? speed : 1);
+    if (s.action?.type === 'food') {
+      s.action.remaining -= dt; changed = true;
+      if (s.action.remaining <= 0) completeAction(s);
+    }
+    if (s.phase === 'day') {
+      const run = s.dayRun;
+      run.elapsed = Math.min(run.duration, run.elapsed + dt);
+      while (run.next < run.arrivals.length && run.arrivals[run.next] <= run.elapsed) {
+        if (!run.customer || run.customer.stage === 'result') run.customer = { number: run.next + 1, stage: 'arriving', revealAt: run.arrivals[run.next] + C.service.decisionSeconds };
+        if (run.customer.revealAt > run.elapsed) break;
+        P.Customers.resolve(s);
+        run.customer = { ...run.customer, stage: 'result', outcome: s.lastCustomer };
+        run.next++;
+        // Let the player see and acknowledge every newly earned unlock.
+        if (s.pendingMilestones.length) { run.elapsed = Math.min(run.elapsed, run.customer.revealAt); break; }
+      }
+      if (run.elapsed >= run.duration) finishDay(s);
+      changed = true;
+    }
+    return changed;
+  }
+  P.Logic = { action, reason, unlocks, tick, finishDay, continueDay, finishRun, recovery, openCost, recycleUnits, recycleValue, clickPower };
+})(Pizza);
+
+}
 </script>
 <script>
+if (window.PizzaMode.sample) {
 (function (P) {
   'use strict';
   const C = P.CONFIG;
@@ -1438,6 +2208,139 @@ Pizza.DATA = {
   P.Save = { clone, valid, save, load, bests, record, settings, saveSettings: value => write(C.keys.settings, value), clear, problem: () => problem };
 })(Pizza);
 
+} else {
+(function (P) {
+  'use strict';
+  const C = P.CONFIG;
+  const clone = value => JSON.parse(JSON.stringify(value));
+  let problem = '';
+  function write(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); problem = ''; return true; }
+    catch (_) { problem = 'Saving is unavailable in this browser. Keep this tab open to continue your run.'; return false; }
+  }
+  function read(key) {
+    try { const value = localStorage.getItem(key); return value ? JSON.parse(value) : null; }
+    catch (_) { problem = 'A saved file could not be read. A fresh run is available.'; return null; }
+  }
+  function valid(s) {
+    try {
+      const nonnegative = n => Number.isFinite(n) && n >= 0;
+      const integer = n => Number.isSafeInteger(n) && n >= 0;
+      const milestones = list => Array.isArray(list) && list.every(m => integer(m.at) && Array.isArray(m.names) && m.names.every(n => typeof n === 'string'));
+      const ledger = day => {
+        if (!day || !integer(day.day)) return false;
+        if (!['slices', 'drinks', 'recycling', 'events'].every(k => integer(day.income[k]))) return false;
+        if (!['ingredients', 'supplies', 'upgrades', 'food', 'events'].every(k => integer(day.expenses[k]))) return false;
+        if (!['potential', 'served', 'passed', 'soldOut', 'turnedAway', 'closed', 'drinks', 'spoiledSlices', 'wastedDough', 'spoiledToppings', 'startCash', 'startHealth', 'startRep', 'startDisgust'].every(k => nonnegative(day[k]))) return false;
+        if (!['delighted', 'satisfied', 'neutral', 'disgusted'].every(k => integer(day.reactions[k]))) return false;
+        if (!Object.entries(day.sales).every(([id, n]) => integer(n) && P.DATA.recipes.some(r => r.id === id))) return false;
+        if (day.milestones !== undefined && !milestones(day.milestones)) return false;
+        return Array.isArray(day.events) && day.events.every(e => P.DATA.events.some(item => item.id === e.id) && typeof e.name === 'string' && typeof e.text === 'string' && typeof e.effect === 'string');
+      };
+      const report = r => ledger(r) && r.finalized === true && ['endCash', 'revenue', 'incomeTotal', 'expenseTotal', 'net', 'repChange', 'healthChange', 'disgustChange', 'endHealth', 'endRep', 'endDisgust'].every(k => Number.isFinite(r[k]));
+      if (!s || s.version !== C.saveVersion || !['management', 'report', 'score'].includes(s.phase)) return false;
+      if (!Number.isInteger(s.day) || s.day < 1 || s.day > C.maxDays || !integer(s.cash)) return false;
+      if (![s.health, s.rep, s.dirt, s.rats, s.waste, s.xp].every(nonnegative) || s.health > C.maxHealth || s.xp > C.skillMax * C.skillXP) return false;
+      if (!integer(s.price) || s.price < C.price.min || s.price > C.price.max || !integer(s.rng) || s.rng > 0xffffffff || !integer(s.logId)) return false;
+      if (!['trained', 'recycled', 'windfall', 'sympathyUsed', 'bestsRecorded', 'wheelchairBuilt'].every(k => typeof s[k] === 'boolean')) return false;
+      if (!integer(s.waste) || s.waste > C.recycling.capacity || !milestones(s.pendingMilestones) || !milestones(s.today.milestones)) return false;
+      if (!P.DATA.items.every(i => integer(s.inventory[i.id])) || !integer(s.inventory.dough) || !integer(s.inventory.slices)) return false;
+      if (!Array.isArray(s.upgrades) || new Set(s.upgrades).size !== s.upgrades.length || !s.upgrades.every(id => C.upgrades[id])) return false;
+      if (!Array.isArray(s.menu) || !s.menu.length || new Set(s.menu).size !== s.menu.length || s.menu.length > P.State.slots(s)) return false;
+      if (!s.menu.every(id => P.DATA.recipes.some(r => r.id === id && P.State.recipeUnlocked(s, r)))) return false;
+      for (const id of Object.keys(C.toppingUnlocks)) {
+        if (!Array.isArray(s.lots[id]) || !s.lots[id].every(l => integer(l.quantity) && integer(l.expiresOn))) return false;
+        if (s.lots[id].reduce((n, l) => n + l.quantity, 0) !== s.inventory[id]) return false;
+      }
+      if (!['income', 'spending', 'slices', 'customers', 'days', 'bestRevenue', 'bestSlices'].every(k => integer(s.stats[k])) || !ledger(s.today) || s.today.day !== s.day) return false;
+      if (!Array.isArray(s.log) || s.log.length > C.maxLog || !s.log.every(l => typeof l.text === 'string' && ['system', 'prep', 'purchase', 'unlock', 'sale', 'miss', 'pass', 'warning', 'event'].includes(l.type))) return false;
+      if (!Array.isArray(s.history) || s.history.length > C.maxHistory || !s.history.every(report) || !Array.isArray(s.unlocks)) return false;
+      if (!['bonus', 'multiplier'].every(k => nonnegative(s.modifiers[k]) && nonnegative(s.tomorrow[k]))) return false;
+      if (s.action && (!['dough', 'prepare', 'train', 'clean', 'food'].includes(s.action.type) || !nonnegative(s.action.remaining) || !nonnegative(s.action.total) || !s.action.total || s.action.remaining > s.action.total)) return false;
+      if (s.phase === 'report' && (!report(s.report) || s.report.day !== s.day)) return false;
+      if (s.phase === 'score' && (!s.final || !['score', 'profit', 'rep', 'slices', 'days'].every(k => Number.isFinite(s.final[k])) || !['health', 'cash', 'complete'].includes(s.endReason))) return false;
+      if (!P.Recipes.valid(s)) return false;
+      const trialCounts = [s.today, ...s.history];
+      if (s.report) trialCounts.push(s.report);
+      if (!trialCounts.every(day => Number.isSafeInteger(day.tastedSlices) && day.tastedSlices >= 0 && Array.isArray(day.discoveries) && day.discoveries.every(id => s.recipeBook.known.includes(id)))) return false;
+      return true;
+    } catch (_) { return false; }
+  }
+  function save(s, checkpoint) {
+    if (s.phase === 'day') {
+      if (!checkpoint) return false;
+      return write(C.keys.run, { version: C.saveVersion, restoreDay: true, state: checkpoint });
+    }
+    return write(C.keys.run, { version: C.saveVersion, restoreDay: false, state: s });
+  }
+  function load() {
+    try {
+    const file = read(C.keys.run);
+    if (!file) return { state: null, notice: problem };
+    const previous = clone(file);
+    let migrated = false;
+    if (file.state?.version === 1) {
+      const s = file.state;
+      // Old recycling was general rubbish, not refundable Pop cans.
+      s.dirt = Math.min(C.disgust.max, s.dirt + s.waste); s.waste = 0;
+      s.wheelchairBuilt = false; s.pendingMilestones = []; s.lastCustomer = null;
+      if (s.today) s.today.milestones = [];
+      if (s.action && ['dough', 'train'].includes(s.action.type) && s.action.total > 0) {
+        s.action.remaining = Math.ceil(s.action.remaining / s.action.total * C.work.total);
+        s.action.total = C.work.total;
+      }
+      s.version = 2; migrated = true;
+    }
+    if (file.state?.version === 2) {
+      const s = file.state;
+      // Grandfather the original recipes the player had already unlocked.
+      if (!s.recipeBook) {
+        const oldThresholds = { plain: 0, pepperoni: 25, mushroom: 50, green_peppers: 100, classic: 50 };
+        s.recipeBook = { known: Object.keys(oldThresholds).filter(id => s.stats.slices >= oldThresholds[id]), attempts: [], last: null };
+      }
+      for (const item of P.DATA.items) {
+        if (!(item.id in s.inventory)) s.inventory[item.id] = 0;
+        if (item.group === 'toppings' && !(item.id in s.lots)) s.lots[item.id] = [];
+      }
+      for (const day of [s.today, s.report, ...s.history].filter(Boolean)) {
+        day.tastedSlices ??= 0; day.discoveries ??= [];
+      }
+      s.version = C.saveVersion; migrated = true;
+    }
+    if (!valid(file.state)) return { state: null, notice: 'The old save is incompatible or damaged. Starting a fresh run.' };
+    if (migrated) {
+      try {
+        const backupKey = C.keys.run + '.pre-2.3.0';
+        if (!localStorage.getItem(backupKey)) localStorage.setItem(backupKey, JSON.stringify(previous));
+      } catch (_) { /* A backup is optional; normal saving still reports its own status. */ }
+    }
+    return { state: file.state, notice: [file.restoreDay ? 'Restored your prepared day. Your stock and cash are back to the moment before opening.' : '', migrated ? 'Run updated. Existing unlocked recipes are kept in your notebook.' : ''].filter(Boolean).join(' ') };
+    } catch (_) { return { state: null, notice: 'The old save is incompatible or damaged. Starting a fresh run.' }; }
+  }
+  function bests() {
+    const value = read(C.keys.bests);
+    return value && ['score', 'profit', 'rep', 'slices', 'days'].every(k => Number.isFinite(value[k]) || value[k] === null) ? value : { score: null, profit: null, rep: 0, slices: 0, days: 0 };
+  }
+  function record(s) {
+    if (s.phase !== 'score' || s.bestsRecorded) return;
+    const previous = bests(), next = { ...previous };
+    s.previousBest = previous.score;
+    s.newBest = previous.score === null || s.final.score > previous.score;
+    Object.keys(next).forEach(k => { next[k] = next[k] === null ? s.final[k] : Math.max(next[k], s.final[k]); });
+    if (write(C.keys.bests, next)) s.bestsRecorded = true;
+  }
+  function settings() {
+    const value = read(C.keys.settings) || {};
+    return { sound: value.sound === true, reducedMotion: value.reducedMotion === true, speed: C.speeds.includes(value.speed) ? value.speed : 1 };
+  }
+  function clear(all = false) {
+    try { localStorage.removeItem(C.keys.run); if (all) { localStorage.removeItem(C.keys.bests); localStorage.removeItem(C.keys.settings); } return true; }
+    catch (_) { problem = 'Your browser did not allow saved data to be cleared.'; return false; }
+  }
+  P.Save = { clone, valid, save, load, bests, record, settings, saveSettings: value => write(C.keys.settings, value), clear, problem: () => problem };
+})(Pizza);
+
+}
 </script>
 <script>
 (()=>{
@@ -1523,16 +2426,14 @@ window.StandScene={paint};
 })();
 </script>
 <script>
-/* The continuing-game adapter translates checkpoint state into the approved stand surface.
-   Simulation, transactions, probability, work, settlement and save validation
-   are supplied by the unmodified candidate modules above. */
+/* Translate the current run or archived comparison engine into the stand surface. */
 (() => {
   'use strict';
   const P = window.Pizza;
   const C = P.CONFIG;
   const copy = JSON.parse(document.getElementById('stand-copy').textContent);
   const reviewHash = new URLSearchParams(window.location.hash.slice(1));
-  const sample = reviewHash.get('mode') === 'sample' || (reviewHash.has('event') && !reviewHash.has('mode'));
+  const sample = window.PizzaMode.sample;
   const seed = sample ? 6 : undefined;
   const ids = P.DATA.items.map(item => item.id);
   const supportedStock = new Set(ids);
@@ -1553,11 +2454,12 @@ window.StandScene={paint};
   const previewType = P.DATA.events.find(e => e.id === previewEvent?.effect)?.type;
   for (const [k, lines] of Object.entries(copy.reactions)) P.DATA.reactions[k] = [...lines];
   for (const group of ['items', 'recipes', 'upgrades']) for (const item of P.DATA[group]) {
+    if (!sample && (group === 'recipes' || group === 'items' && P.RECIPE_BOOK.ingredients.some(ingredient => ingredient.id === item.id))) continue;
     Object.assign(item, copy.catalogue?.[group]?.[item.id] || {});
   }
-  P.DATA.recipes.find(r => r.id === 'plain').name = copy.names.plain;
+  if (sample) P.DATA.recipes.find(r => r.id === 'plain').name = copy.names.plain;
   const textReason = reason => copy.ruleReasons?.[reason] || reason;
-  const nameOf = id => copy.names[id] || P.DATA.items.find(i => i.id === id)?.name || id;
+  const nameOf = id => (!sample && P.RECIPE_BOOK.ingredients.some(item => item.id === id) ? P.DATA.items.find(item => item.id === id)?.name : copy.names[id]) || P.DATA.items.find(i => i.id === id)?.name || id;
   function availableAction(type, id) { return textReason(P.Logic.reason(state, type, id)); }
   function configureEvent(day) {
     for (const event of P.DATA.events) {
@@ -1580,6 +2482,8 @@ window.StandScene={paint};
   };
   const loaded = P.Save.load();
   let state = loaded.state || P.State.create(seed);
+  if (!sample) state.recipeBook.last = state.recipeBook.attempts.at(-1) || null;
+  let selectedToppings = [];
   configureEvent(state.day);
   // The engine validates its own save. Keep optional presentation history
   // tolerant of old or damaged entries without discarding a playable run.
@@ -1591,7 +2495,7 @@ window.StandScene={paint};
   let checkpoint = null;
   let paused = false;
   let panelOpen = false;
-  let notice = loaded.notice ? (loaded.state ? copy.feedback.restore : copy.feedback.incompatible) :
+  let notice = loaded.notice ? (loaded.state ? (!sample && !loaded.notice.includes('Restored your prepared day') ? copy.feedback.migrated : copy.feedback.restore) : copy.feedback.incompatible) :
     (!loaded.state ? copy.feedback.start : '');
   let saveNotice = '';
   let lastTime = performance.now();
@@ -1657,9 +2561,9 @@ window.StandScene={paint};
     let key = 'sale';
     if (result.kind === 'passed') key = 'walk';
     if (result.kind === 'miss') key = state.inventory.slices ? 'busy' : 'out';
-    const params = { n: customer.number, item: result.title, line: result.text.replace('Topping sold out; served plain.', copy.feedback.fallback), money: cash(result.revenue),
+    const params = { n: customer.number, item: result.title, line: result.text.replace('Topping sold out; served plain.', copy.feedback.fallback), money: cash(result.revenue), rep: result.rep,
       mood: result.kind, lineIndex: copy.reactions[result.kind]?.indexOf(result.text) };
-    addLog(key, params, result.kind === 'miss' || result.kind === 'passed' ? 'walk' : 'sale', customer.number);
+    addLog(key, params, result.kind, customer.number);
   }
   // Translate the dispatched checkpoint effect for the editable receipt. The
   // numerical values come from config; writing a line never applies its effect.
@@ -1686,7 +2590,8 @@ window.StandScene={paint};
     else if (r.passed) template = (r.reviewHadNapkins ?? state.inventory.napkins) ? copy.receipt.wasteClue : copy.receipt.supplyClue;
     else if (r.spoiledSlices) { template = copy.receipt.overprepClue; count = r.spoiledSlices; }
     const clue = fill(template, { count, passed: r.passed, visitors: r.potential });
-    return { prepared: r.served + r.spoiledSlices, sold: r.served, leftovers: r.spoiledSlices,
+    return { prepared: r.served + r.spoiledSlices + (r.tastedSlices || 0), tasted: r.tastedSlices || 0,
+      discoveries: (r.discoveries || []).map(id => P.DATA.recipes.find(recipe => recipe.id === id)?.name || id), sold: r.served, leftovers: r.spoiledSlices,
       sales: r.revenue, spending: r.expenseTotal, change: r.net, clue, events,
       eventTitle: events.map(e => e.title).join(' / '),
       eventMessage: events.length ? events.map(e => e.message + ' ' + e.effect).join(' ') : copy.receipt.quiet,
@@ -1694,6 +2599,28 @@ window.StandScene={paint};
       otherIncome: r.income.events + r.income.recycling, income: r.income, expenses: r.expenses,
       milestones: r.milestones || [], day: r.day,
       visitors: r.potential, passed: r.passed, soldOut: r.soldOut };
+  }
+  function outcomeRow(row) {
+    const mood = (row.params.mood !== 'miss' ? row.params.mood : null) || ({ sale: 'satisfied', walk: 'passed', busy: 'capacity', out: 'soldOut', arrived: 'arrival', unlock: 'discovery' }[row.key]) || 'system';
+    const tone = ['delighted', 'satisfied'].includes(mood) ? 'positive' : ['disgusted', 'passed', 'capacity', 'soldOut'].includes(mood) ? 'negative' : mood === 'discovery' ? 'reward' : 'neutral';
+    return { time: row.time, text: entryLine(row), kind: row.kind, visitor: row.number, tone,
+      outcome: copy.outcomes[mood] || copy.outcomes.system,
+      effect: row.params.rep ? fill(copy.ui.reputationEffect, { change: (row.params.rep > 0 ? '+' : '−') + Math.abs(row.params.rep) }) : '' };
+  }
+  function notebook() {
+    if (sample) return null;
+    const check = P.Recipes.check(state, selectedToppings.join(','));
+    const last = state.recipeBook.last;
+    const pending = P.RECIPE_BOOK.ingredients.filter(item => !P.State.unlocked(state, item.id));
+    const nextDay = pending.length ? Math.min(...pending.map(item => item.day)) : null;
+    return { selected: selectedToppings, canTry: check.ok, reason: check.ok ? '' : copy.discovery[check.code],
+      known: state.recipeBook.known.length, total: P.DATA.recipes.length,
+      choices: P.RECIPE_BOOK.ingredients.map(item => ({ id: item.id, name: nameOf(item.id), stock: state.inventory[item.id],
+        available: P.State.unlocked(state, item.id), day: item.day, sold: item.sold, selected: selectedToppings.includes(item.id) })),
+      last: last ? { id: last.recipe, found: Boolean(last.recipe), matches: [...last.ingredients].sort().join(',') === [...selectedToppings].sort().join(','), name: last.recipe ? P.DATA.recipes.find(recipe => recipe.id === last.recipe).name : '',
+        ingredients: last.ingredients.map(nameOf).join(' + '), day: last.day } : null,
+      attempts: state.recipeBook.attempts.map(attempt => ({ ...attempt, names: attempt.ingredients.map(nameOf).join(' + '), name: attempt.recipe ? P.DATA.recipes.find(recipe => recipe.id === attempt.recipe).name : '' })),
+      nextDay, nextItems: pending.filter(item => item.day === nextDay).map(item => nameOf(item.id)).join(' + ') };
   }
   function viewModel() {
     const phase = state.phase === 'management' ? 'prep' : state.phase === 'day' ? 'service' : 'report';
@@ -1706,7 +2633,10 @@ window.StandScene={paint};
     for (const id of [...ids, 'microwave']) {
       costs[id] = cost(id); buyReason[id] = availableToBuy(id); canBuy[id] = !buyReason[id];
     }
-    return { sample, runEnded: state.phase === 'score', final: state.final, endReason: state.endReason,
+    const ingredientMilestones = sample ? Object.values(C.toppingUnlocks) : P.RECIPE_BOOK.ingredients.filter(item => !P.State.unlocked(state, item.id)).map(item => item.sold);
+    const at = [...new Set([...C.slots.map(([at]) => at), ...Object.values(C.upgrades).map(item => item.unlock), ...ingredientMilestones])].sort((a,b) => a-b).find(at => at > state.stats.slices);
+    return { sample, version: C.version, notebook: notebook(), nextMilestone: at ? { at, left: at - state.stats.slices } : null,
+      runEnded: state.phase === 'score', final: state.final, endReason: state.endReason,
       totalIncome: state.stats.income, totalSpending: state.stats.spending,
       skill: P.State.skill(state), xp: state.xp, disgust: P.State.disgust(state), cans: state.waste,
       canRecover: state.phase === 'management' && !state.action && state.cash + P.Logic.recycleValue(state) < P.Logic.openCost(state),
@@ -1715,7 +2645,8 @@ window.StandScene={paint};
         progress: state.action?.type === type ? Math.round(100 * (1 - state.action.remaining / state.action.total)) : null })),
       items: ids.map(id => ({ id, name: nameOf(id), group: P.DATA.items.find(i => i.id === id).group })),
       upgrades: P.DATA.upgrades.map(item => ({ ...item, cost: C.upgrades[item.id].cost, owned: state.upgrades.includes(item.id), reason: availableAction('upgrade', item.id) })),
-      recipes: P.DATA.recipes.map(item => ({ ...item, active: state.menu.includes(item.id), reason: availableAction('menu', item.id), unlocked: P.State.recipeUnlocked(state, item), price: state.price + C.recipeBonuses[item.id] })),
+      recipes: P.DATA.recipes.map(item => ({ ...item, active: state.menu.includes(item.id), reason: availableAction('menu', item.id), unlocked: P.State.recipeUnlocked(state, item), price: state.price + C.recipeBonuses[item.id],
+        ingredientNames: item.ingredients.map(nameOf).join(' + '), stocked: P.State.recipeStocked(state, item) })),
       slots: P.State.slots(state), salesTotal: state.stats.slices,
       phase, day: state.day, cash: state.cash, health: state.health, reputation: state.rep, price: state.price,
       stock: { ...state.inventory }, costs, microwave: state.upgrades.includes('clean_microwave'), work,
@@ -1726,7 +2657,7 @@ window.StandScene={paint};
       possibleSales: state.inventory.slices * state.price, sales: t.income.slices + t.income.drinks, spending: P.State.sum(t.expenses), openingCash: t.startCash,
       paused, visitorsSeen: run?.customer?.number ?? (receipt ? t.potential : 0),
       serviceProgress: run ? run.elapsed / run.duration : receipt ? 1 : 0,
-      log: logEntries().map(row => ({ time: row.time, text: entryLine(row), kind: row.kind, visitor: row.number })),
+      log: logEntries().map(outcomeRow),
       reaction: currentOutcome(), receipt, notice, saveNotice, ready: !noOpen, openReason: noOpen,
       buyFiveReason: Object.fromEntries(ids.map(id => [id, textReason(P.Logic.reason(state, 'buy', id, 5))])),
       canBuy, buyReason, canDough: !noDough, canPrepare: !noSlices, workReasons: { dough: noDough, slices: noSlices },
@@ -1737,12 +2668,24 @@ window.StandScene={paint};
     window.StandView.render(viewModel(), copy);
   }
   function reset() {
+    selectedToppings = [];
     checkpoint = null; paused = false; panelOpen = false; saveNotice = ''; lastPaint = '';
     state = P.State.create(seed); configureEvent(1); notice = copy.feedback.start; persist(); render();
   }
   function action(name, id, quantity = 1) {
     if (name === 'panel') { panelOpen = id === true || id === 'true'; lastTime = performance.now(); return; }
     if (name === 'reset') { reset(); return; }
+    if (name === 'selectTopping' && !sample) {
+      if (state.phase !== 'management' || !P.RECIPE_BOOK.ingredients.some(item => item.id === id) || !P.State.unlocked(state, id)) return;
+      if (selectedToppings.includes(id)) selectedToppings = selectedToppings.filter(item => item !== id);
+      else if (selectedToppings.length < P.RECIPE_BOOK.maxToppings) selectedToppings.push(id);
+      notice = ''; render(); return;
+    }
+    if (name === 'experiment' && !sample) {
+      const result = P.Logic.action(state, 'experiment', selectedToppings.join(','));
+      notice = fill(copy.discovery[result.message], { name: result.recipe ? P.DATA.recipes.find(recipe => recipe.id === result.recipe).name : '' });
+      persist(); render(); return;
+    }
     if (name === 'mode') { persist(); window.location.hash = sample ? '' : 'mode=sample'; window.location.reload(); return; }
     if (name === 'recover') { P.Logic.recovery(state); if (state.phase === 'score') P.Save.record(state); persist(); render(); return; }
     if (name === 'pause') {

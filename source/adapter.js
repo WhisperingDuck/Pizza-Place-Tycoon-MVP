@@ -1,13 +1,11 @@
-/* The continuing-game adapter translates checkpoint state into the approved stand surface.
-   Simulation, transactions, probability, work, settlement and save validation
-   are supplied by the unmodified candidate modules above. */
+/* Translate the current run or archived comparison engine into the stand surface. */
 (() => {
   'use strict';
   const P = window.Pizza;
   const C = P.CONFIG;
   const copy = JSON.parse(document.getElementById('stand-copy').textContent);
   const reviewHash = new URLSearchParams(window.location.hash.slice(1));
-  const sample = reviewHash.get('mode') === 'sample' || (reviewHash.has('event') && !reviewHash.has('mode'));
+  const sample = window.PizzaMode.sample;
   const seed = sample ? 6 : undefined;
   const ids = P.DATA.items.map(item => item.id);
   const supportedStock = new Set(ids);
@@ -28,11 +26,12 @@
   const previewType = P.DATA.events.find(e => e.id === previewEvent?.effect)?.type;
   for (const [k, lines] of Object.entries(copy.reactions)) P.DATA.reactions[k] = [...lines];
   for (const group of ['items', 'recipes', 'upgrades']) for (const item of P.DATA[group]) {
+    if (!sample && (group === 'recipes' || group === 'items' && P.RECIPE_BOOK.ingredients.some(ingredient => ingredient.id === item.id))) continue;
     Object.assign(item, copy.catalogue?.[group]?.[item.id] || {});
   }
-  P.DATA.recipes.find(r => r.id === 'plain').name = copy.names.plain;
+  if (sample) P.DATA.recipes.find(r => r.id === 'plain').name = copy.names.plain;
   const textReason = reason => copy.ruleReasons?.[reason] || reason;
-  const nameOf = id => copy.names[id] || P.DATA.items.find(i => i.id === id)?.name || id;
+  const nameOf = id => (!sample && P.RECIPE_BOOK.ingredients.some(item => item.id === id) ? P.DATA.items.find(item => item.id === id)?.name : copy.names[id]) || P.DATA.items.find(i => i.id === id)?.name || id;
   function availableAction(type, id) { return textReason(P.Logic.reason(state, type, id)); }
   function configureEvent(day) {
     for (const event of P.DATA.events) {
@@ -55,6 +54,8 @@
   };
   const loaded = P.Save.load();
   let state = loaded.state || P.State.create(seed);
+  if (!sample) state.recipeBook.last = state.recipeBook.attempts.at(-1) || null;
+  let selectedToppings = [];
   configureEvent(state.day);
   // The engine validates its own save. Keep optional presentation history
   // tolerant of old or damaged entries without discarding a playable run.
@@ -66,7 +67,7 @@
   let checkpoint = null;
   let paused = false;
   let panelOpen = false;
-  let notice = loaded.notice ? (loaded.state ? copy.feedback.restore : copy.feedback.incompatible) :
+  let notice = loaded.notice ? (loaded.state ? (!sample && !loaded.notice.includes('Restored your prepared day') ? copy.feedback.migrated : copy.feedback.restore) : copy.feedback.incompatible) :
     (!loaded.state ? copy.feedback.start : '');
   let saveNotice = '';
   let lastTime = performance.now();
@@ -132,9 +133,9 @@
     let key = 'sale';
     if (result.kind === 'passed') key = 'walk';
     if (result.kind === 'miss') key = state.inventory.slices ? 'busy' : 'out';
-    const params = { n: customer.number, item: result.title, line: result.text.replace('Topping sold out; served plain.', copy.feedback.fallback), money: cash(result.revenue),
+    const params = { n: customer.number, item: result.title, line: result.text.replace('Topping sold out; served plain.', copy.feedback.fallback), money: cash(result.revenue), rep: result.rep,
       mood: result.kind, lineIndex: copy.reactions[result.kind]?.indexOf(result.text) };
-    addLog(key, params, result.kind === 'miss' || result.kind === 'passed' ? 'walk' : 'sale', customer.number);
+    addLog(key, params, result.kind, customer.number);
   }
   // Translate the dispatched checkpoint effect for the editable receipt. The
   // numerical values come from config; writing a line never applies its effect.
@@ -161,7 +162,8 @@
     else if (r.passed) template = (r.reviewHadNapkins ?? state.inventory.napkins) ? copy.receipt.wasteClue : copy.receipt.supplyClue;
     else if (r.spoiledSlices) { template = copy.receipt.overprepClue; count = r.spoiledSlices; }
     const clue = fill(template, { count, passed: r.passed, visitors: r.potential });
-    return { prepared: r.served + r.spoiledSlices, sold: r.served, leftovers: r.spoiledSlices,
+    return { prepared: r.served + r.spoiledSlices + (r.tastedSlices || 0), tasted: r.tastedSlices || 0,
+      discoveries: (r.discoveries || []).map(id => P.DATA.recipes.find(recipe => recipe.id === id)?.name || id), sold: r.served, leftovers: r.spoiledSlices,
       sales: r.revenue, spending: r.expenseTotal, change: r.net, clue, events,
       eventTitle: events.map(e => e.title).join(' / '),
       eventMessage: events.length ? events.map(e => e.message + ' ' + e.effect).join(' ') : copy.receipt.quiet,
@@ -169,6 +171,28 @@
       otherIncome: r.income.events + r.income.recycling, income: r.income, expenses: r.expenses,
       milestones: r.milestones || [], day: r.day,
       visitors: r.potential, passed: r.passed, soldOut: r.soldOut };
+  }
+  function outcomeRow(row) {
+    const mood = (row.params.mood !== 'miss' ? row.params.mood : null) || ({ sale: 'satisfied', walk: 'passed', busy: 'capacity', out: 'soldOut', arrived: 'arrival', unlock: 'discovery' }[row.key]) || 'system';
+    const tone = ['delighted', 'satisfied'].includes(mood) ? 'positive' : ['disgusted', 'passed', 'capacity', 'soldOut'].includes(mood) ? 'negative' : mood === 'discovery' ? 'reward' : 'neutral';
+    return { time: row.time, text: entryLine(row), kind: row.kind, visitor: row.number, tone,
+      outcome: copy.outcomes[mood] || copy.outcomes.system,
+      effect: row.params.rep ? fill(copy.ui.reputationEffect, { change: (row.params.rep > 0 ? '+' : '−') + Math.abs(row.params.rep) }) : '' };
+  }
+  function notebook() {
+    if (sample) return null;
+    const check = P.Recipes.check(state, selectedToppings.join(','));
+    const last = state.recipeBook.last;
+    const pending = P.RECIPE_BOOK.ingredients.filter(item => !P.State.unlocked(state, item.id));
+    const nextDay = pending.length ? Math.min(...pending.map(item => item.day)) : null;
+    return { selected: selectedToppings, canTry: check.ok, reason: check.ok ? '' : copy.discovery[check.code],
+      known: state.recipeBook.known.length, total: P.DATA.recipes.length,
+      choices: P.RECIPE_BOOK.ingredients.map(item => ({ id: item.id, name: nameOf(item.id), stock: state.inventory[item.id],
+        available: P.State.unlocked(state, item.id), day: item.day, sold: item.sold, selected: selectedToppings.includes(item.id) })),
+      last: last ? { id: last.recipe, found: Boolean(last.recipe), matches: [...last.ingredients].sort().join(',') === [...selectedToppings].sort().join(','), name: last.recipe ? P.DATA.recipes.find(recipe => recipe.id === last.recipe).name : '',
+        ingredients: last.ingredients.map(nameOf).join(' + '), day: last.day } : null,
+      attempts: state.recipeBook.attempts.map(attempt => ({ ...attempt, names: attempt.ingredients.map(nameOf).join(' + '), name: attempt.recipe ? P.DATA.recipes.find(recipe => recipe.id === attempt.recipe).name : '' })),
+      nextDay, nextItems: pending.filter(item => item.day === nextDay).map(item => nameOf(item.id)).join(' + ') };
   }
   function viewModel() {
     const phase = state.phase === 'management' ? 'prep' : state.phase === 'day' ? 'service' : 'report';
@@ -181,7 +205,10 @@
     for (const id of [...ids, 'microwave']) {
       costs[id] = cost(id); buyReason[id] = availableToBuy(id); canBuy[id] = !buyReason[id];
     }
-    return { sample, runEnded: state.phase === 'score', final: state.final, endReason: state.endReason,
+    const ingredientMilestones = sample ? Object.values(C.toppingUnlocks) : P.RECIPE_BOOK.ingredients.filter(item => !P.State.unlocked(state, item.id)).map(item => item.sold);
+    const at = [...new Set([...C.slots.map(([at]) => at), ...Object.values(C.upgrades).map(item => item.unlock), ...ingredientMilestones])].sort((a,b) => a-b).find(at => at > state.stats.slices);
+    return { sample, version: C.version, notebook: notebook(), nextMilestone: at ? { at, left: at - state.stats.slices } : null,
+      runEnded: state.phase === 'score', final: state.final, endReason: state.endReason,
       totalIncome: state.stats.income, totalSpending: state.stats.spending,
       skill: P.State.skill(state), xp: state.xp, disgust: P.State.disgust(state), cans: state.waste,
       canRecover: state.phase === 'management' && !state.action && state.cash + P.Logic.recycleValue(state) < P.Logic.openCost(state),
@@ -190,7 +217,8 @@
         progress: state.action?.type === type ? Math.round(100 * (1 - state.action.remaining / state.action.total)) : null })),
       items: ids.map(id => ({ id, name: nameOf(id), group: P.DATA.items.find(i => i.id === id).group })),
       upgrades: P.DATA.upgrades.map(item => ({ ...item, cost: C.upgrades[item.id].cost, owned: state.upgrades.includes(item.id), reason: availableAction('upgrade', item.id) })),
-      recipes: P.DATA.recipes.map(item => ({ ...item, active: state.menu.includes(item.id), reason: availableAction('menu', item.id), unlocked: P.State.recipeUnlocked(state, item), price: state.price + C.recipeBonuses[item.id] })),
+      recipes: P.DATA.recipes.map(item => ({ ...item, active: state.menu.includes(item.id), reason: availableAction('menu', item.id), unlocked: P.State.recipeUnlocked(state, item), price: state.price + C.recipeBonuses[item.id],
+        ingredientNames: item.ingredients.map(nameOf).join(' + '), stocked: P.State.recipeStocked(state, item) })),
       slots: P.State.slots(state), salesTotal: state.stats.slices,
       phase, day: state.day, cash: state.cash, health: state.health, reputation: state.rep, price: state.price,
       stock: { ...state.inventory }, costs, microwave: state.upgrades.includes('clean_microwave'), work,
@@ -201,7 +229,7 @@
       possibleSales: state.inventory.slices * state.price, sales: t.income.slices + t.income.drinks, spending: P.State.sum(t.expenses), openingCash: t.startCash,
       paused, visitorsSeen: run?.customer?.number ?? (receipt ? t.potential : 0),
       serviceProgress: run ? run.elapsed / run.duration : receipt ? 1 : 0,
-      log: logEntries().map(row => ({ time: row.time, text: entryLine(row), kind: row.kind, visitor: row.number })),
+      log: logEntries().map(outcomeRow),
       reaction: currentOutcome(), receipt, notice, saveNotice, ready: !noOpen, openReason: noOpen,
       buyFiveReason: Object.fromEntries(ids.map(id => [id, textReason(P.Logic.reason(state, 'buy', id, 5))])),
       canBuy, buyReason, canDough: !noDough, canPrepare: !noSlices, workReasons: { dough: noDough, slices: noSlices },
@@ -212,12 +240,24 @@
     window.StandView.render(viewModel(), copy);
   }
   function reset() {
+    selectedToppings = [];
     checkpoint = null; paused = false; panelOpen = false; saveNotice = ''; lastPaint = '';
     state = P.State.create(seed); configureEvent(1); notice = copy.feedback.start; persist(); render();
   }
   function action(name, id, quantity = 1) {
     if (name === 'panel') { panelOpen = id === true || id === 'true'; lastTime = performance.now(); return; }
     if (name === 'reset') { reset(); return; }
+    if (name === 'selectTopping' && !sample) {
+      if (state.phase !== 'management' || !P.RECIPE_BOOK.ingredients.some(item => item.id === id) || !P.State.unlocked(state, id)) return;
+      if (selectedToppings.includes(id)) selectedToppings = selectedToppings.filter(item => item !== id);
+      else if (selectedToppings.length < P.RECIPE_BOOK.maxToppings) selectedToppings.push(id);
+      notice = ''; render(); return;
+    }
+    if (name === 'experiment' && !sample) {
+      const result = P.Logic.action(state, 'experiment', selectedToppings.join(','));
+      notice = fill(copy.discovery[result.message], { name: result.recipe ? P.DATA.recipes.find(recipe => recipe.id === result.recipe).name : '' });
+      persist(); render(); return;
+    }
     if (name === 'mode') { persist(); window.location.hash = sample ? '' : 'mode=sample'; window.location.reload(); return; }
     if (name === 'recover') { P.Logic.recovery(state); if (state.phase === 'score') P.Save.record(state); persist(); render(); return; }
     if (name === 'pause') {
